@@ -9,9 +9,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
 
-<!-- Library photograph — self-hosted at /assets/library.jpg
+<!-- Library photograph — self-hosted at /library.jpg (repo root)
      Source: Long Room, Trinity College Dublin · Photo by Diliff · CC BY-SA 3.0 -->
-<link rel="preload" as="image" fetchpriority="high" href="./assets/library.jpg" />
+<link rel="preload" as="image" fetchpriority="high" href="./library.jpg" />
 
 <!-- Chart.js loaded deferred — only used by Statistics section -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js" defer></script>
@@ -101,7 +101,7 @@
   .bg-photo {
     position: fixed; inset: 0; z-index: -3;
     pointer-events: none;
-    background-image: url('./assets/library.jpg');
+    background-image: url('./library.jpg');
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
@@ -1034,13 +1034,13 @@
     const img = new Image();
     img.onload  = () => document.getElementById('bgPhoto').classList.add('loaded');
     img.onerror = () => {
-      console.warn('[Stewart Lab] assets/library.jpg not found — CSS atmosphere fallback in effect.');
+      console.warn('[Stewart Lab] library.jpg not found — CSS atmosphere fallback in effect.');
       const dot = document.getElementById('syncDot');
       const lbl = document.getElementById('syncLabel');
       if (dot) dot.classList.add('demo');
       if (lbl) lbl.textContent = 'No image';
     };
-    img.src = './assets/library.jpg';
+    img.src = './library.jpg';
   })();
 
   // 2 · Time / date / greeting
