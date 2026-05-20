@@ -156,8 +156,25 @@
     z-index: 100;
     display: flex; flex-direction: column;
     gap: 14px;
-    transition: top 360ms ease, left 360ms ease;
+    transition: top 360ms ease, left 360ms ease, padding 360ms ease;
+    padding: 10px 16px 12px 0;
   }
+  /* When scrolled past splash, give the cluster its own soft backdrop
+     so it doesn't collide with section eyebrows / titles. */
+  .topleft::before {
+    content: '';
+    position: absolute;
+    inset: -14px -56px -22px -32px;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 360ms ease;
+    background: radial-gradient(ellipse at top left,
+      rgba(10, 8, 6, 0.92) 0%,
+      rgba(10, 8, 6, 0.78) 35%,
+      rgba(10, 8, 6, 0.0) 75%);
+  }
+  body.scrolled .topleft::before { opacity: 1; }
   .nav-links {
     display: flex; gap: 22px;
     list-style: none; margin: 0; padding: 0;
@@ -438,6 +455,79 @@
   .review-banner.hidden { display: none; }
 
   /* ============================================================
+     ROUTINE BLOCKS (Morning / Office Hours / Daily)
+     ============================================================ */
+  .routine { margin-top: 44px; }
+  .routine:first-of-type { margin-top: 0; }
+  .routine-head {
+    font-family: var(--mono); font-size: 10px; font-weight: 400;
+    letter-spacing: 0.45em; text-transform: uppercase;
+    color: var(--gold); margin: 0 0 16px 0;
+    display: flex; align-items: baseline; gap: 14px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+  }
+  .routine-head .head-sub {
+    font-size: 9px; letter-spacing: 0.3em;
+    color: var(--text-faint);
+  }
+  .routine-list { list-style: none; margin: 0; padding: 0; max-width: 760px; }
+  .r-row {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border-soft);
+    cursor: pointer;
+    transition: background 200ms;
+  }
+  .r-row:last-child { border-bottom: none; }
+  .r-row.placeholder {
+    cursor: default; color: var(--text-faint);
+    font-style: italic; font-family: var(--serif); font-size: 15px;
+    padding: 18px 0;
+  }
+  .r-row .box {
+    width: 13px; height: 13px;
+    border: 1px solid var(--gold-dim);
+    flex: 0 0 13px; margin-top: 6px;
+    position: relative;
+    transition: background 200ms, border-color 200ms;
+  }
+  .r-row .label-stack { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+  .r-row .r-title {
+    font-family: var(--serif); font-weight: 400;
+    font-size: 18px; color: var(--text); line-height: 1.3;
+  }
+  .r-row .r-note {
+    font-family: var(--serif); font-style: italic;
+    font-size: 14px; color: var(--text-dim);
+    line-height: 1.4;
+  }
+  .r-row .r-meta {
+    font-family: var(--mono); font-size: 9px;
+    letter-spacing: 0.3em; color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-top: 4px; flex: 0 0 auto;
+    align-self: flex-start; padding-top: 4px;
+  }
+  .r-row.done .box { background: var(--green); border-color: var(--green); }
+  .r-row.done .box::after {
+    content: ''; position: absolute;
+    left: 3px; top: 0px; width: 4px; height: 8px;
+    border-right: 1.5px solid #0a0806;
+    border-bottom: 1.5px solid #0a0806;
+    transform: rotate(45deg);
+  }
+  .r-row.done .r-title {
+    color: var(--text-faint);
+    text-decoration: line-through;
+    text-decoration-color: rgba(232,226,208,0.18);
+  }
+  .r-row.done .r-note { opacity: 0.5; }
+
+  /* Hidden when day-conditional doesn't match */
+  .r-row[hidden] { display: none; }
+
+  /* ============================================================
      WEEKLY
      ============================================================ */
   .week-grid {
@@ -705,144 +795,142 @@
 <!-- ========== OFFICE ========== -->
 <section id="office" class="section" aria-labelledby="office-title">
   <div class="section-inner">
-    <p class="section-eyebrow">I · The Office</p>
+    <p class="section-eyebrow">I &middot; The Office</p>
     <h2 class="section-title" id="office-title">Today, the room is open.</h2>
-    <p class="section-sub">Daily operations centre · <span id="officeDay">—</span></p>
+    <p class="section-sub">Daily operations &middot; <span id="officeDay">&mdash;</span></p>
 
-    <div class="office-grid">
-
-      <aside class="minimums" aria-label="Daily minimums">
-        <div class="minimums-head">
-          <h3>Daily Minimums</h3>
-          <span class="count" id="minCount">0 / 12</span>
-        </div>
-        <ul id="minList">
-          <li class="min-row" tabindex="0" role="checkbox" aria-checked="false"><span class="box"></span><span class="label">Wake</span><span class="time">04:30</span></li>
-          <li class="min-row" tabindex="0" role="checkbox" aria-checked="false"><span class="box"></span><span class="label">Weigh post-void</span><span class="time">—</span></li>
-          <li class="min-row" tabindex="0" role="checkbox" aria-checked="false"><span class="box"></span><span class="label">Lemon water</span><span class="time">—</span></li>
-          <li class="min-row" tabindex="0" role="checkbox" aria-checked="false"><span class="box"></span><span class="label">Supplements</span><span class="time">—</span></li>
-          <li class="min-row" tabindex="0" role="checkbox" aria-checked="false"><span class="box"></span><span class="label">Train · resistance</span><span class="time">—</span></li>
-          <li class="min-row" tabindex="0" role="checkbox" aria-checked="false"><span class="box"></span><span class="label">Train · cardio 30m+</span><span class="time">—</span></li>
-          <li class="min-row" tabindex="0" role="checkbox" aria-checked="false"><span class="box"></span><span class="label">Calories 1400–1499</span><span class="time">—</span></li>
-          <li class="min-row" tabindex="0" role="checkbox" aria-checked="false"><span class="box"></span><span class="label">Protein 120g+</span><span class="time">—</span></li>
-          <li class="min-row" tabindex="0" role="checkbox" aria-checked="false"><span class="box"></span><span class="label">50 / 50 / 20 with Wayne</span><span class="time">—</span></li>
-          <li class="min-row" tabindex="0" role="checkbox" aria-checked="false"><span class="box"></span><span class="label">Dress intentionally</span><span class="time">—</span></li>
-          <li class="min-row" tabindex="0" role="checkbox" aria-checked="false"><span class="box"></span><span class="label">Bedtime routine</span><span class="time">—</span></li>
-          <li class="min-row" tabindex="0" role="checkbox" aria-checked="false"><span class="box"></span><span class="label">Sleep</span><span class="time">22:30</span></li>
-        </ul>
-
-        <div class="review-banner hidden" id="reviewBanner">
-          <span class="icon" id="reviewIcon">REVIEW</span>
-          <span class="text" id="reviewText">—</span>
-        </div>
-      </aside>
-
-      <div>
-        <div class="blocks" id="blocks">
-
-          <div class="block" data-window="morning">
-            <div class="block-head" tabindex="0" role="button" aria-expanded="false" onclick="toggleBlock(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleBlock(this);}">
-              <span class="block-window">04:30 — 07:30</span>
-              <span class="block-title">Morning Routine</span>
-              <span class="block-toggle" aria-hidden="true">+</span>
-            </div>
-            <div class="block-body"><div class="block-content">
-              <div class="task" tabindex="0"><span class="box"></span><span class="label">Wake without snooze. Feet on floor by 04:35.</span></div>
-              <div class="task" tabindex="0"><span class="box"></span><span class="label">Hydrate · lemon water · supplements stack</span></div>
-              <div class="task" tabindex="0"><span class="box"></span><span class="label">Weigh post-void. Enter on PHYSIQUE ACADEMY sheet.</span></div>
-              <div class="task" tabindex="0"><span class="box"></span><span class="label">15 minutes of reading before screens. Paper, not glass.</span></div>
-              <div class="task" tabindex="0"><span class="box"></span><span class="label">Dress intentionally. Shave if Monday or before clinical.</span></div>
-            </div></div>
-          </div>
-
-          <div class="block" data-window="research">
-            <div class="block-head" tabindex="0" role="button" aria-expanded="false" onclick="toggleBlock(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleBlock(this);}">
-              <span class="block-window">08:00 — 12:00</span>
-              <span class="block-title">Research Block</span>
-              <span class="block-toggle" aria-hidden="true">+</span>
-            </div>
-            <div class="block-body"><div class="block-content">
-              <div class="task" tabindex="0"><span class="box"></span><span class="label">Deep focus · Project I — antifungal PK/PD outcomes manuscript</span><span class="meta">90m · phone in drawer</span></div>
-              <div class="task" tabindex="0"><span class="box"></span><span class="label">Break · walk · refill water</span><span class="meta">10m</span></div>
-              <div class="task" tabindex="0"><span class="box"></span><span class="label">Deep focus · Project II — N. glabrata proteomic signatures</span><span class="meta">90m</span></div>
-              <div class="task" tabindex="0"><span class="box"></span><span class="label">Read one paper. Note one sentence into commonplace.</span></div>
-              <div class="task" tabindex="0"><span class="box"></span><span class="label">QBank · 10 questions written or reviewed</span></div>
-            </div></div>
-          </div>
-
-          <div class="block" data-window="clinical">
-            <div class="block-head" tabindex="0" role="button" aria-expanded="false" onclick="toggleBlock(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleBlock(this);}">
-              <span class="block-window">12:00 — 17:00</span>
-              <span class="block-title">Clinical</span>
-              <span class="block-toggle" aria-hidden="true">+</span>
-            </div>
-            <div class="block-body"><div class="block-content">
-              <div class="task" tabindex="0"><span class="box"></span><span class="label">Pre-round prep — patient list, antimicrobial rationale</span></div>
-              <div class="task" tabindex="0"><span class="box"></span><span class="label">Rounds. Speak less, observe more. One sharp question.</span></div>
-              <div class="task" tabindex="0"><span class="box"></span><span class="label">Document one teaching moment for the commonplace book.</span></div>
-              <div class="task" tabindex="0"><span class="box"></span><span class="label">Inbox triage · 20 minutes max, then close it.</span></div>
-            </div></div>
-          </div>
-
-          <div class="block" data-window="family">
-            <div class="block-head" tabindex="0" role="button" aria-expanded="false" onclick="toggleBlock(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleBlock(this);}">
-              <span class="block-window">17:00 — 20:30</span>
-              <span class="block-title">Family &amp; Evening</span>
-              <span class="block-toggle" aria-hidden="true">+</span>
-            </div>
-            <div class="block-body"><div class="block-content">
-              <div class="task" tabindex="0"><span class="box"></span><span class="label">Phone in basket the moment you walk in.</span></div>
-              <div class="task" tabindex="0"><span class="box"></span><span class="label">Dinner with the family. Presence over efficiency.</span></div>
-              <div class="task" tabindex="0"><span class="box"></span><span class="label">Boys · 30m of full attention. Their pace, not yours.</span></div>
-              <div class="task" tabindex="0"><span class="box"></span><span class="label">Walk with wife after the boys are down.</span></div>
-              <div class="task" tabindex="0"><span class="box"></span><span class="label">Screen cutoff · 21:00. Books and dim light only.</span></div>
-            </div></div>
-          </div>
-
-          <div class="block" data-window="night">
-            <div class="block-head" tabindex="0" role="button" aria-expanded="false" onclick="toggleBlock(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleBlock(this);}">
-              <span class="block-window">20:30 — 22:30</span>
-              <span class="block-title">Wind-down</span>
-              <span class="block-toggle" aria-hidden="true">+</span>
-            </div>
-            <div class="block-body"><div class="block-content">
-              <div class="task" tabindex="0"><span class="box"></span><span class="label">Three lines · what worked, what didn't, what tomorrow asks.</span></div>
-              <div class="task" tabindex="0"><span class="box"></span><span class="label">Tomorrow's anchor task written on paper.</span></div>
-              <div class="task" tabindex="0"><span class="box"></span><span class="label">Stretch · breathe · gratitude.</span></div>
-              <div class="task" tabindex="0"><span class="box"></span><span class="label">In bed by 22:30. Lights off, no exceptions.</span></div>
-            </div></div>
-          </div>
-
-        </div>
-
-        <div class="agenda">
-          <h3>Today's Agenda</h3>
-          <div class="agenda-grid">
-            <div class="agenda-tile">
-              <div class="when">09:00 — 10:00</div>
-              <div class="what">Supervisor check-in with Dr. Kamaliddin</div>
-              <div class="where">ECHA · Room 2-100</div>
-            </div>
-            <div class="agenda-tile">
-              <div class="when">11:00 — 12:00</div>
-              <div class="what">N. glabrata proteomics — figures review</div>
-              <div class="where">Lab bench</div>
-            </div>
-            <div class="agenda-tile">
-              <div class="when">13:30 — 16:30</div>
-              <div class="what">ID consult service · ward rounds</div>
-              <div class="where">UAH</div>
-            </div>
-            <div class="agenda-tile">
-              <div class="when">19:00</div>
-              <div class="what">Boys to the park before the light goes</div>
-              <div class="where">Home</div>
-            </div>
-          </div>
-        </div>
-
-      </div>
+    <!-- Day-aware review banner (Sunday PhD / biweekly Wed Finance / biweekly Sat Home & Health) -->
+    <div class="review-banner hidden" id="reviewBanner">
+      <span class="icon" id="reviewIcon">REVIEW</span>
+      <span class="text" id="reviewText">&mdash;</span>
     </div>
+
+    <!-- I. MORNING ROUTINE -->
+    <div class="routine">
+      <h3 class="routine-head">I &middot; Morning Routine</h3>
+      <ul class="routine-list" id="morningList">
+
+        <li class="r-row" data-cond="always" tabindex="0" role="checkbox" aria-checked="false">
+          <span class="box"></span>
+          <div class="label-stack">
+            <div class="r-title">Wake Up On Time &mdash; 04:30</div>
+            <div class="r-note">Start the day properly. Wake up &amp; get out of bed early to start your day intentionally.</div>
+          </div>
+        </li>
+
+        <li class="r-row" data-cond="always" tabindex="0" role="checkbox" aria-checked="false">
+          <span class="box"></span>
+          <div class="label-stack">
+            <div class="r-title">Weigh Yourself &amp; Record</div>
+            <div class="r-note">Measure &amp; record an accurate post-void body-weight to track ongoing physique progress.</div>
+          </div>
+        </li>
+
+        <li class="r-row" data-cond="always" tabindex="0" role="checkbox" aria-checked="false">
+          <span class="box"></span>
+          <div class="label-stack">
+            <div class="r-title">Hydrate</div>
+            <div class="r-note">Drink a full glass of lemon / citrus water to properly hydrate first thing in the morning.</div>
+          </div>
+        </li>
+
+        <li class="r-row" data-cond="always" tabindex="0" role="checkbox" aria-checked="false">
+          <span class="box"></span>
+          <div class="label-stack">
+            <div class="r-title">Coffee &amp; Review Schedule</div>
+            <div class="r-note">Over a cup of coffee, review your schedule &amp; task list for the day.</div>
+          </div>
+        </li>
+
+        <li class="r-row" data-cond="always" tabindex="0" role="checkbox" aria-checked="false">
+          <span class="box"></span>
+          <div class="label-stack">
+            <div class="r-title">Full Supplement Stack</div>
+            <div class="r-note">Creatine &middot; Vitamin D &middot; Rosuvastatin &middot; Ezetimibe &middot; Ashwagandha. Every single day.</div>
+          </div>
+        </li>
+
+        <!-- Adaptive training row (content changes by day) -->
+        <li class="r-row" id="trainingRow" data-cond="always" tabindex="0" role="checkbox" aria-checked="false">
+          <span class="box"></span>
+          <div class="label-stack">
+            <div class="r-title">Morning Training</div>
+            <div class="r-note">Resistance training. Hit the programmed lifts for today.</div>
+          </div>
+        </li>
+
+        <li class="r-row" data-cond="not-mon" tabindex="0" role="checkbox" aria-checked="false">
+          <span class="box"></span>
+          <div class="label-stack">
+            <div class="r-title">Steam / Sauna &mdash; 10&ndash;15 min</div>
+            <div class="r-note">A short steam or sauna session at Archetype.</div>
+          </div>
+          <span class="r-meta">Archetype</span>
+        </li>
+
+        <li class="r-row" data-cond="always" tabindex="0" role="checkbox" aria-checked="false">
+          <span class="box"></span>
+          <div class="label-stack">
+            <div class="r-title">Full Hygiene Routine</div>
+            <div class="r-note">Shower, skincare, dental hygiene, nails, body hair management. Every single day.</div>
+          </div>
+        </li>
+
+        <li class="r-row" data-cond="always" tabindex="0" role="checkbox" aria-checked="false">
+          <span class="box"></span>
+          <div class="label-stack">
+            <div class="r-title">Dress Intentionally</div>
+            <div class="r-note">Select from a minimalist set of refined outfit choices every single day.</div>
+          </div>
+        </li>
+
+      </ul>
+    </div>
+
+    <!-- II. OFFICE HOURS -->
+    <div class="routine">
+      <h3 class="routine-head">II &middot; Office Hours <span class="head-sub">08:00 &mdash; 16:00</span></h3>
+      <ul class="routine-list" id="officeHoursList">
+        <li class="r-row placeholder" id="calPlaceholder">
+          <div class="label-stack">
+            <div class="r-note">Google Calendar integration coming &mdash; scheduled events between 08:00 and 16:00 will populate here automatically.</div>
+          </div>
+        </li>
+
+        <li class="r-row" data-cond="tue-only" tabindex="0" role="checkbox" aria-checked="false">
+          <span class="box"></span>
+          <div class="label-stack">
+            <div class="r-title">Tuesday Activity Planning</div>
+            <div class="r-note">Lunchtime sit-down. Plan the week&rsquo;s and weekend&rsquo;s activities and dates.</div>
+          </div>
+          <span class="r-meta">ACE Coffee</span>
+        </li>
+
+        <li class="r-row" data-cond="first-thu" tabindex="0" role="checkbox" aria-checked="false">
+          <span class="box"></span>
+          <div class="label-stack">
+            <div class="r-title">Thursday Travel Planning</div>
+            <div class="r-note">Monthly lunchtime review of the plan for travel and small family trips.</div>
+          </div>
+          <span class="r-meta">ACE Coffee</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- III. DAILY ROUTINE -->
+    <div class="routine">
+      <h3 class="routine-head">III &middot; Daily Routine</h3>
+      <ul class="routine-list">
+        <li class="r-row" data-cond="always" tabindex="0" role="checkbox" aria-checked="false">
+          <span class="box"></span>
+          <div class="label-stack">
+            <div class="r-title">50 / 50 / 20</div>
+            <div class="r-note">50 push-ups, 50 sit-ups, 20 pull-ups. Every single day. No exceptions.</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
   </div>
 </section>
 
@@ -933,7 +1021,7 @@
 
 <footer class="footer">
   <div class="crest">The Stewart Lab</div>
-  <div class="tag">Jackson J. Stewart, PharmD &middot; University of Alberta &middot; MMXXVI</div>
+  <div class="tag">Jackson J. Stewart &middot; University of Alberta &middot; MMXXVI</div>
   <div class="credit">
     Background photograph: <a href="https://commons.wikimedia.org/wiki/File:Long_Room_Interior,_Trinity_College_Dublin,_Ireland_-_Diliff.jpg" target="_blank" rel="noopener">Long Room, Trinity College Dublin</a>
     &middot; Photo by Diliff &middot; CC BY-SA 3.0
@@ -975,7 +1063,8 @@
     const od = document.getElementById('officeDay');
     if (od) od.textContent = DAYS_FULL[now.getDay()];
     updateReviewBanner(now);
-    setActiveBlock(h);
+    applyDayConditions(now);
+    updateMorningTraining(now);
   }
 
   // 3 · Weather (Open-Meteo, no API key needed)
@@ -992,43 +1081,82 @@
       .catch(err => console.warn('[Stewart Lab] Weather fetch failed:', err));
   }
 
-  // 4 · Time-aware block expansion
-  function activeWindowFor(h) {
-    if (h >= 4  && h < 8)  return 'morning';
-    if (h >= 8  && h < 12) return 'research';
-    if (h >= 12 && h < 17) return 'clinical';
-    if (h >= 17 && h < 20) return 'family';
-    return 'night';
+  // 4 · Day-aware visibility for Office routine rows
+  //    Reference dates for biweekly cadences:
+  //      Wednesday Finance Review  → starts May 27, 2026
+  //      Saturday Home & Health    → starts May 23, 2026
+  //      Monthly Travel Planning   → first Thursday of each month, starts June 4, 2026
+  function isBiweeklyFrom(now, refDate, weekday) {
+    if (now.getDay() !== weekday) return false;
+    const day0 = new Date(refDate.getFullYear(), refDate.getMonth(), refDate.getDate());
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const days = Math.round((today - day0) / 86400000);
+    return days >= 0 && (days % 14 === 0);
   }
-  let userHasToggled = false;
-  function setActiveBlock(h) {
-    if (userHasToggled) return;
-    const win = activeWindowFor(h);
-    document.querySelectorAll('.block').forEach(b => {
-      const open = b.dataset.window === win;
-      b.classList.toggle('open', open);
-      const head = b.querySelector('.block-head');
-      if (head) head.setAttribute('aria-expanded', open ? 'true' : 'false');
+  function isFirstWeekdayOfMonth(now, weekday) {
+    if (now.getDay() !== weekday) return false;
+    const firstOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const offset = (weekday - firstOfMonth.getDay() + 7) % 7;
+    return now.getDate() === 1 + offset;
+  }
+  function applyDayConditions(now) {
+    const dow = now.getDay(); // 0 Sun ... 6 Sat
+    document.querySelectorAll('[data-cond]').forEach(el => {
+      let show = true;
+      switch (el.dataset.cond) {
+        case 'always':     show = true; break;
+        case 'not-mon':    show = dow !== 1; break;
+        case 'mon-only':   show = dow === 1; break;
+        case 'tue-only':   show = dow === 2; break;
+        case 'thu-only':   show = dow === 4; break;
+        case 'sun-only':   show = dow === 0; break;
+        case 'biweekly-wed': show = isBiweeklyFrom(now, new Date(2026, 4, 27), 3); break;
+        case 'biweekly-sat': show = isBiweeklyFrom(now, new Date(2026, 4, 23), 6); break;
+        case 'first-thu':  show = isFirstWeekdayOfMonth(now, 4); break;
+        default: show = true;
+      }
+      if (show) el.removeAttribute('hidden'); else el.setAttribute('hidden', '');
     });
   }
-  function toggleBlock(headEl) {
-    userHasToggled = true;
-    const block = headEl.parentElement;
-    block.classList.toggle('open');
-    headEl.setAttribute('aria-expanded', block.classList.contains('open') ? 'true' : 'false');
+  function updateMorningTraining(now) {
+    const row = document.getElementById('trainingRow');
+    if (!row) return;
+    const titleEl = row.querySelector('.r-title');
+    const noteEl  = row.querySelector('.r-note');
+    if (!titleEl || !noteEl) return;
+    const dow = now.getDay();
+    if (dow === 1) {
+      titleEl.textContent = 'Rest Day';
+      noteEl.textContent  = 'Full rest from weightlifting & endurance. Recover completely.';
+    } else if (dow === 4) {
+      titleEl.textContent = 'Morning Training — Endurance';
+      noteEl.textContent  = 'Endurance session. Conversational pace, sustained effort.';
+    } else {
+      titleEl.textContent = 'Morning Training — Weightlifting';
+      noteEl.textContent  = 'Resistance training. Hit the programmed lifts for today.';
+    }
   }
 
-  // 5 · Day-aware review banner
+  // 5 · Day-aware review banner — keeps the boxed style for Sun/biweekly Wed/biweekly Sat
   function updateReviewBanner(now) {
     const banner = document.getElementById('reviewBanner');
     const icon   = document.getElementById('reviewIcon');
     const text   = document.getElementById('reviewText');
     if (!banner) return;
-    const day = now.getDay();
     banner.classList.add('hidden');
-    if (day === 0) { icon.textContent='SUNDAY';    text.textContent='Professional review — deep focus, QBank, papers, one win, one improvement.'; banner.classList.remove('hidden'); }
-    else if (day === 3) { icon.textContent='WEDNESDAY'; text.textContent='Finance review — savings direction, unplanned expenses, PhD fund.';     banner.classList.remove('hidden'); }
-    else if (day === 6) { icon.textContent='SATURDAY';  text.textContent='Home & health review — one home item, performance marker, sleep.';    banner.classList.remove('hidden'); }
+    if (now.getDay() === 0) {
+      icon.textContent = 'SUNDAY';
+      text.textContent = 'PhD / Professional review — deep focus, papers, one win, one improvement. Home office.';
+      banner.classList.remove('hidden');
+    } else if (isBiweeklyFrom(now, new Date(2026, 4, 27), 3)) {
+      icon.textContent = 'WEDNESDAY';
+      text.textContent = 'Biweekly Finance Review — savings direction, unplanned expenses, intentions. Archetype.';
+      banner.classList.remove('hidden');
+    } else if (isBiweeklyFrom(now, new Date(2026, 4, 23), 6)) {
+      icon.textContent = 'SATURDAY';
+      text.textContent = 'Biweekly Home & Health Review — one home item, performance marker, sleep. Archetype.';
+      banner.classList.remove('hidden');
+    }
   }
 
   // 6 · Weekly grid — Mon..Sun for current week
@@ -1062,7 +1190,7 @@
     grid.innerHTML = html;
   }
 
-  // 7 · Statistics — 12-week heatmap + Chart.js trajectory (sample data)
+  // 7 · Statistics — 12-week heatmap + Chart.js trajectory (live from CSV, sample fallback)
   function buildHeatmap12() {
     const wrap = document.getElementById('heatmap12');
     if (!wrap) return;
@@ -1079,13 +1207,13 @@
     }
     wrap.innerHTML = html;
   }
+
   // ----- LIVE CSV (PHYSIQUE ACADEMY tab, published from Google Sheets) -----
   const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSm6d7HdIKw7iYXdo1B5-IUBc6e33FO3wxKp3FmnGGChnqk_MmPl1593rv5XJ3F4Sweg-HyBVwSQGgK/pub?output=csv';
-  const PHASE_START = 158.0;  // lbs
-  const PHASE_GOAL  = 140.0;  // lbs
-  let _chart = null;          // Chart.js instance handle, so we can destroy on refresh
+  const PHASE_START = 158.0;
+  const PHASE_GOAL  = 140.0;
+  let _chart = null;
 
-  // Minimal CSV parser — handles quoted fields with commas
   function parseCSV(text) {
     const rows = []; let cur = ['']; let inQ = false;
     for (let i = 0; i < text.length; i++) {
@@ -1105,31 +1233,28 @@
     if (cur.length > 1 || cur[0] !== '') rows.push(cur);
     return rows.map(r => r.map(c => c.trim()));
   }
-
   function num(v) { const n = parseFloat(v); return isNaN(n) ? null : n; }
 
-  // Fetch the published CSV, then re-render the chart + stat cells with live numbers.
   function loadPhysiqueFromCSV() {
     fetch(CSV_URL, { cache: 'no-store' })
       .then(r => r.ok ? r.text() : Promise.reject(r.status))
       .then(text => {
         const rows = parseCSV(text);
-        // Brief says weekly data lives in rows 4–15 (1-indexed) → indices 3..14
-        const weekRows = rows.slice(3, 15);
+        const weekRows = rows.slice(3, 15); // rows 4-15 (1-indexed) = indices 3-14
         const labels = weekRows.map((r,i) => r[0] || ('W' + (i+1)));
-        const minA   = weekRows.map(r => num(r[2]));
-        const midA   = weekRows.map(r => num(r[3]));
-        const maxA   = weekRows.map(r => num(r[4]));
-        const actA   = weekRows.map(r => num(r[5]));
-        renderWeightChart(labels, minA, midA, maxA, actA);
+        renderWeightChart(
+          labels,
+          weekRows.map(r => num(r[2])),
+          weekRows.map(r => num(r[3])),
+          weekRows.map(r => num(r[4])),
+          weekRows.map(r => num(r[5]))
+        );
         updatePhysiqueStats(weekRows);
-        // Mark live in the sub label of the Current cell
         const sub = document.getElementById('statCurrentSub');
         if (sub) sub.textContent = 'Live · synced from Sheet';
       })
       .catch(err => {
-        console.warn('[Stewart Lab] CSV fetch failed, showing sample data:', err);
-        // Sample fallback so the chart never looks empty
+        console.warn('[Stewart Lab] CSV fetch failed, falling back to sample data:', err);
         renderWeightChart(
           ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12'],
           [158.0,156.7,155.5,154.2,152.9,151.7,150.5,149.3,148.0,146.8,145.5,144.3],
@@ -1169,22 +1294,17 @@
   }
 
   function updatePhysiqueStats(weekRows) {
-    // Find the most recent week with an actual reading
     let lastIdx = -1, lastVal = null;
     for (let i = weekRows.length - 1; i >= 0; i--) {
       const v = num(weekRows[i][5]);
       if (v !== null) { lastIdx = i; lastVal = v; break; }
     }
-    if (lastVal === null) return; // no data yet — leave defaults
-
+    if (lastVal === null) return;
     const fmt = (n) => (n >= 0 ? '' : '−') + Math.abs(n).toFixed(1);
     const lbSpan = '<span style="font-size:18px;color:var(--text-faint);"> lb</span>';
-
     document.getElementById('statCurrent').innerHTML   = lastVal.toFixed(1) + lbSpan;
     document.getElementById('statLost').innerHTML      = fmt(PHASE_START - lastVal) + lbSpan;
     document.getElementById('statRemaining').innerHTML = fmt(lastVal - PHASE_GOAL) + lbSpan;
-
-    // Week delta (vs previous actual)
     let weekDelta = null;
     for (let i = lastIdx - 1; i >= 0; i--) {
       const v = num(weekRows[i][5]);
@@ -1195,8 +1315,6 @@
       if (weekDelta === null) weekEl.textContent = '—';
       else weekEl.innerHTML = (weekDelta > 0 ? '+' : '') + weekDelta.toFixed(1) + lbSpan;
     }
-
-    // Status pill from current row's min/max band
     const minT = num(weekRows[lastIdx][2]);
     const maxT = num(weekRows[lastIdx][4]);
     const pill = document.getElementById('statusPill');
@@ -1208,7 +1326,7 @@
     }
   }
 
-  // 8 · Scroll — active link + body class
+  // 8 · Scroll — active nav link + body class for top-left cluster backdrop
   const links = document.querySelectorAll('.nav-links a[data-nav]');
   const sections = ['splash','office','weekly','statistics'].map(id => document.getElementById(id));
   function onScroll() {
@@ -1229,35 +1347,30 @@
     });
   });
 
-  // 9 · Checkbox interaction
+  // 9 · Checkbox interaction for routine rows
   function toggleRow(row) {
+    if (row.classList.contains('placeholder')) return;
     const isChecked = !row.classList.contains('done');
     row.classList.toggle('done', isChecked);
     if (row.hasAttribute('role')) row.setAttribute('aria-checked', isChecked ? 'true' : 'false');
-    updateMinCount();
   }
-  document.querySelectorAll('.min-row, .task').forEach(row => {
-    row.addEventListener('click', (e) => { if (e.target.closest('.block-head')) return; toggleRow(row); });
-    row.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleRow(row); } });
+  document.querySelectorAll('.r-row').forEach(row => {
+    row.addEventListener('click', () => toggleRow(row));
+    row.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleRow(row); }
+    });
   });
-  function updateMinCount() {
-    const rows = document.querySelectorAll('.minimums .min-row');
-    const done = document.querySelectorAll('.minimums .min-row.done').length;
-    const el = document.getElementById('minCount');
-    if (el) el.textContent = done + ' / ' + rows.length;
-  }
 
   // Boot
   tick();
   setInterval(tick, 30 * 1000);
   onScroll();
-  updateMinCount();
   buildWeekGrid();
   buildHeatmap12();
   refreshWeather();
   setInterval(refreshWeather, 30 * 60 * 1000);
-  if (document.readyState === 'complete') drawWeightChart();
-  else window.addEventListener('load', drawWeightChart);
+  if (document.readyState === 'complete') loadPhysiqueFromCSV();
+  else window.addEventListener('load', loadPhysiqueFromCSV);
 </script>
 
 </body>
