@@ -9,15 +9,16 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
 
-<!-- Library photograph — Long Room, Trinity College Dublin
-     Photo by Diliff, Wikimedia Commons, CC BY-SA 3.0
-     Preloaded so download starts before CSS parses. -->
-<link rel="preload" as="image" fetchpriority="high"
-      href="https://upload.wikimedia.org/wikipedia/commons/4/4b/Long_Room_Interior%2C_Trinity_College_Dublin%2C_Ireland_-_Diliff.jpg" />
+<!-- Library photograph — self-hosted at /assets/library.jpg
+     Source: Long Room, Trinity College Dublin · Photo by Diliff · CC BY-SA 3.0 -->
+<link rel="preload" as="image" fetchpriority="high" href="./assets/library.jpg" />
+
+<!-- Chart.js loaded deferred — only used by Statistics section -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js" defer></script>
 
 <style>
   /* ============================================================
-     STEWART LAB · PhD PREP DASHBOARD
+     STEWART LAB · PhD PREP DASHBOARD · v0.6
      Dark academic library aesthetic
      ============================================================ */
 
@@ -59,14 +60,26 @@
   }
   body { min-height: 100vh; position: relative; }
 
+  /* Visible focus ring for keyboard users */
+  :focus-visible {
+    outline: 1.5px solid var(--gold);
+    outline-offset: 3px;
+  }
+
+  /* Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
   /* ============================================================
-     BACKGROUND
-     Layer 1: real library photograph (Long Room, Trinity Dublin)
-     Layer 2: CSS atmospheric fallback (if image fails to load)
-     Layer 3: warm tint + grain + vignette overlays
+     BACKGROUND LAYERS
      ============================================================ */
 
-  /* Atmospheric fallback (always rendered, but covered when image loads) */
   .bg-fallback {
     position: fixed; inset: 0; z-index: -4;
     pointer-events: none;
@@ -85,11 +98,10 @@
       linear-gradient(180deg, #0e0a06 0%, #07050a 55%, #060403 100%);
   }
 
-  /* Real library photo — set via JS once image confirms it loaded */
   .bg-photo {
     position: fixed; inset: 0; z-index: -3;
     pointer-events: none;
-    background-image: url('https://upload.wikimedia.org/wikipedia/commons/4/4b/Long_Room_Interior%2C_Trinity_College_Dublin%2C_Ireland_-_Diliff.jpg');
+    background-image: url('./assets/library.jpg');
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
@@ -100,12 +112,10 @@
   }
   .bg-photo.loaded { opacity: 1; }
 
-  /* On iOS, fixed attachment can hitch — fall back to scroll on small screens */
   @media (max-width: 900px) {
     .bg-photo { background-attachment: scroll; }
   }
 
-  /* Warm overlay — pushes everything toward amber/sepia */
   .bg-tint {
     position: fixed; inset: 0; z-index: -2;
     pointer-events: none;
@@ -119,7 +129,6 @@
         rgba(6, 5, 3, 0.78) 100%);
   }
 
-  /* Film grain via SVG noise */
   .bg-grain {
     position: fixed; inset: 0; z-index: -1;
     pointer-events: none;
@@ -138,34 +147,26 @@
   }
 
   /* ============================================================
-     TOP-LEFT CLUSTER — nav + date/time/weather, all left-aligned
-     (replaces previous wordmark-left / nav-right structure)
+     TOP-LEFT CLUSTER
      ============================================================ */
 
   .topleft {
     position: fixed;
     top: 26px; left: 32px;
     z-index: 100;
-    display: flex;
-    flex-direction: column;
+    display: flex; flex-direction: column;
     gap: 14px;
     transition: top 360ms ease, left 360ms ease;
   }
-
   .nav-links {
-    display: flex;
-    gap: 22px;
-    list-style: none;
-    margin: 0; padding: 0;
+    display: flex; gap: 22px;
+    list-style: none; margin: 0; padding: 0;
   }
   .nav-links a {
     font-family: var(--mono);
-    font-size: 8px;
-    font-weight: 400;
-    letter-spacing: 0.4em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    text-decoration: none;
+    font-size: 8px; font-weight: 400;
+    letter-spacing: 0.4em; text-transform: uppercase;
+    color: var(--text-dim); text-decoration: none;
     padding: 4px 0;
     border-bottom: 1px solid transparent;
     transition: color 200ms, border-color 200ms;
@@ -175,62 +176,43 @@
     color: var(--gold);
     border-bottom-color: var(--gold-dim);
   }
-
   .stamp { display: flex; flex-direction: column; gap: 3px; }
   .stamp .day {
-    font-family: var(--mono);
-    font-size: 8px;
-    letter-spacing: 0.42em;
-    text-transform: uppercase;
+    font-family: var(--mono); font-size: 8px;
+    letter-spacing: 0.42em; text-transform: uppercase;
     color: var(--gold);
   }
   .stamp .date {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.32em;
-    color: var(--text-dim);
+    font-family: var(--mono); font-size: 9px;
+    letter-spacing: 0.32em; color: var(--text-dim);
     text-transform: uppercase;
   }
   .stamp .time-weather {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.28em;
-    color: var(--text);
-    margin-top: 6px;
-    text-transform: uppercase;
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.28em; color: var(--text);
+    margin-top: 6px; text-transform: uppercase;
   }
   .stamp .time-weather .sep {
-    color: var(--gold-dim);
-    margin: 0 7px;
+    color: var(--gold-dim); margin: 0 7px;
   }
-
-  /* When user scrolls past the splash, dim the cluster and tighten it. */
   body.scrolled .topleft { top: 18px; }
 
   /* ============================================================
-     SPLASH / HOME — 100vh hero
+     SPLASH
      ============================================================ */
 
   .splash {
-    min-height: 100vh;
-    height: 100vh;
+    min-height: 100vh; height: 100vh;
     position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     padding: 0 32px;
   }
-
-  /* Greeting — significantly smaller than before, lighter weight */
   .splash-greeting {
-    font-family: var(--serif);
-    font-style: italic;
+    font-family: var(--serif); font-style: italic;
     font-weight: 300;
     font-size: clamp(22px, 3vw, 36px);
-    color: var(--text);
-    text-align: center;
-    line-height: 1.2;
-    letter-spacing: 0.01em;
+    color: var(--text); text-align: center;
+    line-height: 1.2; letter-spacing: 0.01em;
     opacity: 0;
     animation: fadeInGreeting 2.2s ease 0.5s forwards;
     text-shadow: 0 2px 24px rgba(0,0,0,0.7);
@@ -241,20 +223,16 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* Bottom-left: sync indicator */
   .sync-bar {
     position: fixed;
     bottom: 22px; left: 32px;
     z-index: 100;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    display: flex; align-items: center; gap: 10px;
     opacity: 0;
     animation: fadeInGreeting 1.6s ease 1.4s forwards;
   }
   .sync-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
+    width: 6px; height: 6px; border-radius: 50%;
     background: #2a9d6e;
     box-shadow: 0 0 8px rgba(42,157,110,0.7);
     animation: pulse 2.2s ease-in-out infinite;
@@ -265,242 +243,156 @@
     0%, 100% { opacity: 0.45; transform: scale(1); }
     50%      { opacity: 1.0; transform: scale(1.25); }
   }
-  .sync-label,
-  .sync-version {
-    font-family: var(--mono);
-    font-size: 8px;
-    letter-spacing: 0.35em;
-    color: var(--text-faint);
+  .sync-label, .sync-version {
+    font-family: var(--mono); font-size: 8px;
+    letter-spacing: 0.35em; color: var(--text-faint);
     text-transform: uppercase;
   }
   .sync-version { margin-left: 14px; }
 
   /* ============================================================
-     SECTION SCAFFOLDING
+     SECTIONS
      ============================================================ */
 
-  .section {
-    min-height: 100vh;
-    padding: 140px 40px 80px;
-    position: relative;
-  }
+  .section { min-height: 100vh; padding: 140px 40px 80px; position: relative; }
   .section-inner { max-width: var(--container); margin: 0 auto; }
   .section-eyebrow {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.45em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin: 0 0 14px 0;
+    font-family: var(--mono); font-size: 9px;
+    letter-spacing: 0.45em; text-transform: uppercase;
+    color: var(--gold); margin: 0 0 14px 0;
   }
   .section-title {
-    font-family: var(--serif);
-    font-weight: 300;
-    font-style: italic;
+    font-family: var(--serif); font-weight: 300; font-style: italic;
     font-size: clamp(40px, 5vw, 58px);
-    margin: 0 0 12px 0;
-    line-height: 1.05;
-    letter-spacing: 0.005em;
+    margin: 0 0 12px 0; line-height: 1.05; letter-spacing: 0.005em;
   }
   .section-sub {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin: 0 0 56px 0;
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--text-dim); margin: 0 0 56px 0;
   }
 
-  /* ============================================================
-     OFFICE PAGE
-     ============================================================ */
-
+  /* OFFICE */
   .office-grid {
     display: grid;
     grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
-    gap: 72px;
-    align-items: start;
+    gap: 72px; align-items: start;
   }
-
-  .minimums {
-    border-top: 1px solid var(--border);
-    padding-top: 22px;
-  }
+  .minimums { border-top: 1px solid var(--border); padding-top: 22px; }
   .minimums-head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
+    display: flex; align-items: baseline; justify-content: space-between;
     margin-bottom: 14px;
   }
   .minimums h3 {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.45em;
-    text-transform: uppercase;
-    color: var(--gold);
-    font-weight: 400;
-    margin: 0;
+    font-family: var(--mono); font-size: 9px;
+    letter-spacing: 0.45em; text-transform: uppercase;
+    color: var(--gold); font-weight: 400; margin: 0;
   }
   .minimums .count {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.3em;
-    color: var(--text-faint);
+    font-family: var(--mono); font-size: 9px;
+    letter-spacing: 0.3em; color: var(--text-faint);
   }
-
   .minimums ul { list-style: none; margin: 0; padding: 0; }
   .min-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border-soft);
-    font-family: var(--serif);
-    font-size: 16px;
-    color: var(--text);
-    cursor: pointer;
+    display: flex; align-items: center; gap: 12px;
+    padding: 8px 0; border-bottom: 1px solid var(--border-soft);
+    font-family: var(--serif); font-size: 16px;
+    color: var(--text); cursor: pointer;
     transition: opacity 200ms, color 200ms;
   }
   .min-row:last-child { border-bottom: none; }
   .min-row .box {
     width: 13px; height: 13px;
     border: 1px solid var(--gold-dim);
-    flex: 0 0 13px;
-    position: relative;
+    flex: 0 0 13px; position: relative;
     transition: background 200ms, border-color 200ms;
   }
   .min-row .label { flex: 1; }
   .min-row .time {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.25em;
-    color: var(--text-faint);
+    font-family: var(--mono); font-size: 9px;
+    letter-spacing: 0.25em; color: var(--text-faint);
     text-transform: uppercase;
   }
-  .min-row.done .box {
-    background: var(--green);
-    border-color: var(--green);
-  }
+  .min-row.done .box { background: var(--green); border-color: var(--green); }
   .min-row.done .box::after {
-    content: '';
-    position: absolute;
-    left: 3px; top: 0px;
-    width: 4px; height: 8px;
+    content: ''; position: absolute;
+    left: 3px; top: 0px; width: 4px; height: 8px;
     border-right: 1.5px solid #0a0806;
     border-bottom: 1.5px solid #0a0806;
     transform: rotate(45deg);
   }
-  .min-row.done .label,
-  .min-row.done .time {
-    color: var(--text-faint);
-    text-decoration: line-through;
+  .min-row.done .label, .min-row.done .time {
+    color: var(--text-faint); text-decoration: line-through;
     text-decoration-color: rgba(232,226,208,0.2);
   }
 
-  /* Right column — cascading time-aware blocks */
   .blocks { display: flex; flex-direction: column; gap: 4px; }
   .block { border-top: 1px solid var(--border); }
   .block:last-child { border-bottom: 1px solid var(--border); }
   .block-head {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 20px 0;
-    cursor: pointer;
-    user-select: none;
+    padding: 20px 0; cursor: pointer; user-select: none;
   }
   .block-head:hover .block-title { color: var(--gold-bright); }
   .block-window {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.4em;
-    color: var(--gold);
-    text-transform: uppercase;
-    flex: 0 0 auto;
-    width: 130px;
+    font-family: var(--mono); font-size: 9px;
+    letter-spacing: 0.4em; color: var(--gold);
+    text-transform: uppercase; flex: 0 0 auto; width: 130px;
   }
   .block-title {
-    font-family: var(--serif);
-    font-style: italic;
-    font-weight: 300;
-    font-size: 26px;
-    color: var(--text);
-    flex: 1;
+    font-family: var(--serif); font-style: italic; font-weight: 300;
+    font-size: 26px; color: var(--text); flex: 1;
     transition: color 200ms;
   }
   .block-toggle {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--gold-dim);
-    transition: transform 240ms;
+    font-family: var(--mono); font-size: 11px;
+    color: var(--gold-dim); transition: transform 240ms;
   }
   .block.open .block-toggle { transform: rotate(45deg); color: var(--gold); }
-  .block-body {
-    max-height: 0; overflow: hidden;
-    transition: max-height 380ms ease;
-  }
+  .block-body { max-height: 0; overflow: hidden; transition: max-height 380ms ease; }
   .block.open .block-body { max-height: 1200px; }
   .block-content {
     padding: 4px 0 28px 130px;
     display: flex; flex-direction: column; gap: 10px;
   }
-  @media (max-width: 720px) {
-    .block-content { padding-left: 0; }
-  }
+  @media (max-width: 720px) { .block-content { padding-left: 0; } }
+
   .task {
     display: flex; align-items: flex-start; gap: 14px;
-    padding: 9px 0;
-    border-bottom: 1px solid var(--border-soft);
-    font-family: var(--serif);
-    font-size: 17px;
-    color: var(--text);
-    cursor: pointer;
+    padding: 9px 0; border-bottom: 1px solid var(--border-soft);
+    font-family: var(--serif); font-size: 17px;
+    color: var(--text); cursor: pointer;
   }
   .task:last-child { border-bottom: none; }
   .task .box {
-    width: 13px; height: 13px;
-    border: 1px solid var(--gold-dim);
-    flex: 0 0 13px;
-    margin-top: 5px;
-    position: relative;
+    width: 13px; height: 13px; border: 1px solid var(--gold-dim);
+    flex: 0 0 13px; margin-top: 5px; position: relative;
     transition: background 200ms, border-color 200ms;
   }
-  .task.done .box {
-    background: var(--green);
-    border-color: var(--green);
-  }
+  .task.done .box { background: var(--green); border-color: var(--green); }
   .task.done .box::after {
-    content: '';
-    position: absolute;
-    left: 3px; top: 0px;
-    width: 4px; height: 8px;
+    content: ''; position: absolute;
+    left: 3px; top: 0px; width: 4px; height: 8px;
     border-right: 1.5px solid #0a0806;
     border-bottom: 1.5px solid #0a0806;
     transform: rotate(45deg);
   }
   .task.done .label {
-    color: var(--text-faint);
-    text-decoration: line-through;
+    color: var(--text-faint); text-decoration: line-through;
     text-decoration-color: rgba(232,226,208,0.18);
   }
   .task .label { flex: 1; }
   .task .meta {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.25em;
-    color: var(--text-faint);
-    text-transform: uppercase;
-    margin-top: 6px;
+    font-family: var(--mono); font-size: 9px;
+    letter-spacing: 0.25em; color: var(--text-faint);
+    text-transform: uppercase; margin-top: 6px;
   }
 
-  /* Agenda — larger button-style tiles */
   .agenda { margin-top: 60px; }
   .agenda h3 {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.45em;
-    text-transform: uppercase;
-    color: var(--gold);
-    font-weight: 400;
-    margin: 0 0 18px 0;
+    font-family: var(--mono); font-size: 9px;
+    letter-spacing: 0.45em; text-transform: uppercase;
+    color: var(--gold); font-weight: 400; margin: 0 0 18px 0;
   }
   .agenda-grid {
     display: grid;
@@ -513,102 +405,231 @@
     padding: 18px 20px;
     transition: border-color 240ms, background 240ms, transform 240ms;
   }
-  .agenda-tile:hover {
-    border-color: var(--gold-dim);
-    transform: translateY(-1px);
-  }
+  .agenda-tile:hover { border-color: var(--gold-dim); transform: translateY(-1px); }
   .agenda-tile .when {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.35em;
-    color: var(--gold);
-    text-transform: uppercase;
+    font-family: var(--mono); font-size: 9px;
+    letter-spacing: 0.35em; color: var(--gold); text-transform: uppercase;
   }
   .agenda-tile .what {
-    font-family: var(--serif);
-    font-style: italic;
-    font-weight: 400;
-    font-size: 19px;
-    margin-top: 8px;
-    color: var(--text);
-    line-height: 1.25;
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+    font-size: 19px; margin-top: 8px; color: var(--text); line-height: 1.25;
   }
   .agenda-tile .where {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.25em;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    margin-top: 10px;
+    font-family: var(--mono); font-size: 9px;
+    letter-spacing: 0.25em; color: var(--text-dim);
+    text-transform: uppercase; margin-top: 10px;
   }
 
-  /* Day-aware review banner */
   .review-banner {
-    margin-top: 28px;
-    padding: 14px 18px;
+    margin-top: 28px; padding: 14px 18px;
     border: 1px solid var(--gold-dim);
     background: rgba(201,161,74,0.05);
     display: flex; align-items: center; gap: 16px;
   }
   .review-banner .icon {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.35em;
-    color: var(--gold);
-    text-transform: uppercase;
-    flex: 0 0 auto;
+    font-family: var(--mono); font-size: 9px;
+    letter-spacing: 0.35em; color: var(--gold);
+    text-transform: uppercase; flex: 0 0 auto;
   }
   .review-banner .text {
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 17px;
-    color: var(--text);
+    font-family: var(--serif); font-style: italic;
+    font-size: 17px; color: var(--text);
   }
   .review-banner.hidden { display: none; }
 
-  /* Scaffold placeholders */
+  /* ============================================================
+     WEEKLY
+     ============================================================ */
+  .week-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 56px;
+  }
+  .week-day {
+    border: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(255,255,255,0.012) 0%, rgba(0,0,0,0.22) 100%);
+    padding: 14px 12px;
+    min-height: 320px;
+    display: flex; flex-direction: column; gap: 10px;
+    transition: border-color 240ms;
+  }
+  .week-day.today {
+    border-color: var(--gold-dim);
+    background: linear-gradient(180deg, rgba(201,161,74,0.05) 0%, rgba(0,0,0,0.22) 100%);
+    box-shadow: 0 0 24px rgba(201,161,74,0.08) inset;
+  }
+  .week-day .wd-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    border-bottom: 1px solid var(--border-soft);
+    padding-bottom: 8px;
+  }
+  .week-day .wd-name {
+    font-family: var(--mono); font-size: 8px;
+    letter-spacing: 0.35em; text-transform: uppercase;
+    color: var(--gold);
+  }
+  .week-day.today .wd-name { color: var(--gold-bright); }
+  .week-day .wd-date {
+    font-family: var(--mono); font-size: 9px;
+    color: var(--text-faint);
+  }
+  .week-day .wd-block {
+    font-family: var(--serif); font-style: italic;
+    font-size: 13px; color: var(--text-dim);
+    padding: 3px 0;
+  }
+  .week-day .wd-block .h {
+    font-family: var(--mono); font-style: normal;
+    font-size: 8px; letter-spacing: 0.3em;
+    color: var(--text-faint); text-transform: uppercase;
+    display: block; margin-bottom: 2px;
+  }
+  .week-day .wd-ritual {
+    margin-top: auto;
+    font-family: var(--serif); font-style: italic;
+    font-size: 13px; color: var(--text);
+    border-top: 1px dashed var(--border-soft);
+    padding-top: 8px;
+  }
+
+  .week-minimums {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin-top: 12px;
+  }
+  .wm-tile {
+    border: 1px solid var(--border);
+    padding: 16px 18px;
+  }
+  .wm-tile .wm-label {
+    font-family: var(--mono); font-size: 8px;
+    letter-spacing: 0.35em; text-transform: uppercase;
+    color: var(--gold);
+  }
+  .wm-tile .wm-value {
+    font-family: var(--serif); font-weight: 300;
+    font-size: 42px; line-height: 1; margin-top: 8px;
+    color: var(--text);
+  }
+  .wm-tile .wm-target {
+    font-family: var(--mono); font-size: 9px;
+    letter-spacing: 0.25em; color: var(--text-faint);
+    margin-top: 6px; text-transform: uppercase;
+  }
+
+  /* ============================================================
+     STATISTICS
+     ============================================================ */
+  .phase-head {
+    display: flex; align-items: baseline; gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--border);
+  }
+  .phase-head .phase-name {
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+    font-size: 26px; color: var(--text);
+  }
+  .phase-head .phase-dates {
+    font-family: var(--mono); font-size: 9px;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .status-pill {
+    font-family: var(--mono); font-size: 8px;
+    letter-spacing: 0.4em; text-transform: uppercase;
+    padding: 5px 12px;
+    border: 1px solid var(--gold-dim);
+    color: var(--gold);
+    margin-left: auto;
+  }
+  .status-pill.ontrack { color: var(--green); border-color: var(--green); }
+  .status-pill.behind  { color: var(--red);   border-color: var(--red); }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  .stat-cell {
+    border: 1px solid var(--border);
+    padding: 18px 20px;
+  }
+  .stat-cell .label {
+    font-family: var(--mono); font-size: 8px;
+    letter-spacing: 0.4em; text-transform: uppercase;
+    color: var(--gold);
+  }
+  .stat-cell .value {
+    font-family: var(--serif); font-weight: 200;
+    font-size: 48px; line-height: 1; margin-top: 8px;
+    color: var(--text); letter-spacing: -0.01em;
+  }
+  .stat-cell .sub {
+    font-family: var(--mono); font-size: 9px;
+    letter-spacing: 0.25em; color: var(--text-faint);
+    text-transform: uppercase; margin-top: 8px;
+  }
+
+  .chart-wrap {
+    border: 1px solid var(--border);
+    padding: 22px;
+    margin-bottom: 40px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.008) 0%, rgba(0,0,0,0.2) 100%);
+  }
+  .chart-wrap canvas { max-height: 320px; }
+
+  .heatmap-12 {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 6px;
+    margin-bottom: 40px;
+  }
+  .hm-cell {
+    aspect-ratio: 1;
+    border: 1px solid var(--border);
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-size: 9px;
+    color: var(--text-faint);
+  }
+  .hm-cell.ontrack { background: rgba(42,157,110,0.22); border-color: rgba(42,157,110,0.4); color: var(--text); }
+  .hm-cell.ahead   { background: rgba(201,161,74,0.22); border-color: var(--gold-dim);     color: var(--gold); }
+  .hm-cell.behind  { background: rgba(192,57,43,0.22);  border-color: rgba(192,57,43,0.4); color: var(--text); }
+  .hm-cell.current { box-shadow: 0 0 0 1.5px var(--gold-bright); }
+
+  /* Scaffold placeholders (Weekly fully built, Statistics partly built) */
   .scaffold { border-top: 1px solid var(--border); padding-top: 30px; }
   .scaffold-card {
     border: 1px dashed var(--border);
-    padding: 40px;
-    margin-top: 18px;
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.3em;
-    color: var(--text-faint);
-    text-transform: uppercase;
-    text-align: center;
+    padding: 40px; margin-top: 18px;
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.3em; color: var(--text-faint);
+    text-transform: uppercase; text-align: center;
   }
 
-  /* Footer */
   .footer {
     padding: 60px 40px 50px;
     border-top: 1px solid var(--border-soft);
     text-align: center;
   }
   .footer .crest {
-    font-family: var(--serif);
-    font-style: italic;
-    font-weight: 400;
-    font-size: 22px;
-    color: var(--text);
-    margin-bottom: 8px;
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+    font-size: 22px; color: var(--text); margin-bottom: 8px;
   }
   .footer .tag {
-    font-family: var(--mono);
-    font-size: 8px;
-    letter-spacing: 0.45em;
-    color: var(--text-faint);
+    font-family: var(--mono); font-size: 8px;
+    letter-spacing: 0.45em; color: var(--text-faint);
     text-transform: uppercase;
   }
   .footer .credit {
-    font-family: var(--mono);
-    font-size: 7px;
-    letter-spacing: 0.3em;
-    color: var(--text-faint);
-    text-transform: uppercase;
-    margin-top: 22px;
-    opacity: 0.6;
+    font-family: var(--mono); font-size: 7px;
+    letter-spacing: 0.3em; color: var(--text-faint);
+    text-transform: uppercase; margin-top: 22px; opacity: 0.6;
   }
   .footer .credit a { color: var(--gold-dim); text-decoration: none; }
 
@@ -625,7 +646,6 @@
     .stamp .time-weather { font-size: 9px; }
 
     .sync-bar { left: 20px; bottom: 16px; }
-
     .splash { padding: 0 20px; }
     .splash-greeting { font-size: clamp(20px, 5.5vw, 28px); max-width: 95%; }
 
@@ -633,6 +653,12 @@
     .office-grid { grid-template-columns: 1fr; gap: 50px; }
     .block-window { width: 100px; font-size: 8px; }
     .block-title { font-size: 22px; }
+
+    /* Week — stack on mobile */
+    .week-grid { grid-template-columns: 1fr; }
+    .week-day { min-height: auto; }
+
+    .heatmap-12 { grid-template-columns: repeat(6, 1fr); }
   }
 
 </style>
@@ -646,15 +672,15 @@
 <div class="bg-grain"></div>
 <div class="bg-vignette"></div>
 
-<!-- Top-left cluster: nav + date/time -->
+<!-- Top-left cluster -->
 <div class="topleft">
-  <ul class="nav-links">
+  <ul class="nav-links" aria-label="Primary navigation">
     <li><a href="#splash"     data-nav>Home</a></li>
     <li><a href="#office"     data-nav>Office</a></li>
     <li><a href="#weekly"     data-nav>Weekly</a></li>
     <li><a href="#statistics" data-nav>Statistics</a></li>
   </ul>
-  <div class="stamp">
+  <div class="stamp" aria-label="Date, time, and weather">
     <div class="day"  id="splashDay">—</div>
     <div class="date" id="splashDate">—</div>
     <div class="time-weather">
@@ -666,44 +692,43 @@
 </div>
 
 <!-- Bottom-left sync indicator -->
-<div class="sync-bar">
-  <span class="sync-dot" id="syncDot"></span>
+<div class="sync-bar" role="status" aria-live="polite">
+  <span class="sync-dot" id="syncDot" aria-hidden="true"></span>
   <span class="sync-label" id="syncLabel">Live</span>
-  <span class="sync-version">v0.4 · Stewart Lab</span>
+  <span class="sync-version">v0.6 · Stewart Lab</span>
 </div>
 
-<!-- ========== SPLASH ========== -->
 <section id="splash" class="splash">
   <h1 class="splash-greeting" id="splashGreeting">Good morning, Dr. Stewart.</h1>
 </section>
 
 <!-- ========== OFFICE ========== -->
-<section id="office" class="section">
+<section id="office" class="section" aria-labelledby="office-title">
   <div class="section-inner">
     <p class="section-eyebrow">I · The Office</p>
-    <h2 class="section-title">Today, the room is open.</h2>
+    <h2 class="section-title" id="office-title">Today, the room is open.</h2>
     <p class="section-sub">Daily operations centre · <span id="officeDay">—</span></p>
 
     <div class="office-grid">
 
-      <aside class="minimums">
+      <aside class="minimums" aria-label="Daily minimums">
         <div class="minimums-head">
           <h3>Daily Minimums</h3>
           <span class="count" id="minCount">0 / 12</span>
         </div>
         <ul id="minList">
-          <li class="min-row"><span class="box"></span><span class="label">Wake</span><span class="time">04:30</span></li>
-          <li class="min-row"><span class="box"></span><span class="label">Weigh post-void</span><span class="time">—</span></li>
-          <li class="min-row"><span class="box"></span><span class="label">Lemon water</span><span class="time">—</span></li>
-          <li class="min-row"><span class="box"></span><span class="label">Supplements</span><span class="time">—</span></li>
-          <li class="min-row"><span class="box"></span><span class="label">Train · resistance</span><span class="time">—</span></li>
-          <li class="min-row"><span class="box"></span><span class="label">Train · cardio 30m+</span><span class="time">—</span></li>
-          <li class="min-row"><span class="box"></span><span class="label">Calories 1400–1499</span><span class="time">—</span></li>
-          <li class="min-row"><span class="box"></span><span class="label">Protein 120g+</span><span class="time">—</span></li>
-          <li class="min-row"><span class="box"></span><span class="label">50 / 50 / 20 with Wayne</span><span class="time">—</span></li>
-          <li class="min-row"><span class="box"></span><span class="label">Dress intentionally</span><span class="time">—</span></li>
-          <li class="min-row"><span class="box"></span><span class="label">Bedtime routine</span><span class="time">—</span></li>
-          <li class="min-row"><span class="box"></span><span class="label">Sleep</span><span class="time">22:30</span></li>
+          <li class="min-row" tabindex="0" role="checkbox" aria-checked="false"><span class="box"></span><span class="label">Wake</span><span class="time">04:30</span></li>
+          <li class="min-row" tabindex="0" role="checkbox" aria-checked="false"><span class="box"></span><span class="label">Weigh post-void</span><span class="time">—</span></li>
+          <li class="min-row" tabindex="0" role="checkbox" aria-checked="false"><span class="box"></span><span class="label">Lemon water</span><span class="time">—</span></li>
+          <li class="min-row" tabindex="0" role="checkbox" aria-checked="false"><span class="box"></span><span class="label">Supplements</span><span class="time">—</span></li>
+          <li class="min-row" tabindex="0" role="checkbox" aria-checked="false"><span class="box"></span><span class="label">Train · resistance</span><span class="time">—</span></li>
+          <li class="min-row" tabindex="0" role="checkbox" aria-checked="false"><span class="box"></span><span class="label">Train · cardio 30m+</span><span class="time">—</span></li>
+          <li class="min-row" tabindex="0" role="checkbox" aria-checked="false"><span class="box"></span><span class="label">Calories 1400–1499</span><span class="time">—</span></li>
+          <li class="min-row" tabindex="0" role="checkbox" aria-checked="false"><span class="box"></span><span class="label">Protein 120g+</span><span class="time">—</span></li>
+          <li class="min-row" tabindex="0" role="checkbox" aria-checked="false"><span class="box"></span><span class="label">50 / 50 / 20 with Wayne</span><span class="time">—</span></li>
+          <li class="min-row" tabindex="0" role="checkbox" aria-checked="false"><span class="box"></span><span class="label">Dress intentionally</span><span class="time">—</span></li>
+          <li class="min-row" tabindex="0" role="checkbox" aria-checked="false"><span class="box"></span><span class="label">Bedtime routine</span><span class="time">—</span></li>
+          <li class="min-row" tabindex="0" role="checkbox" aria-checked="false"><span class="box"></span><span class="label">Sleep</span><span class="time">22:30</span></li>
         </ul>
 
         <div class="review-banner hidden" id="reviewBanner">
@@ -716,75 +741,75 @@
         <div class="blocks" id="blocks">
 
           <div class="block" data-window="morning">
-            <div class="block-head" onclick="toggleBlock(this)">
+            <div class="block-head" tabindex="0" role="button" aria-expanded="false" onclick="toggleBlock(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleBlock(this);}">
               <span class="block-window">04:30 — 07:30</span>
               <span class="block-title">Morning Routine</span>
-              <span class="block-toggle">+</span>
+              <span class="block-toggle" aria-hidden="true">+</span>
             </div>
             <div class="block-body"><div class="block-content">
-              <div class="task"><span class="box"></span><span class="label">Wake without snooze. Feet on floor by 04:35.</span></div>
-              <div class="task"><span class="box"></span><span class="label">Hydrate · lemon water · supplements stack</span></div>
-              <div class="task"><span class="box"></span><span class="label">Weigh post-void. Enter on PHYSIQUE ACADEMY sheet.</span></div>
-              <div class="task"><span class="box"></span><span class="label">15 minutes of reading before screens. Paper, not glass.</span></div>
-              <div class="task"><span class="box"></span><span class="label">Dress intentionally. Shave if Monday or before clinical.</span></div>
+              <div class="task" tabindex="0"><span class="box"></span><span class="label">Wake without snooze. Feet on floor by 04:35.</span></div>
+              <div class="task" tabindex="0"><span class="box"></span><span class="label">Hydrate · lemon water · supplements stack</span></div>
+              <div class="task" tabindex="0"><span class="box"></span><span class="label">Weigh post-void. Enter on PHYSIQUE ACADEMY sheet.</span></div>
+              <div class="task" tabindex="0"><span class="box"></span><span class="label">15 minutes of reading before screens. Paper, not glass.</span></div>
+              <div class="task" tabindex="0"><span class="box"></span><span class="label">Dress intentionally. Shave if Monday or before clinical.</span></div>
             </div></div>
           </div>
 
           <div class="block" data-window="research">
-            <div class="block-head" onclick="toggleBlock(this)">
+            <div class="block-head" tabindex="0" role="button" aria-expanded="false" onclick="toggleBlock(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleBlock(this);}">
               <span class="block-window">08:00 — 12:00</span>
               <span class="block-title">Research Block</span>
-              <span class="block-toggle">+</span>
+              <span class="block-toggle" aria-hidden="true">+</span>
             </div>
             <div class="block-body"><div class="block-content">
-              <div class="task"><span class="box"></span><span class="label">Deep focus · Project I — antifungal PK/PD outcomes manuscript</span><span class="meta">90m · phone in drawer</span></div>
-              <div class="task"><span class="box"></span><span class="label">Break · walk · refill water</span><span class="meta">10m</span></div>
-              <div class="task"><span class="box"></span><span class="label">Deep focus · Project II — N. glabrata proteomic signatures</span><span class="meta">90m</span></div>
-              <div class="task"><span class="box"></span><span class="label">Read one paper. Note one sentence into commonplace.</span></div>
-              <div class="task"><span class="box"></span><span class="label">QBank · 10 questions written or reviewed</span></div>
+              <div class="task" tabindex="0"><span class="box"></span><span class="label">Deep focus · Project I — antifungal PK/PD outcomes manuscript</span><span class="meta">90m · phone in drawer</span></div>
+              <div class="task" tabindex="0"><span class="box"></span><span class="label">Break · walk · refill water</span><span class="meta">10m</span></div>
+              <div class="task" tabindex="0"><span class="box"></span><span class="label">Deep focus · Project II — N. glabrata proteomic signatures</span><span class="meta">90m</span></div>
+              <div class="task" tabindex="0"><span class="box"></span><span class="label">Read one paper. Note one sentence into commonplace.</span></div>
+              <div class="task" tabindex="0"><span class="box"></span><span class="label">QBank · 10 questions written or reviewed</span></div>
             </div></div>
           </div>
 
           <div class="block" data-window="clinical">
-            <div class="block-head" onclick="toggleBlock(this)">
+            <div class="block-head" tabindex="0" role="button" aria-expanded="false" onclick="toggleBlock(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleBlock(this);}">
               <span class="block-window">12:00 — 17:00</span>
               <span class="block-title">Clinical</span>
-              <span class="block-toggle">+</span>
+              <span class="block-toggle" aria-hidden="true">+</span>
             </div>
             <div class="block-body"><div class="block-content">
-              <div class="task"><span class="box"></span><span class="label">Pre-round prep — patient list, antimicrobial rationale</span></div>
-              <div class="task"><span class="box"></span><span class="label">Rounds. Speak less, observe more. One sharp question.</span></div>
-              <div class="task"><span class="box"></span><span class="label">Document one teaching moment for the commonplace book.</span></div>
-              <div class="task"><span class="box"></span><span class="label">Inbox triage · 20 minutes max, then close it.</span></div>
+              <div class="task" tabindex="0"><span class="box"></span><span class="label">Pre-round prep — patient list, antimicrobial rationale</span></div>
+              <div class="task" tabindex="0"><span class="box"></span><span class="label">Rounds. Speak less, observe more. One sharp question.</span></div>
+              <div class="task" tabindex="0"><span class="box"></span><span class="label">Document one teaching moment for the commonplace book.</span></div>
+              <div class="task" tabindex="0"><span class="box"></span><span class="label">Inbox triage · 20 minutes max, then close it.</span></div>
             </div></div>
           </div>
 
           <div class="block" data-window="family">
-            <div class="block-head" onclick="toggleBlock(this)">
+            <div class="block-head" tabindex="0" role="button" aria-expanded="false" onclick="toggleBlock(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleBlock(this);}">
               <span class="block-window">17:00 — 20:30</span>
               <span class="block-title">Family &amp; Evening</span>
-              <span class="block-toggle">+</span>
+              <span class="block-toggle" aria-hidden="true">+</span>
             </div>
             <div class="block-body"><div class="block-content">
-              <div class="task"><span class="box"></span><span class="label">Phone in basket the moment you walk in.</span></div>
-              <div class="task"><span class="box"></span><span class="label">Dinner with the family. Presence over efficiency.</span></div>
-              <div class="task"><span class="box"></span><span class="label">Boys · 30m of full attention. Their pace, not yours.</span></div>
-              <div class="task"><span class="box"></span><span class="label">Walk with wife after the boys are down.</span></div>
-              <div class="task"><span class="box"></span><span class="label">Screen cutoff · 21:00. Books and dim light only.</span></div>
+              <div class="task" tabindex="0"><span class="box"></span><span class="label">Phone in basket the moment you walk in.</span></div>
+              <div class="task" tabindex="0"><span class="box"></span><span class="label">Dinner with the family. Presence over efficiency.</span></div>
+              <div class="task" tabindex="0"><span class="box"></span><span class="label">Boys · 30m of full attention. Their pace, not yours.</span></div>
+              <div class="task" tabindex="0"><span class="box"></span><span class="label">Walk with wife after the boys are down.</span></div>
+              <div class="task" tabindex="0"><span class="box"></span><span class="label">Screen cutoff · 21:00. Books and dim light only.</span></div>
             </div></div>
           </div>
 
           <div class="block" data-window="night">
-            <div class="block-head" onclick="toggleBlock(this)">
+            <div class="block-head" tabindex="0" role="button" aria-expanded="false" onclick="toggleBlock(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleBlock(this);}">
               <span class="block-window">20:30 — 22:30</span>
               <span class="block-title">Wind-down</span>
-              <span class="block-toggle">+</span>
+              <span class="block-toggle" aria-hidden="true">+</span>
             </div>
             <div class="block-body"><div class="block-content">
-              <div class="task"><span class="box"></span><span class="label">Three lines · what worked, what didn't, what tomorrow asks.</span></div>
-              <div class="task"><span class="box"></span><span class="label">Tomorrow's anchor task written on paper.</span></div>
-              <div class="task"><span class="box"></span><span class="label">Stretch · breathe · gratitude.</span></div>
-              <div class="task"><span class="box"></span><span class="label">In bed by 22:30. Lights off, no exceptions.</span></div>
+              <div class="task" tabindex="0"><span class="box"></span><span class="label">Three lines · what worked, what didn't, what tomorrow asks.</span></div>
+              <div class="task" tabindex="0"><span class="box"></span><span class="label">Tomorrow's anchor task written on paper.</span></div>
+              <div class="task" tabindex="0"><span class="box"></span><span class="label">Stretch · breathe · gratitude.</span></div>
+              <div class="task" tabindex="0"><span class="box"></span><span class="label">In bed by 22:30. Lights off, no exceptions.</span></div>
             </div></div>
           </div>
 
@@ -822,70 +847,118 @@
 </section>
 
 <!-- ========== WEEKLY ========== -->
-<section id="weekly" class="section">
+<section id="weekly" class="section" aria-labelledby="weekly-title">
   <div class="section-inner">
     <p class="section-eyebrow">II · The Week Ahead</p>
-    <h2 class="section-title">Seven days, written down.</h2>
+    <h2 class="section-title" id="weekly-title">Seven days, written down.</h2>
     <p class="section-sub">Deep focus blocks · weekly rituals · adherence trackers</p>
-    <div class="scaffold">
-      <div class="scaffold-card">Weekly view · scaffolded · build next iteration</div>
+
+    <div class="week-grid" id="weekGrid"><!-- populated by JS --></div>
+
+    <h3 style="font-family: var(--mono); font-size: 9px; letter-spacing: 0.45em; text-transform: uppercase; color: var(--gold); font-weight: 400; margin: 0 0 12px 0;">Weekly Minimums</h3>
+    <div class="week-minimums">
+      <div class="wm-tile">
+        <div class="wm-label">Resistance</div>
+        <div class="wm-value">0 <span style="color:var(--text-faint);font-size:18px;">/ 5</span></div>
+        <div class="wm-target">Sessions completed</div>
+      </div>
+      <div class="wm-tile">
+        <div class="wm-label">Cardio 30m+</div>
+        <div class="wm-value">0 <span style="color:var(--text-faint);font-size:18px;">/ 5</span></div>
+        <div class="wm-target">Sessions completed</div>
+      </div>
+      <div class="wm-tile">
+        <div class="wm-label">50 / 50 / 20</div>
+        <div class="wm-value">0</div>
+        <div class="wm-target">Day streak with Wayne</div>
+      </div>
+      <div class="wm-tile">
+        <div class="wm-value">0 <span style="color:var(--text-faint);font-size:18px;">/ 7</span></div>
+        <div class="wm-target">Nights honoured</div>
+      </div>
     </div>
   </div>
 </section>
 
 <!-- ========== STATISTICS ========== -->
-<section id="statistics" class="section">
+<section id="statistics" class="section" aria-labelledby="stats-title">
   <div class="section-inner">
     <p class="section-eyebrow">III · Statistics</p>
-    <h2 class="section-title">The body, the months, the milestones.</h2>
+    <h2 class="section-title" id="stats-title">The body, the months, the milestones.</h2>
     <p class="section-sub">Physique · monthly markers · habit heatmap · PhD timeline</p>
+
+    <div class="phase-head">
+      <div>
+        <div class="phase-name">Nightwing 2026 · Cut Phase</div>
+        <div class="phase-dates">May 20 — August 11, 2026 · 12 weeks</div>
+      </div>
+      <div class="status-pill ontrack" id="statusPill">On Track</div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-cell">
+        <div class="label">Current</div>
+        <div class="value" id="statCurrent">158.0<span style="font-size:18px;color:var(--text-faint);"> lb</span></div>
+        <div class="sub" id="statCurrentSub">Sample data — awaiting CSV</div>
+      </div>
+      <div class="stat-cell">
+        <div class="label">Lost</div>
+        <div class="value" id="statLost">0.0<span style="font-size:18px;color:var(--text-faint);"> lb</span></div>
+        <div class="sub">From 158.0 start</div>
+      </div>
+      <div class="stat-cell">
+        <div class="label">This Week</div>
+        <div class="value" id="statWeek">—</div>
+        <div class="sub">&Delta; from last check-in</div>
+      </div>
+      <div class="stat-cell">
+        <div class="label">Remaining</div>
+        <div class="value" id="statRemaining">15.8<span style="font-size:18px;color:var(--text-faint);"> lb</span></div>
+        <div class="sub">To 140.0 goal</div>
+      </div>
+    </div>
+
+    <div class="chart-wrap">
+      <canvas id="weightChart" aria-label="Weight trajectory chart" role="img"></canvas>
+    </div>
+
+    <h3 style="font-family: var(--mono); font-size: 9px; letter-spacing: 0.45em; text-transform: uppercase; color: var(--gold); font-weight: 400; margin: 0 0 12px 0;">12-Week Heatmap</h3>
+    <div class="heatmap-12" id="heatmap12"></div>
+
     <div class="scaffold">
-      <div class="scaffold-card">Statistics view · awaiting live CSV URL</div>
+      <div class="scaffold-card">Monthly markers &middot; habit heatmap (48 mo) &middot; PhD timeline &middot; next iteration</div>
     </div>
   </div>
 </section>
 
-<!-- ========== FOOTER ========== -->
 <footer class="footer">
   <div class="crest">The Stewart Lab</div>
-  <div class="tag">Jackson J. Stewart, PharmD · University of Alberta · MMXXVI</div>
+  <div class="tag">Jackson J. Stewart, PharmD &middot; University of Alberta &middot; MMXXVI</div>
   <div class="credit">
     Background photograph: <a href="https://commons.wikimedia.org/wiki/File:Long_Room_Interior,_Trinity_College_Dublin,_Ireland_-_Diliff.jpg" target="_blank" rel="noopener">Long Room, Trinity College Dublin</a>
-    · Photo by Diliff · CC BY-SA 3.0
+    &middot; Photo by Diliff &middot; CC BY-SA 3.0
   </div>
 </footer>
 
 <script>
-  // ============================================================
-  // BACKGROUND PHOTO — confirm load, fade in. If it fails,
-  // the CSS atmospheric fallback (bg-fallback) carries the look.
-  // ============================================================
-
+  // 1 · Background photo preflight
   (function() {
-    const photoUrl = 'https://upload.wikimedia.org/wikipedia/commons/4/4b/Long_Room_Interior%2C_Trinity_College_Dublin%2C_Ireland_-_Diliff.jpg';
     const img = new Image();
-    img.onload = () => {
-      document.getElementById('bgPhoto').classList.add('loaded');
-    };
+    img.onload  = () => document.getElementById('bgPhoto').classList.add('loaded');
     img.onerror = () => {
-      console.warn('[Stewart Lab] Background image failed to load — falling back to CSS atmosphere.');
-      // Mark sync indicator as demo (amber) so the failure is visible.
+      console.warn('[Stewart Lab] assets/library.jpg not found — CSS atmosphere fallback in effect.');
       const dot = document.getElementById('syncDot');
       const lbl = document.getElementById('syncLabel');
       if (dot) dot.classList.add('demo');
       if (lbl) lbl.textContent = 'No image';
     };
-    img.src = photoUrl;
+    img.src = './assets/library.jpg';
   })();
 
-  // ============================================================
-  // TIME / DATE / GREETING
-  // ============================================================
-
-  const DAYS = ['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
-  const MONTHS = ['January','February','March','April','May','June',
-                  'July','August','September','October','November','December'];
-
+  // 2 · Time / date / greeting
+  const DAYS_FULL  = ['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
+  const DAYS_SHORT = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   function greetingFor(h) {
     if (h >= 4  && h < 12) return 'Good morning, Dr. Stewart.';
     if (h >= 12 && h < 17) return 'Good afternoon, Dr. Stewart.';
@@ -893,24 +966,33 @@
     return 'Working late, Dr. Stewart.';
   }
   function pad(n) { return n < 10 ? '0' + n : '' + n; }
-
   function tick() {
-    const now = new Date();
-    const h = now.getHours(), m = now.getMinutes();
+    const now = new Date(); const h = now.getHours();
     document.getElementById('splashGreeting').textContent = greetingFor(h);
-    document.getElementById('splashDay').textContent  = DAYS[now.getDay()];
-    document.getElementById('splashDate').textContent =
-      `${MONTHS[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`.toUpperCase();
-    document.getElementById('splashTime').textContent = `${pad(h)}:${pad(m)}`;
-
+    document.getElementById('splashDay').textContent  = DAYS_FULL[now.getDay()];
+    document.getElementById('splashDate').textContent = (MONTHS[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear()).toUpperCase();
+    document.getElementById('splashTime').textContent = pad(h) + ':' + pad(now.getMinutes());
     const od = document.getElementById('officeDay');
-    if (od) od.textContent = DAYS[now.getDay()];
-
+    if (od) od.textContent = DAYS_FULL[now.getDay()];
     updateReviewBanner(now);
     setActiveBlock(h);
   }
 
-  // Time-aware block expansion
+  // 3 · Weather (Open-Meteo, no API key needed)
+  const WEATHER_CODES = {0:'Clear',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',45:'Fog',48:'Rime fog',51:'Light drizzle',53:'Drizzle',55:'Dense drizzle',61:'Light rain',63:'Rain',65:'Heavy rain',71:'Light snow',73:'Snow',75:'Heavy snow',77:'Snow grains',80:'Rain showers',81:'Showers',82:'Violent showers',85:'Snow showers',86:'Heavy snow showers',95:'Thunderstorm',96:'Storm w/ hail',99:'Severe storm'};
+  function refreshWeather() {
+    fetch('https://api.open-meteo.com/v1/forecast?latitude=53.5461&longitude=-113.4938&current=temperature_2m,weather_code&temperature_unit=celsius&timezone=auto', { cache: 'no-store' })
+      .then(r => r.ok ? r.json() : Promise.reject(r.status))
+      .then(d => {
+        const t = Math.round(d.current.temperature_2m);
+        const cond = WEATHER_CODES[d.current.weather_code] || 'Edmonton';
+        const el = document.getElementById('splashWeather');
+        if (el) el.textContent = 'Edmonton · ' + t + '°C · ' + cond;
+      })
+      .catch(err => console.warn('[Stewart Lab] Weather fetch failed:', err));
+  }
+
+  // 4 · Time-aware block expansion
   function activeWindowFor(h) {
     if (h >= 4  && h < 8)  return 'morning';
     if (h >= 8  && h < 12) return 'research';
@@ -923,79 +1005,246 @@
     if (userHasToggled) return;
     const win = activeWindowFor(h);
     document.querySelectorAll('.block').forEach(b => {
-      if (b.dataset.window === win) b.classList.add('open');
-      else b.classList.remove('open');
+      const open = b.dataset.window === win;
+      b.classList.toggle('open', open);
+      const head = b.querySelector('.block-head');
+      if (head) head.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
   }
   function toggleBlock(headEl) {
     userHasToggled = true;
-    headEl.parentElement.classList.toggle('open');
+    const block = headEl.parentElement;
+    block.classList.toggle('open');
+    headEl.setAttribute('aria-expanded', block.classList.contains('open') ? 'true' : 'false');
   }
 
-  // Day-aware review banner
+  // 5 · Day-aware review banner
   function updateReviewBanner(now) {
     const banner = document.getElementById('reviewBanner');
     const icon   = document.getElementById('reviewIcon');
     const text   = document.getElementById('reviewText');
+    if (!banner) return;
     const day = now.getDay();
     banner.classList.add('hidden');
-    if (day === 0) {
-      icon.textContent = 'SUNDAY';
-      text.textContent = 'Professional review — deep focus, QBank, papers, one win, one improvement.';
-      banner.classList.remove('hidden');
-    } else if (day === 3) {
-      icon.textContent = 'WEDNESDAY';
-      text.textContent = 'Finance review — savings direction, unplanned expenses, PhD fund.';
-      banner.classList.remove('hidden');
-    } else if (day === 6) {
-      icon.textContent = 'SATURDAY';
-      text.textContent = 'Home & health review — one home item, performance marker, sleep.';
-      banner.classList.remove('hidden');
+    if (day === 0) { icon.textContent='SUNDAY';    text.textContent='Professional review — deep focus, QBank, papers, one win, one improvement.'; banner.classList.remove('hidden'); }
+    else if (day === 3) { icon.textContent='WEDNESDAY'; text.textContent='Finance review — savings direction, unplanned expenses, PhD fund.';     banner.classList.remove('hidden'); }
+    else if (day === 6) { icon.textContent='SATURDAY';  text.textContent='Home & health review — one home item, performance marker, sleep.';    banner.classList.remove('hidden'); }
+  }
+
+  // 6 · Weekly grid — Mon..Sun for current week
+  function startOfWeek(d) {
+    const dow = (d.getDay() + 6) % 7;
+    const s = new Date(d); s.setDate(d.getDate() - dow); s.setHours(0,0,0,0); return s;
+  }
+  const WEEKLY_RITUALS = {1:null, 2:'Family activity night', 3:'Finance review (biweekly)', 4:'Boys hangout', 5:'Family / date night', 6:'Saturday activity · Home/Health review', 0:'AM cafe · Professional review'};
+  function buildWeekGrid() {
+    const grid = document.getElementById('weekGrid');
+    if (!grid) return;
+    const now = new Date();
+    const monday = startOfWeek(now);
+    const todayIdx = (now.getDay() + 6) % 7;
+    let html = '';
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(monday); d.setDate(monday.getDate() + i);
+      const isoDow = (i === 6) ? 0 : i + 1;
+      const isToday = i === todayIdx;
+      const dayName = DAYS_SHORT[isoDow];
+      const dateLabel = (MONTHS[d.getMonth()].slice(0,3) + ' ' + d.getDate()).toUpperCase();
+      const ritual = WEEKLY_RITUALS[isoDow];
+      html += '<div class="week-day' + (isToday ? ' today' : '') + '">'
+           +  '<div class="wd-head"><span class="wd-name">' + dayName + (isToday ? ' · TODAY' : '') + '</span><span class="wd-date">' + dateLabel + '</span></div>'
+           +  '<div class="wd-block"><span class="h">08–12</span>Research</div>'
+           +  '<div class="wd-block"><span class="h">12–17</span>Clinical</div>'
+           +  '<div class="wd-block"><span class="h">17–20:30</span>Family</div>'
+           +  (ritual ? '<div class="wd-ritual">' + ritual + '</div>' : '')
+           +  '</div>';
+    }
+    grid.innerHTML = html;
+  }
+
+  // 7 · Statistics — 12-week heatmap + Chart.js trajectory (sample data)
+  function buildHeatmap12() {
+    const wrap = document.getElementById('heatmap12');
+    if (!wrap) return;
+    const now = new Date();
+    const phaseStart = new Date(2026, 4, 20); // May 20, 2026
+    const msPerWeek = 7 * 24 * 3600 * 1000;
+    const currentWeek = Math.max(0, Math.min(11, Math.floor((now - phaseStart) / msPerWeek)));
+    const sample = ['ontrack','ontrack','ahead','ontrack','','','','','','','',''];
+    let html = '';
+    for (let i = 0; i < 12; i++) {
+      const cls = sample[i];
+      const current = i === currentWeek;
+      html += '<div class="hm-cell' + (cls ? ' ' + cls : '') + (current ? ' current' : '') + '">' + (i + 1) + '</div>';
+    }
+    wrap.innerHTML = html;
+  }
+  // ----- LIVE CSV (PHYSIQUE ACADEMY tab, published from Google Sheets) -----
+  const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSm6d7HdIKw7iYXdo1B5-IUBc6e33FO3wxKp3FmnGGChnqk_MmPl1593rv5XJ3F4Sweg-HyBVwSQGgK/pub?output=csv';
+  const PHASE_START = 158.0;  // lbs
+  const PHASE_GOAL  = 140.0;  // lbs
+  let _chart = null;          // Chart.js instance handle, so we can destroy on refresh
+
+  // Minimal CSV parser — handles quoted fields with commas
+  function parseCSV(text) {
+    const rows = []; let cur = ['']; let inQ = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i], n = text[i+1];
+      if (inQ) {
+        if (c === '"' && n === '"') { cur[cur.length-1] += '"'; i++; }
+        else if (c === '"') { inQ = false; }
+        else { cur[cur.length-1] += c; }
+      } else {
+        if (c === '"') { inQ = true; }
+        else if (c === ',') { cur.push(''); }
+        else if (c === '\n') { rows.push(cur); cur = ['']; }
+        else if (c === '\r') { /* skip */ }
+        else { cur[cur.length-1] += c; }
+      }
+    }
+    if (cur.length > 1 || cur[0] !== '') rows.push(cur);
+    return rows.map(r => r.map(c => c.trim()));
+  }
+
+  function num(v) { const n = parseFloat(v); return isNaN(n) ? null : n; }
+
+  // Fetch the published CSV, then re-render the chart + stat cells with live numbers.
+  function loadPhysiqueFromCSV() {
+    fetch(CSV_URL, { cache: 'no-store' })
+      .then(r => r.ok ? r.text() : Promise.reject(r.status))
+      .then(text => {
+        const rows = parseCSV(text);
+        // Brief says weekly data lives in rows 4–15 (1-indexed) → indices 3..14
+        const weekRows = rows.slice(3, 15);
+        const labels = weekRows.map((r,i) => r[0] || ('W' + (i+1)));
+        const minA   = weekRows.map(r => num(r[2]));
+        const midA   = weekRows.map(r => num(r[3]));
+        const maxA   = weekRows.map(r => num(r[4]));
+        const actA   = weekRows.map(r => num(r[5]));
+        renderWeightChart(labels, minA, midA, maxA, actA);
+        updatePhysiqueStats(weekRows);
+        // Mark live in the sub label of the Current cell
+        const sub = document.getElementById('statCurrentSub');
+        if (sub) sub.textContent = 'Live · synced from Sheet';
+      })
+      .catch(err => {
+        console.warn('[Stewart Lab] CSV fetch failed, showing sample data:', err);
+        // Sample fallback so the chart never looks empty
+        renderWeightChart(
+          ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12'],
+          [158.0,156.7,155.5,154.2,152.9,151.7,150.5,149.3,148.0,146.8,145.5,144.3],
+          [158.0,156.4,154.8,153.2,151.7,150.2,148.7,147.2,145.8,144.4,142.9,140.0],
+          [158.0,156.0,153.8,151.7,149.7,147.8,145.8,144.0,142.1,140.3,138.5,136.7],
+          [158.0,156.8,155.4,null,null,null,null,null,null,null,null,null]
+        );
+      });
+  }
+
+  function renderWeightChart(weeks, min, mid, max, actual) {
+    if (typeof Chart === 'undefined') return;
+    const ctx = document.getElementById('weightChart');
+    if (!ctx) return;
+    if (_chart) { _chart.destroy(); _chart = null; }
+    _chart = new Chart(ctx, {
+      type:'line',
+      data:{ labels:weeks, datasets:[
+        { label:'Min',    data:min,    borderColor:'rgba(232,220,185,0.22)', borderDash:[3,4], borderWidth:1,   pointRadius:0, tension:0.25 },
+        { label:'Target', data:mid,    borderColor:'rgba(201,161,74,0.55)',  borderDash:[5,5], borderWidth:1.5, pointRadius:0, tension:0.25 },
+        { label:'Max',    data:max,    borderColor:'rgba(232,220,185,0.30)', borderDash:[3,4], borderWidth:1,   pointRadius:0, tension:0.25 },
+        { label:'Actual', data:actual, borderColor:'#c9a14a', backgroundColor:'rgba(201,161,74,0.18)', borderWidth:2.5, pointRadius:3, pointBackgroundColor:'#d9b25a', tension:0.2, spanGaps:false }
+      ]},
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        interaction:{ intersect:false, mode:'index' },
+        plugins:{
+          legend:{ labels:{ color:'rgba(232,226,208,0.7)', font:{ family:'DM Mono, monospace', size:9 }, boxWidth:14 } },
+          tooltip:{ backgroundColor:'rgba(10,8,6,0.92)', titleColor:'#c9a14a', titleFont:{family:'DM Mono, monospace', size:10}, bodyColor:'#e8e2d0', bodyFont:{family:'DM Mono, monospace', size:10}, borderColor:'rgba(201,161,74,0.3)', borderWidth:1, padding:10 }
+        },
+        scales:{
+          x:{ grid:{ color:'rgba(201,161,74,0.05)' }, ticks:{ color:'rgba(232,226,208,0.5)', font:{ family:'DM Mono, monospace', size:9 } } },
+          y:{ grid:{ color:'rgba(201,161,74,0.05)' }, ticks:{ color:'rgba(232,226,208,0.5)', font:{ family:'DM Mono, monospace', size:9 } }, title:{ display:true, text:'lb', color:'rgba(232,226,208,0.5)', font:{ family:'DM Mono, monospace', size:9 } } }
+        }
+      }
+    });
+  }
+
+  function updatePhysiqueStats(weekRows) {
+    // Find the most recent week with an actual reading
+    let lastIdx = -1, lastVal = null;
+    for (let i = weekRows.length - 1; i >= 0; i--) {
+      const v = num(weekRows[i][5]);
+      if (v !== null) { lastIdx = i; lastVal = v; break; }
+    }
+    if (lastVal === null) return; // no data yet — leave defaults
+
+    const fmt = (n) => (n >= 0 ? '' : '−') + Math.abs(n).toFixed(1);
+    const lbSpan = '<span style="font-size:18px;color:var(--text-faint);"> lb</span>';
+
+    document.getElementById('statCurrent').innerHTML   = lastVal.toFixed(1) + lbSpan;
+    document.getElementById('statLost').innerHTML      = fmt(PHASE_START - lastVal) + lbSpan;
+    document.getElementById('statRemaining').innerHTML = fmt(lastVal - PHASE_GOAL) + lbSpan;
+
+    // Week delta (vs previous actual)
+    let weekDelta = null;
+    for (let i = lastIdx - 1; i >= 0; i--) {
+      const v = num(weekRows[i][5]);
+      if (v !== null) { weekDelta = lastVal - v; break; }
+    }
+    const weekEl = document.getElementById('statWeek');
+    if (weekEl) {
+      if (weekDelta === null) weekEl.textContent = '—';
+      else weekEl.innerHTML = (weekDelta > 0 ? '+' : '') + weekDelta.toFixed(1) + lbSpan;
+    }
+
+    // Status pill from current row's min/max band
+    const minT = num(weekRows[lastIdx][2]);
+    const maxT = num(weekRows[lastIdx][4]);
+    const pill = document.getElementById('statusPill');
+    if (pill && minT !== null && maxT !== null) {
+      pill.classList.remove('ontrack','behind');
+      if (lastVal <= minT)      { pill.textContent = 'Ahead'; }
+      else if (lastVal <= maxT) { pill.textContent = 'On Track'; pill.classList.add('ontrack'); }
+      else                      { pill.textContent = 'Behind';   pill.classList.add('behind'); }
     }
   }
 
-  // ============================================================
-  // SCROLL — active nav link + body class for sticky cluster
-  // ============================================================
+  // 8 · Scroll — active link + body class
   const links = document.querySelectorAll('.nav-links a[data-nav]');
-  const sections = ['splash','office','weekly','statistics']
-    .map(id => document.getElementById(id));
-
+  const sections = ['splash','office','weekly','statistics'].map(id => document.getElementById(id));
   function onScroll() {
     document.body.classList.toggle('scrolled', window.scrollY > 40);
     const y = window.scrollY + window.innerHeight * 0.35;
     let activeId = 'splash';
     sections.forEach(s => { if (s && s.offsetTop <= y) activeId = s.id; });
-    links.forEach(a => {
-      a.classList.toggle('active', a.getAttribute('href') === '#' + activeId);
-    });
+    links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + activeId));
   }
   window.addEventListener('scroll', onScroll, { passive: true });
-
-  // Smooth scroll
   links.forEach(a => {
     a.addEventListener('click', (e) => {
       const targetId = a.getAttribute('href').slice(1);
       const target = document.getElementById(targetId);
       if (!target) return;
       e.preventDefault();
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      target.scrollIntoView({ behavior:'smooth', block:'start' });
     });
   });
 
-  // Checkbox demo interaction
+  // 9 · Checkbox interaction
+  function toggleRow(row) {
+    const isChecked = !row.classList.contains('done');
+    row.classList.toggle('done', isChecked);
+    if (row.hasAttribute('role')) row.setAttribute('aria-checked', isChecked ? 'true' : 'false');
+    updateMinCount();
+  }
   document.querySelectorAll('.min-row, .task').forEach(row => {
-    row.addEventListener('click', (e) => {
-      if (e.target.closest('.block-head')) return;
-      row.classList.toggle('done');
-      updateMinCount();
-    });
+    row.addEventListener('click', (e) => { if (e.target.closest('.block-head')) return; toggleRow(row); });
+    row.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleRow(row); } });
   });
   function updateMinCount() {
     const rows = document.querySelectorAll('.minimums .min-row');
     const done = document.querySelectorAll('.minimums .min-row.done').length;
     const el = document.getElementById('minCount');
-    if (el) el.textContent = `${done} / ${rows.length}`;
+    if (el) el.textContent = done + ' / ' + rows.length;
   }
 
   // Boot
@@ -1003,6 +1252,12 @@
   setInterval(tick, 30 * 1000);
   onScroll();
   updateMinCount();
+  buildWeekGrid();
+  buildHeatmap12();
+  refreshWeather();
+  setInterval(refreshWeather, 30 * 60 * 1000);
+  if (document.readyState === 'complete') drawWeightChart();
+  else window.addEventListener('load', drawWeightChart);
 </script>
 
 </body>
