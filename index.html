@@ -51,7 +51,7 @@
 
   html, body {
     margin: 0; padding: 0;
-    background: var(--bg);
+    background: transparent;  /* CRITICAL: must be transparent so negative-z-indexed .bg-photo can show through. Dark fallback color lives on .bg-fallback at z-index -4. */
     color: var(--text);
     font-family: var(--serif);
     font-weight: 300;
