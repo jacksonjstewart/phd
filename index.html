@@ -11,9 +11,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
 
-<!-- Library photograph — loaded directly from Wikimedia CDN (no local file needed)
-     Source: Long Room, Trinity College Dublin · Photo by Diliff · CC BY-SA 3.0 -->
-<link rel="preload" as="image" fetchpriority="high" href="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Long_Room_Interior%2C_Trinity_College_Dublin%2C_Ireland_-_Diliff.jpg/2560px-Long_Room_Interior%2C_Trinity_College_Dublin%2C_Ireland_-_Diliff.jpg" crossorigin />
+<!-- Library photograph — served from /lab/library.jpg on GitHub Pages (CONFIRMED working).
+     Wikimedia is NOT used (blocks hotlinks). Source: Long Room, Trinity College Dublin · CC BY-SA 3.0 -->
+<link rel="preload" as="image" fetchpriority="high" href="./library.jpg" />
 
 <!-- Chart.js loaded deferred — only used by Statistics section -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js" defer></script>
@@ -103,7 +103,7 @@
   .bg-photo {
     position: fixed; inset: 0; z-index: -3;
     pointer-events: none;
-    background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Long_Room_Interior%2C_Trinity_College_Dublin%2C_Ireland_-_Diliff.jpg/2560px-Long_Room_Interior%2C_Trinity_College_Dublin%2C_Ireland_-_Diliff.jpg'); /* CDN — no local file needed */
+    background-image: url('./library.jpg'); /* CONFIRMED: GitHub Pages serves this from /lab/library.jpg */
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
@@ -1230,12 +1230,20 @@
 </footer>
 
 <script>
-  // 1 · Background photo — CSS loads it directly from Wikimedia CDN.
-  //    JS just confirms in console; the image will render regardless.
+  // 1 · Background photo — CSS loads ./library.jpg directly.
+  //    JS just confirms it loaded.
   (function() {
     const lbl = document.getElementById('syncLabel');
-    if (lbl) lbl.textContent = 'Library';
-    console.log('[Stewart Lab] Background: Wikimedia CDN (no local file required)');
+    const probe = new Image();
+    probe.onload = () => {
+      if (lbl) lbl.textContent = 'Library';
+      console.log('[Stewart Lab] Background: ./library.jpg confirmed (' + probe.naturalWidth + 'x' + probe.naturalHeight + ')');
+    };
+    probe.onerror = () => {
+      if (lbl) lbl.textContent = 'No image';
+      console.warn('[Stewart Lab] ./library.jpg failed to load — atmospheric layer only');
+    };
+    probe.src = './library.jpg';
   })();
 
   // 2 · Time / date / greeting
