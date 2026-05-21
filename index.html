@@ -11,9 +11,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
 
-<!-- Library photograph — self-hosted at /library.jpg (repo root)
+<!-- Library photograph — loaded directly from Wikimedia CDN (no local file needed)
      Source: Long Room, Trinity College Dublin · Photo by Diliff · CC BY-SA 3.0 -->
-<link rel="preload" as="image" fetchpriority="high" href="./library.jpg" />
+<link rel="preload" as="image" fetchpriority="high" href="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Long_Room_Interior%2C_Trinity_College_Dublin%2C_Ireland_-_Diliff.jpg/2560px-Long_Room_Interior%2C_Trinity_College_Dublin%2C_Ireland_-_Diliff.jpg" crossorigin />
 
 <!-- Chart.js loaded deferred — only used by Statistics section -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js" defer></script>
@@ -103,7 +103,7 @@
   .bg-photo {
     position: fixed; inset: 0; z-index: -3;
     pointer-events: none;
-    background-image: url('./library.jpg'); /* primary: local file in repo root */
+    background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Long_Room_Interior%2C_Trinity_College_Dublin%2C_Ireland_-_Diliff.jpg/2560px-Long_Room_Interior%2C_Trinity_College_Dublin%2C_Ireland_-_Diliff.jpg'); /* CDN — no local file needed */
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
@@ -1230,45 +1230,12 @@
 </footer>
 
 <script>
-  // 1 · Background photo — cascade through candidate paths
-  //    Tries ./library.jpg, then ./assets/library.jpg, then Wikimedia.
-  //    Whichever loads first wins. Atmospheric layer is a final visual fallback.
+  // 1 · Background photo — CSS loads it directly from Wikimedia CDN.
+  //    JS just confirms in console; the image will render regardless.
   (function() {
-    const photoEl = document.getElementById('bgPhoto');
     const lbl = document.getElementById('syncLabel');
-    const dot = document.getElementById('syncDot');
-    const cacheBust = '?cb=' + Date.now();
-    const candidates = [
-      { url: './library.jpg',        label: 'Library' },
-      { url: './assets/library.jpg', label: 'Library' },
-      { url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Long_Room_Interior%2C_Trinity_College_Dublin%2C_Ireland_-_Diliff.jpg/2560px-Long_Room_Interior%2C_Trinity_College_Dublin%2C_Ireland_-_Diliff.jpg',
-        label: 'Remote img', demo: true }
-    ];
-
-    function tryNext(i) {
-      if (i >= candidates.length) {
-        console.warn('[Stewart Lab] All background candidates failed — atmospheric layer only.');
-        if (photoEl) photoEl.style.backgroundImage = 'none';
-        if (lbl) lbl.textContent = 'No image';
-        if (dot) dot.classList.add('demo');
-        return;
-      }
-      const cand = candidates[i];
-      const probe = new Image();
-      probe.onload = () => {
-        console.log('[Stewart Lab] Background loaded from:', cand.url);
-        if (photoEl) photoEl.style.backgroundImage = "url('" + cand.url + "')";
-        if (lbl) lbl.textContent = cand.label;
-        if (dot && cand.demo) dot.classList.add('demo');
-      };
-      probe.onerror = () => {
-        console.warn('[Stewart Lab] Background candidate failed:', cand.url);
-        tryNext(i + 1);
-      };
-      probe.src = cand.url.startsWith('http') ? cand.url : (cand.url + cacheBust);
-    }
-
-    tryNext(0);
+    if (lbl) lbl.textContent = 'Library';
+    console.log('[Stewart Lab] Background: Wikimedia CDN (no local file required)');
   })();
 
   // 2 · Time / date / greeting
