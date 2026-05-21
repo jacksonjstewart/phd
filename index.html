@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2.5" />
 <meta name="theme-color" content="#0a0806" />
 <title>The Stewart Lab</title>
+<!-- Inline SVG favicon — gold serif "S" on dark, no network request, no 404 -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%230a0806'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Georgia,serif' font-style='italic' font-size='44' fill='%23c9a14a'%3ES%3C/text%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
@@ -1228,33 +1230,45 @@
 </footer>
 
 <script>
-  // 1 · Background photo
-  //    CSS already loads ./library.jpg directly. JS just verifies and,
-  //    if the local file is missing, swaps in the public Wikimedia URL.
+  // 1 · Background photo — cascade through candidate paths
+  //    Tries ./library.jpg, then ./assets/library.jpg, then Wikimedia.
+  //    Whichever loads first wins. Atmospheric layer is a final visual fallback.
   (function() {
     const photoEl = document.getElementById('bgPhoto');
     const lbl = document.getElementById('syncLabel');
     const dot = document.getElementById('syncDot');
-    const localImg = new Image();
-    localImg.onload = () => {
-      console.log('[Stewart Lab] Background: ./library.jpg loaded');
-      if (lbl) lbl.textContent = 'Library';
-    };
-    localImg.onerror = () => {
-      console.warn('[Stewart Lab] ./library.jpg missing — falling back to Wikimedia');
-      const remote = 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Long_Room_Interior%2C_Trinity_College_Dublin%2C_Ireland_-_Diliff.jpg/2560px-Long_Room_Interior%2C_Trinity_College_Dublin%2C_Ireland_-_Diliff.jpg';
-      if (photoEl) photoEl.style.backgroundImage = "url('" + remote + "')";
-      if (lbl) lbl.textContent = 'Remote img';
-      if (dot) dot.classList.add('demo');
-      // Final-final fallback: if Wikimedia also fails, atmospheric layer still shows.
-      const remoteImg = new Image();
-      remoteImg.onerror = () => {
+    const cacheBust = '?cb=' + Date.now();
+    const candidates = [
+      { url: './library.jpg',        label: 'Library' },
+      { url: './assets/library.jpg', label: 'Library' },
+      { url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Long_Room_Interior%2C_Trinity_College_Dublin%2C_Ireland_-_Diliff.jpg/2560px-Long_Room_Interior%2C_Trinity_College_Dublin%2C_Ireland_-_Diliff.jpg',
+        label: 'Remote img', demo: true }
+    ];
+
+    function tryNext(i) {
+      if (i >= candidates.length) {
+        console.warn('[Stewart Lab] All background candidates failed — atmospheric layer only.');
         if (photoEl) photoEl.style.backgroundImage = 'none';
         if (lbl) lbl.textContent = 'No image';
+        if (dot) dot.classList.add('demo');
+        return;
+      }
+      const cand = candidates[i];
+      const probe = new Image();
+      probe.onload = () => {
+        console.log('[Stewart Lab] Background loaded from:', cand.url);
+        if (photoEl) photoEl.style.backgroundImage = "url('" + cand.url + "')";
+        if (lbl) lbl.textContent = cand.label;
+        if (dot && cand.demo) dot.classList.add('demo');
       };
-      remoteImg.src = remote;
-    };
-    localImg.src = './library.jpg?cb=' + Date.now(); // cache-bust to avoid stale 404
+      probe.onerror = () => {
+        console.warn('[Stewart Lab] Background candidate failed:', cand.url);
+        tryNext(i + 1);
+      };
+      probe.src = cand.url.startsWith('http') ? cand.url : (cand.url + cacheBust);
+    }
+
+    tryNext(0);
   })();
 
   // 2 · Time / date / greeting
@@ -1703,15 +1717,13 @@
   setInterval(tick, 30 * 1000);
   onScroll();
   initRoutines();
+  refreshWeather();
+  setInterval(refreshWeather, 30 * 60 * 1000);  // every 30 min
   buildWeekGrid();
   buildHeatmap12();
-  refreshWeather();
-  setInterval(refreshWeather, 30 * 60 * 1000);
+  loadPhysiqueFromCSV();
   loadCalendarEvents();
-  setInterval(loadCalendarEvents, 10 * 60 * 1000);
-  if (document.readyState === 'complete') loadPhysiqueFromCSV();
-  else window.addEventListener('load', loadPhysiqueFromCSV);
+  setInterval(loadCalendarEvents, 10 * 60 * 1000);  // every 10 min
 </script>
-
 </body>
 </html>
