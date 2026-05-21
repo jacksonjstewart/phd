@@ -101,16 +101,14 @@
   .bg-photo {
     position: fixed; inset: 0; z-index: -3;
     pointer-events: none;
-    /* background-image set by JS once an image candidate resolves */
+    background-image: url('./library.jpg'); /* primary: local file in repo root */
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
     background-attachment: fixed;
     filter: brightness(0.42) contrast(1.05) saturate(0.92) sepia(0.18);
-    opacity: 0;
-    transition: opacity 1200ms ease;
+    opacity: 1;
   }
-  .bg-photo.loaded { opacity: 1; }
 
   @media (max-width: 900px) {
     .bg-photo { background-attachment: scroll; }
@@ -224,6 +222,39 @@
     display: flex; align-items: center; justify-content: center;
     padding: 0 32px;
   }
+  /* Splash-anchored stamp — sits top-left of splash, NOT fixed.
+     Scrolls away normally when user navigates down. */
+  .splash-stamp {
+    position: absolute;
+    top: 92px; left: 32px;
+    display: flex; flex-direction: column; gap: 3px;
+    opacity: 0;
+    animation: fadeInGreeting 1.6s ease 0.9s forwards;
+  }
+  .splash-stamp .day {
+    font-family: var(--mono); font-size: 9px;
+    letter-spacing: 0.45em; text-transform: uppercase;
+    color: var(--gold);
+  }
+  .splash-stamp .date {
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.32em; color: var(--text-dim);
+    text-transform: uppercase;
+  }
+  .splash-stamp .time-weather {
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.28em; color: var(--text);
+    margin-top: 8px; text-transform: uppercase;
+  }
+  .splash-stamp .time-weather .sep {
+    color: var(--gold-dim); margin: 0 8px;
+  }
+  @media (max-width: 880px) {
+    .splash-stamp { top: 76px; left: 22px; }
+    .splash-stamp .day { font-size: 8px; }
+    .splash-stamp .date { font-size: 9px; }
+    .splash-stamp .time-weather { font-size: 9px; }
+  }
   .splash-stack {
     display: flex; flex-direction: column;
     align-items: center; gap: 28px;
@@ -249,36 +280,53 @@
     color: var(--gold-dim); margin: 0 8px;
   }
 
-  /* Big prominent date module at top of Office page */
-  .today-header {
-    margin-bottom: 56px;
-    padding-bottom: 32px;
+  /* Office "Today" module — day/date/time left, weather right */
+  .today-module {
+    margin-bottom: 48px;
+    padding-bottom: 28px;
     border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 32px;
+    flex-wrap: wrap;
   }
-  .today-header .section-eyebrow { margin-bottom: 18px; }
-  .today-header .th-day {
-    font-family: var(--serif); font-weight: 300;
-    font-style: italic;
-    font-size: clamp(56px, 9vw, 96px);
-    letter-spacing: 0.01em;
-    line-height: 0.95;
+  .tm-main { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .tm-day {
+    font-family: var(--serif); font-style: italic; font-weight: 300;
+    font-size: clamp(46px, 7vw, 76px);
+    line-height: 0.95; letter-spacing: 0.005em;
     color: var(--text);
-    margin: 0 0 14px 0;
   }
-  .today-header .th-date {
-    font-family: var(--serif); font-style: italic;
-    font-weight: 400;
-    font-size: clamp(20px, 2.4vw, 28px);
+  .tm-date {
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+    font-size: clamp(20px, 2.2vw, 26px);
     color: var(--gold);
-    margin-bottom: 14px;
   }
-  .today-header .th-meta {
-    font-family: var(--mono); font-size: 11px;
-    letter-spacing: 0.32em; text-transform: uppercase;
+  .tm-time {
+    font-family: var(--mono); font-weight: 400;
+    font-size: 20px; letter-spacing: 0.22em;
+    color: var(--text);
+    margin-top: 4px;
+  }
+  .tm-weather {
+    text-align: right;
+    flex: 0 0 auto;
+    padding-bottom: 8px;
+  }
+  .tm-weather-label {
+    font-family: var(--mono); font-size: 9px;
+    letter-spacing: 0.45em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 8px;
+  }
+  .tm-weather-value {
+    font-family: var(--mono); font-size: 12px;
+    letter-spacing: 0.28em; text-transform: uppercase;
     color: var(--text-dim);
   }
-  .today-header .th-meta .th-sep {
-    color: var(--gold-dim); margin: 0 10px;
+  @media (max-width: 600px) {
+    .today-module { align-items: flex-start; }
+    .tm-weather { text-align: left; padding-bottom: 0; padding-top: 4px; }
   }
 
   .splash-greeting {
@@ -500,40 +548,75 @@
   }
 
   .review-banner {
-    margin-top: 28px; padding: 14px 18px;
-    border: 1px solid var(--gold-dim);
-    background: rgba(201,161,74,0.05);
+    margin-top: 28px; padding: 16px 20px;
+    border: 1px solid var(--gold);
+    background: linear-gradient(135deg, rgba(201,161,74,0.18) 0%, rgba(201,161,74,0.08) 100%);
     display: flex; align-items: center; gap: 16px;
+    position: relative;
+    box-shadow: 0 0 0 0 rgba(201, 161, 74, 0.45);
+    animation: pulse-gold 2.6s ease-in-out infinite;
+  }
+  @keyframes pulse-gold {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(201, 161, 74, 0.32);
+      border-color: var(--gold);
+    }
+    50% {
+      box-shadow: 0 0 22px 2px rgba(201, 161, 74, 0.18);
+      border-color: var(--gold-bright);
+    }
   }
   .review-banner .icon {
     font-family: var(--mono); font-size: 9px;
-    letter-spacing: 0.35em; color: var(--gold);
+    letter-spacing: 0.4em; color: var(--gold-bright);
     text-transform: uppercase; flex: 0 0 auto;
   }
   .review-banner .text {
     font-family: var(--serif); font-style: italic;
     font-size: 17px; color: var(--text);
   }
-  .review-banner.hidden { display: none; }
+  .review-banner.hidden { display: none; animation: none; }
 
   /* ============================================================
      ROUTINE BLOCKS (Morning / Office Hours / Daily)
      ============================================================ */
-  .routine { margin-top: 44px; }
+  .routine { margin-top: 18px; }
   .routine:first-of-type { margin-top: 0; }
-  .routine-head {
+  /* Collapsible header — clickable button styled as a heading */
+  button.routine-head {
+    width: 100%; background: none;
+    border: none; border-bottom: 1px solid var(--border);
+    padding: 16px 0; margin: 0;
+    display: flex; align-items: center; justify-content: space-between; gap: 14px;
     font-family: var(--mono); font-size: 10px; font-weight: 400;
     letter-spacing: 0.45em; text-transform: uppercase;
-    color: var(--gold); margin: 0 0 16px 0;
-    display: flex; align-items: baseline; gap: 14px;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 12px;
+    color: var(--gold);
+    cursor: pointer; text-align: left;
+    transition: color 200ms;
   }
-  .routine-head .head-sub {
+  button.routine-head:hover { color: var(--gold-bright); }
+  button.routine-head .rh-label { flex: 1; }
+  button.routine-head .head-sub {
     font-size: 9px; letter-spacing: 0.3em;
-    color: var(--text-faint);
+    color: var(--text-faint); margin-left: 12px;
   }
-  .routine-list { list-style: none; margin: 0; padding: 0; max-width: 820px; display: flex; flex-direction: column; gap: 8px; }
+  .rh-toggle {
+    font-family: var(--mono); font-size: 16px;
+    color: var(--gold-dim); transition: transform 320ms ease, color 200ms;
+    flex: 0 0 auto;
+  }
+  .routine.open .rh-toggle { transform: rotate(45deg); color: var(--gold); }
+
+  .routine-list {
+    list-style: none; margin: 0; padding: 0; max-width: 820px;
+    display: flex; flex-direction: column; gap: 8px;
+    max-height: 0; overflow: hidden;
+    transition: max-height 460ms ease, padding-top 320ms ease;
+  }
+  .routine.open .routine-list {
+    max-height: 2400px;
+    padding-top: 14px;
+  }
   /* TILES — each task is its own bordered box */
   .r-row {
     display: flex; align-items: flex-start; gap: 14px;
@@ -860,7 +943,7 @@
 <div class="bg-grain"></div>
 <div class="bg-vignette"></div>
 
-<!-- Top-left cluster — nav + persistent date/time/weather stamp -->
+<!-- Top-left fixed — nav links only. Stamp anchored to splash (scrolls away). -->
 <div class="topleft">
   <ul class="nav-links" aria-label="Primary navigation">
     <li><a href="#splash"     data-nav>Home</a></li>
@@ -868,7 +951,18 @@
     <li><a href="#weekly"     data-nav>Weekly</a></li>
     <li><a href="#statistics" data-nav>Statistics</a></li>
   </ul>
-  <div class="stamp" aria-label="Date, time, and weather">
+</div>
+
+<!-- Bottom-left sync indicator -->
+<div class="sync-bar" role="status" aria-live="polite">
+  <span class="sync-dot" id="syncDot" aria-hidden="true"></span>
+  <span class="sync-label" id="syncLabel">Live</span>
+  <span class="sync-version">v0.9 · Stewart Lab</span>
+</div>
+
+<section id="splash" class="splash">
+  <!-- Stamp lives top-left of splash, anchored to this section. -->
+  <div class="splash-stamp" aria-label="Date, time, and weather">
     <div class="day"  id="splashDay">—</div>
     <div class="date" id="splashDate">—</div>
     <div class="time-weather">
@@ -877,16 +971,6 @@
       <span id="splashWeather">Edmonton · —</span>
     </div>
   </div>
-</div>
-
-<!-- Bottom-left sync indicator -->
-<div class="sync-bar" role="status" aria-live="polite">
-  <span class="sync-dot" id="syncDot" aria-hidden="true"></span>
-  <span class="sync-label" id="syncLabel">Live</span>
-  <span class="sync-version">v0.8 · Stewart Lab</span>
-</div>
-
-<section id="splash" class="splash">
   <h1 class="splash-greeting" id="splashGreeting">Good morning, Dr. Stewart.</h1>
 </section>
 
@@ -894,7 +978,17 @@
 <section id="office" class="section" aria-labelledby="office-title">
   <div class="section-inner">
     <p class="section-eyebrow">I &middot; The Office</p>
-    <h2 class="section-title" id="office-title">Today.</h2>
+    <header class="today-module">
+      <div class="tm-main">
+        <div class="tm-day"  id="officeDayBig">&mdash;</div>
+        <div class="tm-date" id="officeDateBig">&mdash;</div>
+        <div class="tm-time" id="officeTimeBig">&mdash;</div>
+      </div>
+      <div class="tm-weather">
+        <div class="tm-weather-label">Edmonton</div>
+        <div class="tm-weather-value" id="officeWeatherBig">&mdash;</div>
+      </div>
+    </header>
 
     <!-- Day-aware review banner (Sunday PhD / biweekly Wed Finance / biweekly Sat Home & Health) -->
     <div class="review-banner hidden" id="reviewBanner">
@@ -903,8 +997,11 @@
     </div>
 
     <!-- I. MORNING ROUTINE -->
-    <div class="routine">
-      <h3 class="routine-head">I &middot; Morning Routine</h3>
+    <div class="routine" data-window="morning">
+      <button class="routine-head" type="button" onclick="toggleRoutine(this)" aria-expanded="false">
+        <span class="rh-label">I &middot; Morning Routine</span>
+        <span class="rh-toggle" aria-hidden="true">+</span>
+      </button>
       <ul class="routine-list" id="morningList">
 
         <li class="r-row" data-cond="always" tabindex="0" role="checkbox" aria-checked="false">
@@ -960,9 +1057,8 @@
           <span class="box"></span>
           <div class="label-stack">
             <div class="r-title">Steam / Sauna &mdash; 10&ndash;15 min</div>
-            <div class="r-note">A short steam or sauna session at Archetype.</div>
+            <div class="r-note">A short steam or sauna session.</div>
           </div>
-          <span class="r-meta">Archetype</span>
         </li>
 
         <li class="r-row" data-cond="always" tabindex="0" role="checkbox" aria-checked="false">
@@ -985,8 +1081,11 @@
     </div>
 
     <!-- II. OFFICE HOURS -->
-    <div class="routine">
-      <h3 class="routine-head">II &middot; Office Hours <span class="head-sub">08:00 &mdash; 16:00</span></h3>
+    <div class="routine" data-window="office">
+      <button class="routine-head" type="button" onclick="toggleRoutine(this)" aria-expanded="false">
+        <span class="rh-label">II &middot; Office Hours <span class="head-sub">08:00 &mdash; 16:00</span></span>
+        <span class="rh-toggle" aria-hidden="true">+</span>
+      </button>
       <ul class="routine-list" id="officeHoursList">
         <li class="r-row placeholder" id="calPlaceholder">
           <div class="label-stack">
@@ -1015,8 +1114,11 @@
     </div>
 
     <!-- III. DAILY ROUTINE -->
-    <div class="routine">
-      <h3 class="routine-head">III &middot; Daily Routine</h3>
+    <div class="routine" data-window="daily">
+      <button class="routine-head" type="button" onclick="toggleRoutine(this)" aria-expanded="false">
+        <span class="rh-label">III &middot; Daily Routine</span>
+        <span class="rh-toggle" aria-hidden="true">+</span>
+      </button>
       <ul class="routine-list">
         <li class="r-row" data-cond="always" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
@@ -1126,44 +1228,33 @@
 </footer>
 
 <script>
-  // 1 · Background photo — bulletproof cascade
-  //    Tries local filenames in order, then a public Wikimedia URL.
-  //    Whichever resolves first wins. Whatever the user has, something shows.
+  // 1 · Background photo
+  //    CSS already loads ./library.jpg directly. JS just verifies and,
+  //    if the local file is missing, swaps in the public Wikimedia URL.
   (function() {
     const photoEl = document.getElementById('bgPhoto');
-    const dot = document.getElementById('syncDot');
     const lbl = document.getElementById('syncLabel');
-    const CANDIDATES = [
-      './library.jpg',
-      './Library.jpg',
-      './library.jpeg',
-      './library.JPG',
-      './assets/library.jpg',
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Long_Room_Interior%2C_Trinity_College_Dublin%2C_Ireland_-_Diliff.jpg/2560px-Long_Room_Interior%2C_Trinity_College_Dublin%2C_Ireland_-_Diliff.jpg'
-    ];
-    function tryNext(i) {
-      if (i >= CANDIDATES.length) {
-        console.warn('[Stewart Lab] No background image found — CSS atmosphere fallback in effect.');
-        if (dot) dot.classList.add('demo');
+    const dot = document.getElementById('syncDot');
+    const localImg = new Image();
+    localImg.onload = () => {
+      console.log('[Stewart Lab] Background: ./library.jpg loaded');
+      if (lbl) lbl.textContent = 'Library';
+    };
+    localImg.onerror = () => {
+      console.warn('[Stewart Lab] ./library.jpg missing — falling back to Wikimedia');
+      const remote = 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Long_Room_Interior%2C_Trinity_College_Dublin%2C_Ireland_-_Diliff.jpg/2560px-Long_Room_Interior%2C_Trinity_College_Dublin%2C_Ireland_-_Diliff.jpg';
+      if (photoEl) photoEl.style.backgroundImage = "url('" + remote + "')";
+      if (lbl) lbl.textContent = 'Remote img';
+      if (dot) dot.classList.add('demo');
+      // Final-final fallback: if Wikimedia also fails, atmospheric layer still shows.
+      const remoteImg = new Image();
+      remoteImg.onerror = () => {
+        if (photoEl) photoEl.style.backgroundImage = 'none';
         if (lbl) lbl.textContent = 'No image';
-        return;
-      }
-      const url = CANDIDATES[i];
-      const img = new Image();
-      img.onload = () => {
-        if (photoEl) {
-          photoEl.style.backgroundImage = "url('" + url + "')";
-          photoEl.classList.add('loaded');
-        }
-        const isRemote = url.startsWith('http');
-        if (lbl) lbl.textContent = isRemote ? 'Remote img' : 'Live';
-        if (isRemote && dot) dot.classList.add('demo');
-        console.log('[Stewart Lab] Background image loaded from:', url);
       };
-      img.onerror = () => tryNext(i + 1);
-      img.src = url;
-    }
-    tryNext(0);
+      remoteImg.src = remote;
+    };
+    localImg.src = './library.jpg?cb=' + Date.now(); // cache-bust to avoid stale 404
   })();
 
   // 2 · Time / date / greeting
@@ -1209,7 +1300,8 @@
         const cond = WEATHER_CODES[d.current.weather_code] || 'Edmonton';
         const txt = 'Edmonton · ' + t + '°C · ' + cond;
         setText('splashWeather', txt);
-        setText('officeWeatherBig', txt);
+        // Office module shows "Edmonton" as a label above, so value is bare temp+cond
+        setText('officeWeatherBig', t + '°C · ' + cond);
       })
       .catch(err => console.warn('[Stewart Lab] Weather fetch failed:', err));
   }
@@ -1505,12 +1597,12 @@
       .then(d => renderCalendarEvents(d.items || []))
       .catch(err => console.warn('[Stewart Lab] Calendar fetch failed:', err));
   }
+
   function renderCalendarEvents(events) {
     const list = document.getElementById('officeHoursList');
     const placeholder = document.getElementById('calPlaceholder');
     if (!list) return;
     if (placeholder) placeholder.remove();
-    // Insert event tiles at the top of the list (before Tue / first-Thu rows)
     const firstStatic = list.querySelector('li[data-cond]');
     events.slice().reverse().forEach(ev => {
       const li = document.createElement('li');
@@ -1534,6 +1626,35 @@
       if (firstStatic) list.insertBefore(li, firstStatic);
       else list.appendChild(li);
     });
+  }
+
+  // ============================================================
+  // ROUTINE COLLAPSIBLES — time-aware default expand
+  //   Morning (04–08)  →  I · Morning Routine
+  //   Office  (08–17)  →  II · Office Hours
+  //   else             →  III · Daily Routine
+  // ============================================================
+  function activeRoutineWindow(h) {
+    if (h >= 4 && h < 8)  return 'morning';
+    if (h >= 8 && h < 17) return 'office';
+    return 'daily';
+  }
+  let _routineInited = false;
+  function initRoutines() {
+    if (_routineInited) return;
+    _routineInited = true;
+    const win = activeRoutineWindow(new Date().getHours());
+    document.querySelectorAll('.routine').forEach(r => {
+      const open = r.dataset.window === win;
+      r.classList.toggle('open', open);
+      const head = r.querySelector('.routine-head');
+      if (head) head.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  }
+  function toggleRoutine(headEl) {
+    const r = headEl.parentElement;
+    r.classList.toggle('open');
+    headEl.setAttribute('aria-expanded', r.classList.contains('open') ? 'true' : 'false');
   }
 
   // ============================================================
@@ -1581,6 +1702,7 @@
   tick();
   setInterval(tick, 30 * 1000);
   onScroll();
+  initRoutines();
   buildWeekGrid();
   buildHeatmap12();
   refreshWeather();
