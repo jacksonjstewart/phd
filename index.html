@@ -1168,31 +1168,29 @@
     background: linear-gradient(90deg, rgba(42,157,110,0.7), rgba(62,207,110,0.9));
     width: 0%; transition: width 0.9s ease;
   }
-  .chem-group { margin-bottom: 18px; }
+  .chem-group { margin-bottom: 22px; }
   .chem-group-header {
-    display: flex; align-items: center;
+    display: flex; align-items: baseline;
     justify-content: space-between;
-    padding: 5px 10px;
-    border-radius: 2px;
-    margin-bottom: 8px;
-    background: var(--grp-bg);
-    border: 1px solid var(--grp-border);
+    margin-bottom: 9px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
   }
   .chem-group-name {
-    font-family: var(--mono); font-size: 7.5px;
-    letter-spacing: 0.25em; text-transform: uppercase;
-    color: var(--grp-color); font-weight: 500;
+    font-family: var(--mono); font-size: 8.5px;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--text-dim); font-weight: 500;
   }
   .chem-group-stats {
-    font-family: var(--mono); font-size: 7px;
-    letter-spacing: 0.1em;
-    color: var(--grp-color); opacity: 0.75;
+    font-family: var(--mono); font-size: 8px;
+    letter-spacing: 0.08em;
+    color: var(--grp-color);
   }
-  .chem-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+  .chem-chips { display: flex; flex-wrap: wrap; gap: 6px; }
   .chem-chip {
-    font-family: var(--mono); font-size: 7.5px;
+    font-family: var(--mono); font-size: 8.5px;
     letter-spacing: 0.06em;
-    padding: 3px 8px; border-radius: 2px;
+    padding: 4px 10px; border-radius: 2px;
     border: 1px solid transparent;
     white-space: nowrap;
   }
@@ -1210,31 +1208,32 @@
   .chem-donut-wrap {
     display: flex; flex-direction: column;
     align-items: center;
-    margin-top: 28px; padding-top: 22px;
+    margin-top: 32px; padding-top: 26px;
     border-top: 1px solid var(--border-soft);
   }
   .chem-donut {
-    width: 130px; height: 130px;
+    width: 170px; height: 170px;
     border-radius: 50%;
     position: relative;
     background: conic-gradient(rgba(62,207,110,0.85) 0% 0%, rgba(255,255,255,0.07) 0% 100%);
     transition: background 1s ease;
   }
   .chem-donut-hole {
-    position: absolute; inset: 28px;
+    position: absolute;
+    inset: 21px;          /* ~75% hole: 21/170 ≈ 12.5% ring width each side */
     border-radius: 50%; background: var(--bg);
   }
   .chem-donut-pct {
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
-    font-family: var(--mono); font-size: 18px;
+    font-family: var(--mono); font-size: 20px;
     color: rgba(62,207,110,0.9);
     z-index: 1;
   }
   .chem-donut-sub {
     font-family: var(--mono); font-size: 7px;
     letter-spacing: 0.3em; text-transform: uppercase;
-    color: var(--text-faint); margin-top: 10px;
+    color: var(--text-faint); margin-top: 12px;
   }
 
   .stats-split {
@@ -1801,7 +1800,7 @@
               <div class="chem-donut-hole"></div>
               <div class="chem-donut-pct" id="chemDonutPct">—</div>
             </div>
-            <div class="chem-donut-sub">Overall Completion</div>
+            <div class="chem-donut-sub">Chemistry Completion</div>
           </div>
         </div>
       </div>
@@ -2205,7 +2204,7 @@
     const complete = modules.filter(m => m.done).length;
     const pct      = Math.round((complete / total) * 100);
 
-    if (countEl) countEl.textContent = complete + ' / ' + total + ' complete';
+    if (countEl) countEl.textContent = complete + ' / ' + total + '  ·  ' + pct + '%';
     if (fillEl)  fillEl.style.width  = pct + '%';
 
     // Donut
