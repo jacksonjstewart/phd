@@ -1151,7 +1151,7 @@
   }
   .chem-tracker-title {
     font-family: var(--serif);
-    font-size: 1.05rem; font-weight: 400;
+    font-size: 1.31rem; font-weight: 400;
     color: var(--text);
   }
   .chem-tracker-count {
@@ -1179,7 +1179,7 @@
   .chem-group-name {
     font-family: var(--mono); font-size: 8.5px;
     letter-spacing: 0.28em; text-transform: uppercase;
-    color: var(--text-dim); font-weight: 500;
+    color: var(--grp-color); font-weight: 500;
   }
   .chem-group-stats {
     font-family: var(--mono); font-size: 8px;
@@ -1212,7 +1212,7 @@
     border-top: 1px solid var(--border-soft);
   }
   .chem-donut {
-    width: 170px; height: 170px;
+    width: 255px; height: 255px;
     border-radius: 50%;
     position: relative;
     background: conic-gradient(rgba(62,207,110,0.85) 0% 0%, rgba(255,255,255,0.07) 0% 100%);
@@ -1220,20 +1220,46 @@
   }
   .chem-donut-hole {
     position: absolute;
-    inset: 21px;          /* ~75% hole: 21/170 ≈ 12.5% ring width each side */
+    inset: 32px;          /* ~75% hole */
     border-radius: 50%; background: var(--bg);
   }
   .chem-donut-pct {
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
-    font-family: var(--mono); font-size: 20px;
+    font-family: var(--mono); font-size: 26px;
     color: rgba(62,207,110,0.9);
     z-index: 1;
   }
   .chem-donut-sub {
     font-family: var(--mono); font-size: 7px;
     letter-spacing: 0.3em; text-transform: uppercase;
-    color: var(--text-faint); margin-top: 12px;
+    color: var(--text-faint); margin-top: 14px; margin-bottom: 28px;
+  }
+  /* Future actions list */
+  .chem-next {
+    width: 100%;
+    border-top: 1px solid var(--border-soft);
+    padding-top: 22px;
+    margin-top: 4px;
+  }
+  .chem-next-title {
+    font-family: var(--mono); font-size: 7px;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--text-faint); margin-bottom: 14px;
+  }
+  .chem-next-item {
+    display: flex; align-items: baseline; gap: 10px;
+    margin-bottom: 12px;
+  }
+  .chem-next-num {
+    font-family: var(--mono); font-size: 8px;
+    color: rgba(62,207,110,0.4);
+    flex-shrink: 0; width: 14px;
+  }
+  .chem-next-text {
+    font-family: var(--serif); font-style: italic;
+    font-size: 13px; color: var(--text-dim);
+    line-height: 1.5;
   }
 
   .stats-split {
@@ -1801,6 +1827,21 @@
               <div class="chem-donut-pct" id="chemDonutPct">—</div>
             </div>
             <div class="chem-donut-sub">Chemistry Completion</div>
+          <div class="chem-next">
+            <div class="chem-next-title">On completion</div>
+            <div class="chem-next-item">
+              <span class="chem-next-num">01</span>
+              <span class="chem-next-text">Compile written notes &amp; practice questions into a professional white paper</span>
+            </div>
+            <div class="chem-next-item">
+              <span class="chem-next-num">02</span>
+              <span class="chem-next-text">Finalize an equation sheet for each section</span>
+            </div>
+            <div class="chem-next-item">
+              <span class="chem-next-num">03</span>
+              <span class="chem-next-text">Craft and design a professional lecture for each chemistry section</span>
+            </div>
+          </div>
           </div>
         </div>
       </div>
