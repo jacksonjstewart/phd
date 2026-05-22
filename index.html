@@ -965,10 +965,7 @@
   .scaffold-card,
   .chart-wrap,
   .heatmap-12,
-  .week-day,
-  .today-module,
-  .routine-head,
-  .routine-list {
+  .week-day {
     background-color: rgba(14, 14, 18, 0.93) !important;
     backdrop-filter: blur(3px);
     -webkit-backdrop-filter: blur(3px);
@@ -1677,6 +1674,17 @@
     const officeList  = document.getElementById('officeHoursList');
     const dailyList   = document.getElementById('dailyList');
     const placeholder = document.getElementById('calPlaceholder');
+
+    // If calendar is empty for today, update the placeholder and leave it
+    if (!events || events.length === 0) {
+      if (placeholder) {
+        const note = placeholder.querySelector('.r-note');
+        if (note) note.textContent = 'No action for today — calendar is clear for this window.';
+      }
+      return;
+    }
+
+    // Events present — remove placeholder and render
     if (placeholder) placeholder.remove();
 
     const fmtT = (s) => { if (!s) return ''; const d = new Date(s); return pad(d.getHours()) + ':' + pad(d.getMinutes()); };
@@ -1888,6 +1896,7 @@
     }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
     document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
   }
+  // ============================================================
   // ============================================================
   // BOOT
   // ============================================================
