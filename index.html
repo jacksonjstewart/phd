@@ -1031,29 +1031,32 @@
   .steward-link {
     display: block;
     margin-top: 24px;
-    padding: 18px 24px;
-    background: rgba(14, 14, 18, 0.93);
-    border: 1px solid rgba(201, 161, 74, 0.18);
+    padding: 16px 24px;
+    background: rgba(80, 10, 10, 0.88);
+    border: 1px solid rgba(160, 40, 40, 0.35);
     backdrop-filter: blur(3px);
     -webkit-backdrop-filter: blur(3px);
     text-decoration: none;
     cursor: pointer;
-    transition: border-color 260ms ease, box-shadow 260ms ease;
+    text-align: center;
+    transition: border-color 260ms ease, background 260ms ease, box-shadow 260ms ease;
   }
   .steward-link:hover {
-    border-color: rgba(201, 161, 74, 0.42);
-    box-shadow: 0 0 20px rgba(201, 161, 74, 0.1);
+    background: rgba(100, 14, 14, 0.95);
+    border-color: rgba(180, 60, 60, 0.5);
+    box-shadow: 0 0 20px rgba(140, 20, 20, 0.2);
   }
   .steward-inner {
     display: flex;
     align-items: baseline;
-    gap: 14px;
+    justify-content: center;
+    gap: 10px;
   }
   .steward-label {
     font-family: var(--mono);
     font-size: 9px;
     letter-spacing: 0.45em;
-    color: var(--gold);
+    color: rgba(232, 180, 160, 0.95);
     font-weight: 500;
     text-transform: uppercase;
   }
@@ -1061,18 +1064,18 @@
     font-family: var(--mono);
     font-size: 9px;
     letter-spacing: 0.25em;
-    color: var(--text-dim);
+    color: rgba(232, 180, 160, 0.7);
     font-weight: 400;
     text-transform: uppercase;
     transition: color 260ms ease;
   }
-  .steward-count.loaded { color: var(--text); }
+  .steward-count.loaded { color: rgba(232, 200, 180, 1); }
   .steward-sub {
     font-family: var(--serif);
     font-style: italic;
     font-size: 13px;
-    color: var(--text-faint);
-    margin-top: 6px;
+    color: rgba(220, 160, 140, 0.55);
+    margin-top: 5px;
   }
 
   /* Completed section — head shows green Done label, no re-open */
@@ -1758,6 +1761,11 @@
     const officeList  = document.getElementById('officeHoursList');
     const dailyList   = document.getElementById('dailyList');
     const placeholder = document.getElementById('calPlaceholder');
+
+    // Clear any cal-events from a previous render to avoid duplicates on refresh
+    [officeList, dailyList].forEach(list => {
+      if (list) list.querySelectorAll('.cal-event').forEach(el => el.remove());
+    });
 
     // If calendar is empty for today, update the placeholder and leave it
     if (!events || events.length === 0) {
