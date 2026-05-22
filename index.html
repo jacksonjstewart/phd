@@ -4,6 +4,11 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2.5" />
 <meta name="theme-color" content="#0a0806" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="PhD Prep" />
+<link rel="manifest" href="./manifest.json" />
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%230a0806'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Georgia,serif' font-size='72' fill='%23c9a14a'%3E%CE%A8%3C/text%3E%3C/svg%3E" />
 <title>PhD Prep Dashboard</title>
 <!-- Inline SVG favicon — gold serif "S" on dark, no network request, no 404 -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%230a0806'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Georgia,serif' font-size='24' fill='%23c9a14a'%3EDr.%3C/text%3E%3C/svg%3E" />
@@ -710,9 +715,9 @@
   .week-day {
     border: 1px solid var(--border);
     background: linear-gradient(180deg, rgba(255,255,255,0.012) 0%, rgba(0,0,0,0.22) 100%);
-    padding: 14px 12px;
-    min-height: 320px;
-    display: flex; flex-direction: column; gap: 10px;
+    padding: 20px 16px;
+    min-height: 420px;
+    display: flex; flex-direction: column; gap: 12px;
     transition: border-color 240ms;
   }
   .week-day.today {
@@ -726,25 +731,25 @@
     padding-bottom: 8px;
   }
   .week-day .wd-name {
-    font-family: var(--mono); font-size: 8px;
+    font-family: var(--mono); font-size: 9px;
     letter-spacing: 0.35em; text-transform: uppercase;
     color: var(--gold);
   }
   .week-day.today .wd-name { color: var(--gold-bright); }
   .week-day .wd-date {
-    font-family: var(--mono); font-size: 9px;
+    font-family: var(--mono); font-size: 10px;
     color: var(--text-faint);
   }
   .week-day .wd-block {
     font-family: var(--serif); font-style: italic;
-    font-size: 13px; color: var(--text-dim);
-    padding: 3px 0;
+    font-size: 15px; color: var(--text-dim);
+    padding: 4px 0;
   }
   .week-day .wd-block .h {
     font-family: var(--mono); font-style: normal;
-    font-size: 8px; letter-spacing: 0.3em;
+    font-size: 9px; letter-spacing: 0.3em;
     color: var(--text-faint); text-transform: uppercase;
-    display: block; margin-bottom: 2px;
+    display: block; margin-bottom: 3px;
   }
   .week-day .wd-ritual {
     margin-top: auto;
@@ -1137,6 +1142,57 @@
 
 
   /* ── Stats two-column split ── */
+  /* ── Chemistry Study Tracker ── */
+  .chem-tracker { width: 100%; }
+  .chem-tracker-head {
+    display: flex; align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .chem-tracker-title {
+    font-family: var(--serif);
+    font-size: 1.05rem; font-weight: 400;
+    color: var(--text);
+  }
+  .chem-tracker-count {
+    font-family: var(--mono); font-size: 8px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: rgba(62,207,110,0.7);
+  }
+  .chem-progress-bar {
+    height: 3px; background: rgba(255,255,255,0.07);
+    border-radius: 2px; margin-bottom: 22px; overflow: hidden;
+  }
+  .chem-progress-fill {
+    height: 100%; border-radius: 2px;
+    background: linear-gradient(90deg, rgba(42,157,110,0.7), rgba(62,207,110,0.9));
+    width: 0%; transition: width 0.9s ease;
+  }
+  .chem-group { margin-bottom: 18px; }
+  .chem-group-label {
+    font-family: var(--mono); font-size: 7px;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--text-faint); margin-bottom: 7px;
+  }
+  .chem-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+  .chem-chip {
+    font-family: var(--mono); font-size: 7.5px;
+    letter-spacing: 0.06em;
+    padding: 3px 8px; border-radius: 2px;
+    border: 1px solid transparent;
+    white-space: nowrap;
+  }
+  .chem-chip.done {
+    background: rgba(42,157,110,0.14);
+    border-color: rgba(62,207,110,0.25);
+    color: rgba(62,207,110,0.85);
+  }
+  .chem-chip.todo {
+    background: rgba(255,255,255,0.03);
+    border-color: rgba(255,255,255,0.07);
+    color: rgba(255,255,255,0.22);
+  }
+
   .stats-split {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1225,6 +1281,14 @@
     color: var(--gold);
     text-transform: uppercase;
     font-weight: 500;
+  }
+  .pp-program-name {
+    font-family: var(--serif);
+    font-size: 11px;
+    font-style: italic;
+    color: rgba(201,161,74,0.45);
+    letter-spacing: 0.04em;
+    margin-top: 3px;
   }
   /* Status pill */
   .pp-status {
@@ -1677,9 +1741,18 @@
     <p class="section-eyebrow">III &middot; Statistics</p>
     <div class="stats-split">
 
-      <!-- Left: future content -->
+      <!-- Left: Chemistry study tracker -->
       <div class="stats-left">
-        <div class="scaffold-card">PhD timeline &middot; milestones &middot; habit heatmap &middot; next iteration</div>
+        <div class="chem-tracker reveal">
+          <div class="chem-tracker-head">
+            <span class="chem-tracker-title">Chemistry · Study Progress</span>
+            <span class="chem-tracker-count" id="chemCount">— / —</span>
+          </div>
+          <div class="chem-progress-bar">
+            <div class="chem-progress-fill" id="chemFill"></div>
+          </div>
+          <div id="chemGroups"><!-- populated by JS --></div>
+        </div>
       </div>
 
       <!-- Right: physique panel -->
@@ -1687,7 +1760,10 @@
 
         <!-- Header bar -->
         <div class="pp-top-bar">
-          <div class="pp-heading">Physique Progress</div>
+          <div>
+            <div class="pp-heading">Physique Progress</div>
+            <div class="pp-program-name" id="ppProgramName"></div>
+          </div>
           <div class="pp-status" id="ppStatus">&mdash;</div>
         </div>
 
@@ -2050,6 +2126,71 @@
     }
   }
 
+  // ── Chemistry tracker (from sheet columns P+, starting where row[15] is TRUE/FALSE) ──
+  function buildChemTracker(allRows) {
+    const countEl = document.getElementById('chemCount');
+    const fillEl  = document.getElementById('chemFill');
+    const groupEl = document.getElementById('chemGroups');
+    if (!groupEl) return;
+
+    // Collect all (done, name) pairs from chemistry rows
+    const modules = [];
+    for (const row of allRows) {
+      const v = (row[15] || '').toString().trim().toUpperCase();
+      if (v !== 'TRUE' && v !== 'FALSE') continue;
+      // 5 possible pairs per row at cols 15/16, 17/18, 19/20, 21/22, 23/24
+      for (let c = 15; c <= 23; c += 2) {
+        const boolVal = (row[c] || '').toString().trim().toUpperCase();
+        const name    = (row[c+1] || '').toString().trim();
+        if ((boolVal === 'TRUE' || boolVal === 'FALSE') && name) {
+          modules.push({ done: boolVal === 'TRUE', name });
+        }
+      }
+    }
+    if (!modules.length) return;
+
+    const total    = modules.length;
+    const complete = modules.filter(m => m.done).length;
+    const pct      = Math.round((complete / total) * 100);
+
+    if (countEl) countEl.textContent = complete + ' / ' + total + ' complete';
+    if (fillEl)  fillEl.style.width  = pct + '%';
+
+    // Group by prefix (CHEM, OC, BC)
+    const groups = { 'CHEM': [], 'OC': [], 'BC': [] };
+    for (const m of modules) {
+      const key = m.name.startsWith('CHEM') ? 'CHEM'
+                : m.name.startsWith('OC')   ? 'OC'
+                : m.name.startsWith('BC')   ? 'BC' : 'CHEM';
+      groups[key].push(m);
+    }
+
+    const LABELS = { CHEM: 'General Chemistry', OC: 'Organic Chemistry', BC: 'Biochemistry' };
+    let html = '';
+    for (const [key, mods] of Object.entries(groups)) {
+      if (!mods.length) continue;
+      html += '<div class="chem-group"><div class="chem-group-label">' + LABELS[key] + '</div>';
+      html += '<div class="chem-chips">';
+      for (const m of mods) {
+        // Shorten: "CHEM 1. Atoms" → "CHEM 1"
+        const short = m.name.replace(/\.\s.*$/, '');
+        html += '<span class="chem-chip ' + (m.done ? 'done' : 'todo') + '" title="' + m.name + '">' + short + '</span>';
+      }
+      html += '</div></div>';
+    }
+    groupEl.innerHTML = html;
+  }
+
+  // ── Program name from M4 (rows[3][12]) ──
+  function updateProgramName(allRows) {
+    const el = document.getElementById('ppProgramName');
+    if (!el) return;
+    try {
+      const name = allRows[3] && allRows[3][12] ? allRows[3][12].toString().trim() : '';
+      if (name) el.textContent = name;
+    } catch(_) {}
+  }
+
   function loadPhysiqueFromCSV() {
     fetch(CSV_URL, { cache: 'no-store' })
       .then(r => r.ok ? r.text() : Promise.reject(r.status))
@@ -2067,6 +2208,8 @@
         updatePhysiqueStats(weekRows);
         buildHeatmap12(weekRows);
         updateSheetBtn(weekRows);
+        buildChemTracker(rows);
+        updateProgramName(rows);
         const sub = document.getElementById('statCurrentSub');
         if (sub) sub.textContent = 'Live · synced from Sheet';
         const _sds = document.getElementById('syncDot');

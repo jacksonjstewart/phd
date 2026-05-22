@@ -1,0 +1,25 @@
+{
+  "name": "PhD Prep Dashboard",
+  "short_name": "PhD Prep",
+  "description": "Daily home base — Office, Weekly, Statistics.",
+  "start_url": "/lab/",
+  "scope": "/lab/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0a0806",
+  "theme_color": "#0a0806",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%230a0806'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Georgia,serif' font-size='80' fill='%23c9a14a'%3E%CE%A8%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%230a0806'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Georgia,serif' font-size='220' fill='%23c9a14a'%3E%CE%A8%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
