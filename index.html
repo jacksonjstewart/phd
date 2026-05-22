@@ -108,7 +108,7 @@
     background-position: center center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    filter: brightness(0.32) contrast(1.05) saturate(0.85) sepia(0.22);
+    filter: brightness(0.18) contrast(1.08) saturate(0.80) sepia(0.18);
     opacity: 1;
   }
 
@@ -906,6 +906,26 @@
   }
   .footer .credit a { color: var(--gold-dim); text-decoration: none; }
 
+
+  /* ============================================================
+     SCROLL-REVEAL
+     ============================================================ */
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity 0.72s ease, transform 0.72s ease;
+    transition-delay: var(--reveal-delay, 0s);
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  /* Never animate for users who prefer it */
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+  }
+
   /* ============================================================
      MOBILE
      ============================================================ */
@@ -936,9 +956,8 @@
 
   /* ============================================================
      CONTENT OPACITY OVERRIDES
-     Library background must not bleed through readable surfaces.
-     Tile/card/row/panel backgrounds get a near-opaque dark layer
-     plus a subtle backdrop blur so text stays crisp on any zoom.
+     Tiles use neutral dark grey so the warm library bg doesn't
+     bleed through and tint everything brown.
      ============================================================ */
   .r-row,
   .wm-tile,
@@ -950,21 +969,61 @@
   .today-module,
   .routine-head,
   .routine-list {
-    background-color: rgba(10, 8, 6, 0.88) !important;
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
+    background-color: rgba(14, 14, 18, 0.93) !important;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
   }
   .r-row.done {
     background:
-      linear-gradient(135deg, rgba(12, 36, 24, 0.92) 0%, rgba(8, 24, 15, 0.95) 100%) !important;
+      linear-gradient(135deg, rgba(10, 30, 20, 0.95) 0%, rgba(6, 20, 12, 0.97) 100%) !important;
   }
   .review-banner {
-    background-color: rgba(36, 26, 8, 0.92) !important;
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
+    background-color: rgba(30, 22, 6, 0.93) !important;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
   }
   .hm-cell {
-    background-color: rgba(10, 8, 6, 0.78) !important;
+    background-color: rgba(14, 14, 18, 0.82) !important;
+  }
+
+  /* ============================================================
+     COMPLETE SECTION BUTTON
+     ============================================================ */
+  .complete-btn {
+    width: 100%;
+    margin-top: 16px;
+    padding: 12px 24px;
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 240ms, color 240ms, box-shadow 240ms;
+    animation: fadeInGreeting 0.5s ease;
+  }
+  .complete-btn:hover {
+    background: rgba(201, 161, 74, 0.12);
+    box-shadow: 0 0 18px rgba(201, 161, 74, 0.15);
+  }
+
+  /* Completed section — head shows green Done label, no re-open */
+  .routine.section-complete .routine-head {
+    color: rgba(42, 157, 110, 0.65);
+    border-bottom-color: rgba(42, 157, 110, 0.15);
+    cursor: default;
+  }
+  .routine.section-complete .routine-head:hover {
+    color: rgba(42, 157, 110, 0.65);
+  }
+  .routine.section-complete .rh-toggle { display: none; }
+  .routine.section-complete .routine-head .rh-label::after {
+    content: ' \00b7 done';
+    color: rgba(42, 157, 110, 0.55);
+    font-size: 8px;
+    letter-spacing: 0.42em;
   }
 
 </style>
@@ -1006,7 +1065,7 @@
       <span id="splashWeather">Edmonton · —</span>
     </div>
   </div>
-  <h1 class="splash-greeting" id="splashGreeting">Good morning, Dr. Stewart.</h1>
+  <h1 class="splash-greeting"><span style="color:var(--gold);">PhD</span> <span style="color:var(--text);">Prep</span></h1>
 </section>
 
 <!-- ========== OFFICE ========== -->
@@ -1039,7 +1098,7 @@
       </button>
       <ul class="routine-list" id="morningList">
 
-        <li class="r-row" data-cond="always" tabindex="0" role="checkbox" aria-checked="false">
+        <li class="r-row" data-cond="always" data-task="wake-up" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
             <div class="r-title">Wake Up On Time &mdash; 04:30</div>
@@ -1047,7 +1106,7 @@
           </div>
         </li>
 
-        <li class="r-row" data-cond="always" tabindex="0" role="checkbox" aria-checked="false">
+        <li class="r-row" data-cond="always" data-task="weigh" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
             <div class="r-title">Weigh Yourself &amp; Record</div>
@@ -1055,7 +1114,7 @@
           </div>
         </li>
 
-        <li class="r-row" data-cond="always" tabindex="0" role="checkbox" aria-checked="false">
+        <li class="r-row" data-cond="always" data-task="hydrate" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
             <div class="r-title">Hydrate</div>
@@ -1063,7 +1122,7 @@
           </div>
         </li>
 
-        <li class="r-row" data-cond="always" tabindex="0" role="checkbox" aria-checked="false">
+        <li class="r-row" data-cond="always" data-task="coffee" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
             <div class="r-title">Coffee &amp; Review Schedule</div>
@@ -1071,7 +1130,7 @@
           </div>
         </li>
 
-        <li class="r-row" data-cond="always" tabindex="0" role="checkbox" aria-checked="false">
+        <li class="r-row" data-cond="always" data-task="supplements" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
             <div class="r-title">Full Supplement Stack</div>
@@ -1080,7 +1139,7 @@
         </li>
 
         <!-- Adaptive training row (content changes by day) -->
-        <li class="r-row" id="trainingRow" data-cond="always" tabindex="0" role="checkbox" aria-checked="false">
+        <li class="r-row" id="trainingRow" data-cond="always" data-task="training" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
             <div class="r-title">Morning Training</div>
@@ -1088,7 +1147,7 @@
           </div>
         </li>
 
-        <li class="r-row" data-cond="not-mon" tabindex="0" role="checkbox" aria-checked="false">
+        <li class="r-row" data-cond="not-mon" data-task="steam" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
             <div class="r-title">Steam / Sauna &mdash; 10&ndash;15 min</div>
@@ -1096,7 +1155,7 @@
           </div>
         </li>
 
-        <li class="r-row" data-cond="always" tabindex="0" role="checkbox" aria-checked="false">
+        <li class="r-row" data-cond="always" data-task="hygiene" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
             <div class="r-title">Full Hygiene Routine</div>
@@ -1104,7 +1163,7 @@
           </div>
         </li>
 
-        <li class="r-row" data-cond="always" tabindex="0" role="checkbox" aria-checked="false">
+        <li class="r-row" data-cond="always" data-task="dress" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
             <div class="r-title">Dress Intentionally</div>
@@ -1128,7 +1187,7 @@
           </div>
         </li>
 
-        <li class="r-row" data-cond="tue-only" tabindex="0" role="checkbox" aria-checked="false">
+        <li class="r-row" data-cond="tue-only" data-task="tue-planning" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
             <div class="r-title">Tuesday Activity Planning</div>
@@ -1137,7 +1196,7 @@
           <span class="r-meta">ACE Coffee</span>
         </li>
 
-        <li class="r-row" data-cond="first-thu" tabindex="0" role="checkbox" aria-checked="false">
+        <li class="r-row" data-cond="first-thu" data-task="thu-travel" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
             <div class="r-title">Thursday Travel Planning</div>
@@ -1154,8 +1213,8 @@
         <span class="rh-label">III &middot; Daily Routine</span>
         <span class="rh-toggle" aria-hidden="true">+</span>
       </button>
-      <ul class="routine-list">
-        <li class="r-row" data-cond="always" tabindex="0" role="checkbox" aria-checked="false">
+      <ul class="routine-list" id="dailyList">
+        <li class="r-row" data-cond="always" data-task="505020" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
             <div class="r-title">50 / 50 / 20</div>
@@ -1179,22 +1238,22 @@
 
     <h3 style="font-family: var(--mono); font-size: 9px; letter-spacing: 0.45em; text-transform: uppercase; color: var(--gold); font-weight: 400; margin: 0 0 12px 0;">Weekly Minimums</h3>
     <div class="week-minimums">
-      <div class="wm-tile">
+      <div class="wm-tile reveal" style="--reveal-delay: 0s">
         <div class="wm-label">Resistance</div>
         <div class="wm-value">0 <span style="color:var(--text-faint);font-size:18px;">/ 5</span></div>
         <div class="wm-target">Sessions completed</div>
       </div>
-      <div class="wm-tile">
+      <div class="wm-tile reveal" style="--reveal-delay: 0.1s">
         <div class="wm-label">Cardio 30m+</div>
         <div class="wm-value">0 <span style="color:var(--text-faint);font-size:18px;">/ 5</span></div>
         <div class="wm-target">Sessions completed</div>
       </div>
-      <div class="wm-tile">
+      <div class="wm-tile reveal" style="--reveal-delay: 0.2s">
         <div class="wm-label">50 / 50 / 20</div>
         <div class="wm-value">0</div>
         <div class="wm-target">Day streak with Wayne</div>
       </div>
-      <div class="wm-tile">
+      <div class="wm-tile reveal" style="--reveal-delay: 0.3s">
         <div class="wm-value">0 <span style="color:var(--text-faint);font-size:18px;">/ 7</span></div>
         <div class="wm-target">Nights honoured</div>
       </div>
@@ -1209,7 +1268,7 @@
     <h2 class="section-title" id="stats-title">The body, the months, the milestones.</h2>
     <p class="section-sub">Physique · monthly markers · habit heatmap · PhD timeline</p>
 
-    <div class="phase-head">
+    <div class="phase-head reveal">
       <div>
         <div class="phase-name">Nightwing 2026 · Cut Phase</div>
         <div class="phase-dates">May 20 — August 11, 2026 · 12 weeks</div>
@@ -1218,34 +1277,34 @@
     </div>
 
     <div class="stat-grid">
-      <div class="stat-cell">
+      <div class="stat-cell reveal" style="--reveal-delay: 0s">
         <div class="label">Current</div>
         <div class="value" id="statCurrent">158.0<span style="font-size:18px;color:var(--text-faint);"> lb</span></div>
         <div class="sub" id="statCurrentSub">Sample data — awaiting CSV</div>
       </div>
-      <div class="stat-cell">
+      <div class="stat-cell reveal" style="--reveal-delay: 0.1s">
         <div class="label">Lost</div>
         <div class="value" id="statLost">0.0<span style="font-size:18px;color:var(--text-faint);"> lb</span></div>
         <div class="sub">From 158.0 start</div>
       </div>
-      <div class="stat-cell">
+      <div class="stat-cell reveal" style="--reveal-delay: 0.2s">
         <div class="label">This Week</div>
         <div class="value" id="statWeek">—</div>
         <div class="sub">&Delta; from last check-in</div>
       </div>
-      <div class="stat-cell">
+      <div class="stat-cell reveal" style="--reveal-delay: 0.3s">
         <div class="label">Remaining</div>
         <div class="value" id="statRemaining">15.8<span style="font-size:18px;color:var(--text-faint);"> lb</span></div>
         <div class="sub">To 140.0 goal</div>
       </div>
     </div>
 
-    <div class="chart-wrap">
+    <div class="chart-wrap reveal" style="--reveal-delay: 0.15s">
       <canvas id="weightChart" aria-label="Weight trajectory chart" role="img"></canvas>
     </div>
 
     <h3 style="font-family: var(--mono); font-size: 9px; letter-spacing: 0.45em; text-transform: uppercase; color: var(--gold); font-weight: 400; margin: 0 0 12px 0;">12-Week Heatmap</h3>
-    <div class="heatmap-12" id="heatmap12"></div>
+    <div class="heatmap-12 reveal" id="heatmap12"></div>
 
     <div class="scaffold">
       <div class="scaffold-card">Monthly markers &middot; habit heatmap (48 mo) &middot; PhD timeline &middot; next iteration</div>
@@ -1283,12 +1342,6 @@
   const DAYS_FULL  = ['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
   const DAYS_SHORT = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
   const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  function greetingFor(h) {
-    if (h >= 4  && h < 12) return 'Good morning, Dr. Stewart.';
-    if (h >= 12 && h < 17) return 'Good afternoon, Dr. Stewart.';
-    if (h >= 17 && h < 22) return 'Good evening, Dr. Stewart.';
-    return 'Working late, Dr. Stewart.';
-  }
   function pad(n) { return n < 10 ? '0' + n : '' + n; }
   function setText(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
   function tick() {
@@ -1296,8 +1349,6 @@
     const dayName = DAYS_FULL[now.getDay()];
     const dateLine = MONTHS[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
     const timeStr = pad(h) + ':' + pad(now.getMinutes());
-
-    setText('splashGreeting', greetingFor(h));
     setText('splashDay',      dayName);
     setText('splashDate',     dateLine.toUpperCase());
     setText('splashTime',     timeStr);
@@ -1591,8 +1642,8 @@
   //   Paste your API key + calendar ID below to turn it on.
   //   Setup steps live in docs/CALENDAR_SETUP.md
   // ============================================================
-  const GCAL_API_KEY = ''; // ← paste your Google Cloud API key here
-  const GCAL_CAL_ID  = ''; // ← paste your calendar ID here (e.g. you@gmail.com)
+  const GCAL_API_KEY = 'AIzaSyAEjj-tigrOzroE_3KDT7G_u6YopYMbVno'; // ← paste your Google Cloud API key here
+  const GCAL_CAL_ID  = 'stewart.jacksonjames@gmail.com'; // ← paste your calendar ID here (e.g. you@gmail.com)
   const GCAL_WINDOW  = { startHour: 8, endHour: 16 };
 
   function tzOffsetStr(d) {
@@ -1603,12 +1654,14 @@
     return sign + h + ':' + m;
   }
   function loadCalendarEvents() {
-    if (!GCAL_API_KEY || !GCAL_CAL_ID) return; // not configured
+    if (!GCAL_API_KEY || !GCAL_CAL_ID) return; // not configured — see CALENDAR_SETUP.md
     const now = new Date();
     const tz = tzOffsetStr(now);
     const ymd = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate());
-    const timeMin = ymd + 'T' + pad(GCAL_WINDOW.startHour) + ':00:00' + tz;
-    const timeMax = ymd + 'T' + pad(GCAL_WINDOW.endHour)   + ':00:00' + tz;
+    // Fetch the full useful day: 08:00–23:59.
+    // Events are routed to Section II (office, 08–16) or Section III (daily, 16–24) by start hour.
+    const timeMin = ymd + 'T08:00:00' + tz;
+    const timeMax = ymd + 'T23:59:59' + tz;
     const url = 'https://www.googleapis.com/calendar/v3/calendars/' + encodeURIComponent(GCAL_CAL_ID)
               + '/events?key=' + GCAL_API_KEY
               + '&timeMin=' + encodeURIComponent(timeMin)
@@ -1621,20 +1674,29 @@
   }
 
   function renderCalendarEvents(events) {
-    const list = document.getElementById('officeHoursList');
+    const officeList  = document.getElementById('officeHoursList');
+    const dailyList   = document.getElementById('dailyList');
     const placeholder = document.getElementById('calPlaceholder');
-    if (!list) return;
     if (placeholder) placeholder.remove();
-    const firstStatic = list.querySelector('li[data-cond]');
-    events.slice().reverse().forEach(ev => {
+
+    const fmtT = (s) => { if (!s) return ''; const d = new Date(s); return pad(d.getHours()) + ':' + pad(d.getMinutes()); };
+
+    events.forEach(ev => {
+      // Determine which list this event belongs to by start hour
+      const start = ev.start && (ev.start.dateTime || ev.start.date);
+      const end   = ev.end   && (ev.end.dateTime   || ev.end.date);
+      const startHour = start ? new Date(start).getHours() : 8;
+      // Section II: 08:00–15:59  |  Section III: 16:00–23:59
+      const targetList = (startHour >= 16 && dailyList) ? dailyList : officeList;
+      if (!targetList) return;
+
       const li = document.createElement('li');
       li.className = 'r-row';
       li.setAttribute('tabindex', '0');
       li.setAttribute('role', 'checkbox');
       li.setAttribute('aria-checked', 'false');
-      const start = ev.start && (ev.start.dateTime || ev.start.date);
-      const end   = ev.end   && (ev.end.dateTime   || ev.end.date);
-      const fmtT = (s) => { if (!s) return ''; const d = new Date(s); return pad(d.getHours()) + ':' + pad(d.getMinutes()); };
+      li.dataset.task = 'cal-' + (ev.id ? ev.id.slice(0, 20) : Math.random().toString(36).slice(2));
+
       const when = (start && end && !ev.start.date) ? (fmtT(start) + ' — ' + fmtT(end)) : 'All-day';
       const where = ev.location || '';
       li.innerHTML =
@@ -1645,8 +1707,16 @@
         '</div>';
       li.addEventListener('click', () => toggleRow(li));
       li.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleRow(li); } });
-      if (firstStatic) list.insertBefore(li, firstStatic);
-      else list.appendChild(li);
+
+      // Office events insert before the static day-conditional rows
+      if (targetList === officeList) {
+        const firstStatic = officeList.querySelector('li[data-cond]');
+        if (firstStatic) officeList.insertBefore(li, firstStatic);
+        else officeList.appendChild(li);
+      } else {
+        // Daily: append after existing items
+        dailyList.appendChild(li);
+      }
     });
   }
 
@@ -1667,6 +1737,7 @@
     _routineInited = true;
     const win = activeRoutineWindow(new Date().getHours());
     document.querySelectorAll('.routine').forEach(r => {
+      if (r.classList.contains('section-complete')) return; // already completed today, leave collapsed
       const open = r.dataset.window === win;
       r.classList.toggle('open', open);
       const head = r.querySelector('.routine-head');
@@ -1675,6 +1746,7 @@
   }
   function toggleRoutine(headEl) {
     const r = headEl.parentElement;
+    if (r.classList.contains('section-complete')) return; // locked until midnight
     r.classList.toggle('open');
     headEl.setAttribute('aria-expanded', r.classList.contains('open') ? 'true' : 'false');
   }
@@ -1703,14 +1775,43 @@
   });
 
   // ============================================================
-  // 9 · Checkbox interaction
+  // 9 · Checkbox interaction + localStorage persistence
   // ============================================================
+
+  // Date-scoped key — naturally resets at midnight as the date changes
+  function getTodayKey() {
+    const d = new Date();
+    return 'stewlab-' + d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+  }
+  function loadCheckState() {
+    try { return JSON.parse(localStorage.getItem(getTodayKey()) || '{}'); }
+    catch (e) { return {}; }
+  }
+  function saveCheckState(taskId, checked) {
+    const state = loadCheckState();
+    if (checked) state[taskId] = true; else delete state[taskId];
+    try { localStorage.setItem(getTodayKey(), JSON.stringify(state)); } catch (e) {}
+  }
+  function saveSectionComplete(windowKey) {
+    try { localStorage.setItem(getTodayKey() + '-done-' + windowKey, '1'); } catch (e) {}
+  }
+  function isSectionComplete(windowKey) {
+    try { return localStorage.getItem(getTodayKey() + '-done-' + windowKey) === '1'; } catch (e) { return false; }
+  }
+
   function toggleRow(row) {
     if (row.classList.contains('placeholder')) return;
     const isChecked = !row.classList.contains('done');
     row.classList.toggle('done', isChecked);
     if (row.hasAttribute('role')) row.setAttribute('aria-checked', isChecked ? 'true' : 'false');
+    // Persist
+    if (row.dataset.task) saveCheckState(row.dataset.task, isChecked);
+    // Check if whole section is now done
+    const routine = row.closest('.routine');
+    if (routine) checkSectionCompletion(routine);
   }
+
+  // Attach listeners to all static rows
   document.querySelectorAll('.r-row').forEach(row => {
     row.addEventListener('click', () => toggleRow(row));
     row.addEventListener('keydown', (e) => {
@@ -1718,6 +1819,75 @@
     });
   });
 
+  // Restore today's check state on load
+  function restoreCheckState() {
+    const state = loadCheckState();
+    document.querySelectorAll('.r-row[data-task]').forEach(row => {
+      if (state[row.dataset.task]) {
+        row.classList.add('done');
+        if (row.hasAttribute('role')) row.setAttribute('aria-checked', 'true');
+      }
+    });
+    // Restore completed sections
+    document.querySelectorAll('.routine[data-window]').forEach(r => {
+      if (isSectionComplete(r.dataset.window)) markSectionDone(r);
+    });
+    // Then check each section in case all were already ticked
+    document.querySelectorAll('.routine').forEach(r => checkSectionCompletion(r));
+  }
+
+  // ============================================================
+  // 10 · Complete-section logic
+  // ============================================================
+  function checkSectionCompletion(routineEl) {
+    if (routineEl.classList.contains('section-complete')) return;
+    // Only count visible, non-placeholder rows
+    const rows = Array.from(routineEl.querySelectorAll('.r-row:not(.placeholder)'))
+                      .filter(r => !r.hasAttribute('hidden'));
+    if (rows.length === 0) return;
+    const allDone = rows.every(r => r.classList.contains('done'));
+    const existingBtn = routineEl.querySelector('.complete-btn');
+    if (allDone && !existingBtn) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'complete-btn';
+      btn.textContent = 'Complete · hide section until midnight';
+      btn.onclick = () => {
+        saveSectionComplete(routineEl.dataset.window);
+        markSectionDone(routineEl);
+      };
+      const list = routineEl.querySelector('.routine-list');
+      if (list) list.appendChild(btn);
+    } else if (!allDone && existingBtn) {
+      existingBtn.remove();
+    }
+  }
+
+  function markSectionDone(routineEl) {
+    routineEl.classList.add('section-complete');
+    routineEl.classList.remove('open');
+    const head = routineEl.querySelector('.routine-head');
+    if (head) head.setAttribute('aria-expanded', 'false');
+    const btn = routineEl.querySelector('.complete-btn');
+    if (btn) btn.remove();
+  }
+
+  // ============================================================
+  // 11 · Scroll-reveal (IntersectionObserver)
+  // ============================================================
+  function initScrollReveal() {
+    if (!('IntersectionObserver' in window)) {
+      // Fallback: make everything visible immediately
+      document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+      return;
+    }
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  }
   // ============================================================
   // BOOT
   // ============================================================
@@ -1725,13 +1895,15 @@
   setInterval(tick, 30 * 1000);
   onScroll();
   initRoutines();
+  restoreCheckState();
+  initScrollReveal();
   refreshWeather();
-  setInterval(refreshWeather, 30 * 60 * 1000);  // every 30 min
+  setInterval(refreshWeather, 30 * 60 * 1000);
   buildWeekGrid();
   buildHeatmap12();
   loadPhysiqueFromCSV();
   loadCalendarEvents();
-  setInterval(loadCalendarEvents, 10 * 60 * 1000);  // every 10 min
+  setInterval(loadCalendarEvents, 10 * 60 * 1000);
 </script>
 </body>
 </html>
