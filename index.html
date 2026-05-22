@@ -668,12 +668,13 @@
     border-style: dashed;
   }
   .r-row.placeholder:hover { border-color: var(--border); transform: none; }
-  /* Calendar-sourced events — distinct dark blue so they stand apart from static tasks */
+  /* Calendar-sourced events — midnight-blue tint: nearly identical to dark grey tiles but
+     with a subtle blue cast (r=9 g=11 b=25 vs normal r=14 g=14 b=18). Gold rim intact. */
   .r-row.cal-event {
-    background: linear-gradient(180deg, rgba(20, 48, 100, 0.72) 0%, rgba(10, 28, 68, 0.88) 100%);
-    border-color: rgba(80, 140, 230, 0.22);
+    background: rgba(9, 11, 25, 0.93) !important;
+    border-color: rgba(201, 161, 74, 0.22) !important;
   }
-  .r-row.cal-event:hover { border-color: rgba(80, 140, 230, 0.5); }
+  .r-row.cal-event:hover { border-color: rgba(201, 161, 74, 0.45) !important; }
   .r-row .box {
     width: 14px; height: 14px;
     border: 1px solid var(--gold-dim);
@@ -1024,6 +1025,56 @@
     box-shadow: 0 0 18px rgba(201, 161, 74, 0.15);
   }
 
+  /* ============================================================
+     STEWARD LINK — cross-app launcher at foot of OFFICE tab
+     ============================================================ */
+  .steward-link {
+    display: block;
+    margin-top: 24px;
+    padding: 18px 24px;
+    background: rgba(14, 14, 18, 0.93);
+    border: 1px solid rgba(201, 161, 74, 0.18);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color 260ms ease, box-shadow 260ms ease;
+  }
+  .steward-link:hover {
+    border-color: rgba(201, 161, 74, 0.42);
+    box-shadow: 0 0 20px rgba(201, 161, 74, 0.1);
+  }
+  .steward-inner {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+  .steward-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.45em;
+    color: var(--gold);
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+  .steward-count {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    color: var(--text-dim);
+    font-weight: 400;
+    text-transform: uppercase;
+    transition: color 260ms ease;
+  }
+  .steward-count.loaded { color: var(--text); }
+  .steward-sub {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--text-faint);
+    margin-top: 6px;
+  }
+
   /* Completed section — head shows green Done label, no re-open */
   .routine.section-complete .routine-head {
     color: rgba(42, 157, 110, 0.65);
@@ -1238,6 +1289,19 @@
         </li>
       </ul>
     </div>
+
+    <!-- STEWARD — cross-app launcher -->
+    <a href="https://jacksonjstewart.github.io/stewardapp/"
+       target="_blank" rel="noopener"
+       class="steward-link reveal"
+       id="stewardBtn"
+       style="--reveal-delay: 0.1s">
+      <div class="steward-inner">
+        <span class="steward-label">Steward</span>
+        <span class="steward-count" id="stewardCount">— Loading&hellip;</span>
+      </div>
+      <div class="steward-sub">Household &middot; Finances &middot; Logistics</div>
+    </a>
 
   </div>
 </section>
@@ -1883,12 +1947,8 @@
       btn.type = 'button';
       btn.className = 'complete-btn';
       btn.textContent = 'Complete · hide section until midnight';
-      btn.onclick = () => {
-        saveSectionComplete(routineEl.dataset.window);
-        markSectionDone(routineEl);
-      };
-      const list = routineEl.querySelector('.routine-list');
-      if (list) list.appendChild(btn);
+      btn.addEventListener('click', () => markSectionDone(routineEl));
+      routineEl.appendChild(btn);
     } else if (!allDone && existingBtn) {
       existingBtn.remove();
     }
@@ -1896,28 +1956,19 @@
 
   function markSectionDone(routineEl) {
     routineEl.classList.add('section-complete');
-    routineEl.classList.remove('open');
-    const head = routineEl.querySelector('.routine-head');
-    if (head) head.setAttribute('aria-expanded', 'false');
+    const windowKey = routineEl.dataset.window;
+    if (windowKey) saveSectionComplete(windowKey);
+    // Collapse
+    const list = routineEl.querySelector('.routine-list');
+    if (list) list.style.display = 'none';
     const btn = routineEl.querySelector('.complete-btn');
     if (btn) btn.remove();
-  }
-
-  // ============================================================
-  // 11 · Scroll-reveal (IntersectionObserver)
-  // ============================================================
-  function initScrollReveal() {
-    if (!('IntersectionObserver' in window)) {
-      // Fallback: make everything visible immediately
-      document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
-      return;
+    const head = routineEl.querySelector('.routine-head');
+    if (head) {
+      head.setAttribute('aria-expanded', 'false');
+      const tog = head.querySelector('.rh-toggle');
+      if (tog) tog.textContent = '+';
     }
-    const obs = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
-      });
-    }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
-    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
   }
 
   // ============================================================
@@ -1925,7 +1976,6 @@
   // ============================================================
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   window.scrollTo({ top: 0, behavior: 'instant' });
-
   tick();
   setInterval(tick, 30 * 1000);
   onScroll();
@@ -1939,6 +1989,72 @@
   loadPhysiqueFromCSV();
   loadCalendarEvents();
   setInterval(loadCalendarEvents, 10 * 60 * 1000);
+
+  // ============================================================
+  // STEWARD COUNT — reads Steward app’s localStorage (same GitHub Pages origin:
+  // jacksonjstewart.github.io, so keys are shared across /lab/ and /stewardapp/).
+  // ============================================================
+  function loadStewardCount() {
+    const el = document.getElementById('stewardCount');
+    if (!el) return;
+    try {
+      const STEWARD_CANDIDATES = [
+        'steward-tasks', 'stewardTasks', 'steward_tasks',
+        'steward-data',  'stewardData',  'steward_data',
+        'stewartTasks',  'tasks',        'steward-state',
+        'steward',       'taskList',     'task-list'
+      ];
+      let actionCount = null;
+
+      // Step 1: try known key candidates
+      for (const key of STEWARD_CANDIDATES) {
+        const raw = localStorage.getItem(key);
+        if (!raw) continue;
+        try {
+          const data = JSON.parse(raw);
+          if (Array.isArray(data) && data.length > 0) {
+            actionCount = data.filter(t => t && !t.done && !t.completed && !t.finished).length;
+            break;
+          }
+          if (data && typeof data === 'object') {
+            if (typeof data.left  === 'number') { actionCount = data.left;  break; }
+            if (typeof data.total === 'number') { actionCount = data.total; break; }
+          }
+        } catch (_) {}
+      }
+
+      // Step 2: broader scan — any key whose value is a task-shaped array
+      if (actionCount === null) {
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (!key || key.startsWith('stewlab-')) continue;
+          const raw = localStorage.getItem(key);
+          if (!raw || raw[0] !== '[') continue;
+          try {
+            const data = JSON.parse(raw);
+            if (Array.isArray(data) && data.length > 0 && data[0] && typeof data[0] === 'object') {
+              actionCount = data.filter(t => !t.done && !t.completed && !t.finished).length;
+              break;
+            }
+          } catch (_) {}
+        }
+      }
+
+      // Step 3: render
+      if (actionCount !== null) {
+        el.textContent = '— ' + actionCount + ' ACTION' + (actionCount !== 1 ? 'S' : '') + ' FOR TODAY';
+        el.classList.add('loaded');
+      } else {
+        el.textContent = '— OPEN APP →';
+      }
+    } catch (_) {
+      const el2 = document.getElementById('stewardCount');
+      if (el2) el2.textContent = '— OPEN APP →';
+    }
+  }
+
+  loadStewardCount();
+
 </script>
 </body>
 </html>
