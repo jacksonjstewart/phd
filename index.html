@@ -858,6 +858,33 @@
     text-transform: uppercase;
     color: rgba(201,161,74,0.65);
     margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .sheet-link {
+    font-family: var(--mono);
+    font-size: 7px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(201,161,74,0.5);
+    text-decoration: none;
+    border: 1px solid rgba(201,161,74,0.18);
+    padding: 3px 9px;
+    border-radius: 2px;
+    background: rgba(201,161,74,0.04);
+    transition: color 200ms, border-color 200ms, background 200ms;
+    white-space: nowrap;
+  }
+  .sheet-link::before {
+    content: '⊞ ';
+    font-size: 8px;
+    opacity: 0.7;
+  }
+  .sheet-link:hover {
+    color: rgba(201,161,74,0.9);
+    border-color: rgba(201,161,74,0.45);
+    background: rgba(201,161,74,0.08);
   }
 
   .heatmap-12 {
@@ -1360,7 +1387,7 @@
   .stats-notif, .office-notif {
     display: block;
     position: absolute;
-    top: -8px;
+    top: -13px;
     left: 50%;
     transform: translateX(-50%);
     width: 6px; height: 6px;
@@ -1703,7 +1730,12 @@
         </div>
 
         <!-- Trajectory chart -->
-        <div class="chart-section-title">12-Week Program Progress</div>
+        <div class="chart-section-title">
+          <span>12-Week Program Progress</span>
+          <a class="sheet-link"
+             href="https://docs.google.com/spreadsheets/d/1My6fWDsy8EiCZ9qc_0O0yvAcdVTC-V4hTFQm7E_I07c/edit?gid=1100245422#gid=1100245422"
+             target="_blank" rel="noopener" title="Edit in Google Sheets">Edit Sheet</a>
+        </div>
         <div class="chart-wrap reveal" style="--reveal-delay: 0.1s">
           <canvas id="weightChart" aria-label="Weight trajectory chart" role="img"></canvas>
         </div>
