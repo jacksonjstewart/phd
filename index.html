@@ -1005,7 +1005,7 @@
 
     .sync-bar { left: 20px; bottom: 16px; }
     .splash { padding: 0 20px; }
-    .splash-greeting { font-size: clamp(20px, 5.5vw, 28px); max-width: 95%; }
+    .splash-greeting { font-size: clamp(42px, 11vw, 56px); max-width: 95%; gap: 12px; }
 
     .section { padding: 120px 22px 60px; }
     .office-grid { grid-template-columns: 1fr; gap: 50px; }
@@ -1274,6 +1274,37 @@
     font-size: 13px; color: var(--text-dim);
     line-height: 1.5;
   }
+
+  /* ── Competence System ── */
+  .cp-widget{display:none;flex-direction:column;align-items:center;gap:5px;position:relative;cursor:default;}
+  .cp-widget.earned{display:flex;}
+  .cp-widget-office{position:absolute;top:140px;right:40px;}
+  @media(max-width:900px){.cp-widget-office{top:90px;right:18px;}}
+  .cp-widget-stats-wrap{display:flex;justify-content:center;margin-top:56px;padding-top:40px;border-top:1px solid var(--border-soft);}
+  .cp-widget-label{font-family:var(--mono);font-size:7px;letter-spacing:0.35em;text-transform:uppercase;color:var(--text-faint);}
+  .cp-ring-wrap{position:relative;width:80px;height:80px;}
+  .cp-ring-wrap svg{display:block;}
+  .cp-ring-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
+  .cp-ring-level{font-family:var(--serif);font-style:italic;font-size:22px;color:var(--gold);line-height:1;}
+  .cp-widget-sub{font-family:var(--mono);font-size:7px;letter-spacing:0.12em;color:var(--text-faint);text-align:center;}
+  .cp-ring-title{font-family:var(--mono);font-size:7px;letter-spacing:0.35em;text-transform:uppercase;color:rgba(201,161,74,0.75);text-align:center;margin-top:1px;}
+  .cp-tooltip{position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);width:224px;background:rgba(10,8,6,0.97);border:1px solid rgba(201,161,74,0.28);padding:14px 16px;pointer-events:none;opacity:0;transition:opacity 200ms;z-index:200;}
+  .cp-widget:hover .cp-tooltip{opacity:1;}
+  .cp-tooltip-title{font-family:var(--mono);font-size:8px;letter-spacing:0.4em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+  .cp-tooltip-row{font-family:var(--mono);font-size:8px;letter-spacing:0.08em;color:var(--text-dim);margin-bottom:3px;}
+  .cp-tooltip-msg{font-family:var(--serif);font-style:italic;font-size:12px;color:var(--text);line-height:1.5;margin-top:10px;padding-top:10px;border-top:1px solid var(--border-soft);}
+  .cp-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.87);z-index:9999;align-items:center;justify-content:center;}
+  .cp-modal-overlay.open{display:flex;}
+  .cp-modal-box{background:rgba(12,10,7,0.98);border:1px solid rgba(201,161,74,0.35);box-shadow:0 0 60px rgba(201,161,74,0.1);padding:48px 44px;max-width:440px;width:90%;text-align:center;animation:cpModalIn 0.45s ease forwards;}
+  @keyframes cpModalIn{from{opacity:0;transform:translateY(14px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+  .cp-modal-icon{font-size:26px;color:var(--gold);margin-bottom:18px;opacity:0.7;}
+  .cp-modal-heading{font-family:var(--mono);font-size:8px;letter-spacing:0.55em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
+  .cp-modal-points{font-family:var(--serif);font-style:italic;font-size:28px;color:var(--text);line-height:1;margin-bottom:22px;}
+  .cp-modal-body{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--text-dim);line-height:1.65;margin-bottom:24px;}
+  .cp-modal-stats{font-family:var(--mono);font-size:8.5px;letter-spacing:0.18em;color:var(--text-faint);text-transform:uppercase;line-height:2.2;margin-bottom:30px;border-top:1px solid var(--border-soft);border-bottom:1px solid var(--border-soft);padding:14px 0;}
+  .cp-modal-stats span{color:var(--gold);}
+  .cp-modal-btn{font-family:var(--mono);font-size:8px;letter-spacing:0.45em;text-transform:uppercase;color:var(--gold);background:transparent;border:1px solid rgba(201,161,74,0.3);padding:10px 28px;cursor:pointer;transition:border-color 200ms,background 200ms;}
+  .cp-modal-btn:hover{border-color:var(--gold);background:rgba(201,161,74,0.07);}
 
   .stats-split {
     display: grid;
@@ -1642,6 +1673,28 @@
 
 <!-- ========== OFFICE ========== -->
 <section id="office" class="section" aria-labelledby="office-title">
+  <div class="cp-widget cp-widget-office" id="cpWidgetOffice">
+    <div class="cp-widget-label">Competence</div>
+    <div class="cp-ring-wrap">
+      <svg viewBox="0 0 80 80" width="80" height="80">
+        <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3.5"/>
+        <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(201,161,74,0.8)" stroke-width="3.5"
+          stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="188.5"
+          transform="rotate(-90 40 40)" id="cpArcOffice"/>
+      </svg>
+      <div class="cp-ring-inner"><span class="cp-ring-level" id="cpLevelOffice">0</span></div>
+    </div>
+    <div class="cp-ring-title" id="cpRingTitleOffice"></div>
+    <div class="cp-widget-sub" id="cpSubOffice">0 / 10</div>
+    <div class="cp-tooltip">
+      <div class="cp-tooltip-title" id="cpTitleOffice">—</div>
+      <div class="cp-tooltip-row" id="cpRow1Office">Level 0</div>
+      <div class="cp-tooltip-row" id="cpRow2Office">0 CP Total</div>
+      <div class="cp-tooltip-row" id="cpRow3Office">0 / 10 to Level 1</div>
+      <div class="cp-tooltip-msg" id="cpMsgOffice">Begin your discipline.</div>
+    </div>
+  </div>
+
   <div class="section-inner">
     <p class="section-eyebrow">OFFICE</p>
     <header class="today-module">
@@ -1942,8 +1995,44 @@
       </div>
 
     </div>
+
+    <div class="cp-widget-stats-wrap">
+      <div class="cp-widget" id="cpWidgetStats">
+        <div class="cp-widget-label">Competence</div>
+        <div class="cp-ring-wrap">
+          <svg viewBox="0 0 80 80" width="80" height="80">
+            <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3.5"/>
+            <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(201,161,74,0.8)" stroke-width="3.5"
+              stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="188.5"
+              transform="rotate(-90 40 40)" id="cpArcStats"/>
+          </svg>
+          <div class="cp-ring-inner"><span class="cp-ring-level" id="cpLevelStats">0</span></div>
+        </div>
+        <div class="cp-ring-title" id="cpRingTitleStats"></div>
+        <div class="cp-widget-sub" id="cpSubStats">0 / 10</div>
+        <div class="cp-tooltip">
+          <div class="cp-tooltip-title" id="cpTitleStats">—</div>
+          <div class="cp-tooltip-row" id="cpRow1Stats">Level 0</div>
+          <div class="cp-tooltip-row" id="cpRow2Stats">0 CP Total</div>
+          <div class="cp-tooltip-row" id="cpRow3Stats">0 / 10 to Level 1</div>
+          <div class="cp-tooltip-msg" id="cpMsgStats">Begin your discipline.</div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
+
+<!-- COMPETENCE MODAL -->
+<div class="cp-modal-overlay" id="cpModal" role="dialog" aria-modal="true">
+  <div class="cp-modal-box">
+    <div class="cp-modal-icon">✦</div>
+    <div class="cp-modal-heading">Competence Point Earned</div>
+    <div class="cp-modal-points">+1 Competence Point</div>
+    <div class="cp-modal-body" id="cpModalBody">Daily completion of all difficult tasks and routine habits builds competence as a man over time. You are demonstrating to your son what it looks like to be a man who follows through with his plans.</div>
+    <div class="cp-modal-stats" id="cpModalStats"></div>
+    <button class="cp-modal-btn" id="cpModalClose">Acknowledged</button>
+  </div>
+</div>
 
 <footer class="footer">
   <div class="crest"><span class="crest-gold">Dr.</span> Jackson J. Stewart, <span class="crest-gold">PhD.</span></div>
@@ -2737,6 +2826,7 @@
       const tog = head.querySelector('.rh-toggle');
       if (tog) tog.textContent = '+';
     }
+    checkForCP();
   }
 
   // ============================================================
@@ -2804,6 +2894,189 @@
       dot.classList.remove('visible');
     }
   }
+
+
+  // ============================================================
+  // COMPETENCE SYSTEM
+  // ============================================================
+  const CP_KEY = 'stewlab-competence';
+  const CP_C   = 0.0925; // quadratic coefficient (tuned for level 99 ≈ 3 yrs daily)
+
+  function cpCost(n) {
+    // CP required to advance from level (n-1) to level n
+    if (n <= 0) return 0;
+    return Math.floor(10 + 2*(n-1) + CP_C*(n-1)*(n-1));
+  }
+  function levelFromCP(total) {
+    let lv = 0, spent = 0;
+    while (lv < 99) {
+      const cost = cpCost(lv + 1);
+      if (spent + cost > total) break;
+      spent += cost; lv++;
+    }
+    return lv;
+  }
+  function cpInLevel(total) {
+    // CP accumulated inside current level (toward next)
+    let lv = 0, spent = 0;
+    while (lv < 99) {
+      const cost = cpCost(lv + 1);
+      if (spent + cost > total) return total - spent;
+      spent += cost; lv++;
+    }
+    return total - spent;
+  }
+  function cpTitle(lv) {
+    if (lv >= 99) return 'King';
+    if (lv >= 80) return 'Duke';
+    if (lv >= 60) return 'Commander';
+    if (lv >= 30) return 'Exemplar';
+    if (lv >= 10) return 'Stalwart';
+    if (lv >= 1)  return 'Aspirant';
+    return '';
+  }
+  function cpMessage(lv) {
+    if (lv >= 99) return 'Maximum discipline achieved. You have built something permanent — a legacy your family will carry forward.';
+    if (lv >= 80) return 'You are among the elite few. Your son will one day tell the story of his father's discipline.';
+    if (lv >= 60) return 'Few men reach this standard. Your consistency is a rare and irreplaceable gift to your family.';
+    if (lv >= 30) return 'You have become the example. The standard you keep is the inheritance you leave.';
+    if (lv >= 10) return 'Your son is watching. Not what you say — what you do, every single day.';
+    if (lv >= 1)  return 'Every task completed today is a stone in the foundation your son will stand on.';
+    return 'Begin your discipline. Every consistent man started with a single completed day.';
+  }
+  function loadCPData() {
+    try { return JSON.parse(localStorage.getItem(CP_KEY) || 'null') || { totalCP:0, lastEarned:null, log:[] }; }
+    catch(_) { return { totalCP:0, lastEarned:null, log:[] }; }
+  }
+  function saveCPData(d) {
+    try { localStorage.setItem(CP_KEY, JSON.stringify(d)); } catch(_) {}
+  }
+  function todayISO() {
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+
+  function renderCPWidgets() {
+    const data = loadCPData();
+    const total = data.totalCP || 0;
+    const lv    = levelFromCP(total);
+    const title = cpTitle(lv);
+    const inLv  = cpInLevel(total);
+    const toNext = lv < 99 ? cpCost(lv + 1) : null;
+    const circ  = 188.5;
+    const pct   = toNext ? inLv / toNext : 1;
+    const offset = circ * (1 - pct);
+
+    ['Office','Stats'].forEach(sfx => {
+      const widget = document.getElementById('cpWidget' + sfx);
+      if (!widget) return;
+
+      // Show/hide
+      if (total > 0) widget.classList.add('earned');
+
+      // Arc
+      const arc = document.getElementById('cpArc' + sfx);
+      if (arc) arc.setAttribute('stroke-dashoffset', offset.toFixed(1));
+
+      // Level numeral
+      const lvEl = document.getElementById('cpLevel' + sfx);
+      if (lvEl) lvEl.textContent = lv;
+
+      // Sub-line
+      const subEl = document.getElementById('cpSub' + sfx);
+      if (subEl) subEl.textContent = lv < 99 ? inLv + ' / ' + toNext : total + ' CP';
+
+      // Title below ring (always visible when earned, hidden when no title yet)
+      const ringTitleEl = document.getElementById('cpRingTitle' + sfx);
+      if (ringTitleEl) {
+        ringTitleEl.textContent = title;
+        ringTitleEl.style.display = title ? '' : 'none';
+      }
+
+      // Tooltip
+      const titleEl = document.getElementById('cpTitle' + sfx);
+      if (titleEl) titleEl.textContent = title || 'Level 0';
+      const r1 = document.getElementById('cpRow1' + sfx);
+      if (r1) r1.textContent = 'Level ' + lv + (title ? ' — ' + title : '');
+      const r2 = document.getElementById('cpRow2' + sfx);
+      if (r2) r2.textContent = total + ' CP Total';
+      const r3 = document.getElementById('cpRow3' + sfx);
+      if (r3) r3.textContent = lv < 99 ? inLv + ' / ' + toNext + ' to Level ' + (lv+1) : 'Max Level Reached';
+      const msgEl = document.getElementById('cpMsg' + sfx);
+      if (msgEl) msgEl.textContent = cpMessage(lv);
+    });
+  }
+
+  function showCPModal(data) {
+    const modal  = document.getElementById('cpModal');
+    const stats  = document.getElementById('cpModalStats');
+    const body   = document.getElementById('cpModalBody');
+    if (!modal) return;
+    const total  = data.totalCP;
+    const lv     = levelFromCP(total);
+    const title  = cpTitle(lv);
+    const inLv   = cpInLevel(total);
+    const toNext = lv < 99 ? cpCost(lv + 1) : null;
+    if (body) body.textContent = 'Daily completion of all difficult tasks and routine habits builds competence as a man over time. You are demonstrating to your son what it looks like to be a man who follows through with his plans.';
+    if (stats) stats.innerHTML =
+      'Total CP &nbsp; <span>' + total + '</span><br>' +
+      'Level &nbsp; <span>' + lv + (title ? ' — ' + title : '') + '</span><br>' +
+      (toNext ? 'Progress &nbsp; <span>' + inLv + ' / ' + toNext + ' to Level ' + (lv+1) + '</span>' : '<span>Max Level</span>');
+    modal.classList.add('open');
+    document.getElementById('cpModalClose').focus();
+  }
+
+  function syncCPToSheets(data) {
+    if (!APPS_SCRIPT_URL) return;
+    var url = APPS_SCRIPT_URL + '?action=setCP&totalCP=' + (data.totalCP || 0) + '&lastEarned=' + encodeURIComponent(data.lastEarned || '');
+    fetch(url).catch(function() {});
+  }
+
+  function loadCPFromSheets() {
+    if (!APPS_SCRIPT_URL) return;
+    fetch(APPS_SCRIPT_URL + '?action=getCP', { cache: 'no-store' })
+      .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
+      .then(function(remote) {
+        if (typeof remote.totalCP !== 'number') return;
+        var local = loadCPData();
+        var localCP = local.totalCP || 0;
+        if (remote.totalCP > localCP) {
+          // Sheet is ahead (earned on another device) — pull it down
+          var merged = { totalCP: remote.totalCP, lastEarned: remote.lastEarned || null, log: local.log || [] };
+          saveCPData(merged);
+          renderCPWidgets();
+        } else if (localCP > remote.totalCP) {
+          // Local is ahead (sheet not yet updated) — push it up
+          syncCPToSheets(local);
+        }
+      })
+      .catch(function() {}); // silent fail — localStorage works as fallback
+  }
+
+  function checkForCP() {
+    // All 3 routines section-complete AND steward = 0
+    const routines = document.querySelectorAll('.routine[data-window]');
+    const allDone  = routines.length > 0 &&
+                     Array.from(routines).every(r => r.classList.contains('section-complete'));
+    const stewardOk = _stewardActionCount !== null && _stewardActionCount === 0;
+    if (!allDone || !stewardOk) return;
+
+    const data  = loadCPData();
+    const today = todayISO();
+    if (data.lastEarned === today) return; // already earned today
+
+    data.totalCP   = (data.totalCP || 0) + 1;
+    data.lastEarned = today;
+    data.log        = [...(data.log || []), today].slice(-3650); // keep ~10yr
+    saveCPData(data);
+    syncCPToSheets(data);
+    renderCPWidgets();
+    showCPModal(data);
+  }
+
+  document.getElementById('cpModalClose').addEventListener('click', () => {
+    document.getElementById('cpModal').classList.remove('open');
+  });
 
   // ============================================================
   // BOOT
@@ -2879,6 +3152,7 @@
         el.classList.add('loaded');
         if (btn) btn.classList.add('no-actions');
         _stewardActionCount = 0;
+        checkForCP();
       } else if (count !== null && count > 0) {
         el.textContent = '\u2014 ' + count + ' ACTION' + (count !== 1 ? 'S' : '') + ' FOR TODAY';
         el.classList.add('loaded');
@@ -2894,6 +3168,8 @@
     }
   }
   loadStewardCount();
+  renderCPWidgets();
+  loadCPFromSheets();
 
 </script>
 </body>
