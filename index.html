@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2.5" />
 <meta name="theme-color" content="#0a0806" />
-<title>The Stewart Lab</title>
+<title>PhD Prep Dashboard</title>
 <!-- Inline SVG favicon — gold serif "S" on dark, no network request, no 404 -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%230a0806'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Georgia,serif' font-size='24' fill='%23c9a14a'%3EDr.%3C/text%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -20,7 +20,7 @@
 
 <style>
   /* ============================================================
-     STEWART LAB · PhD PREP DASHBOARD · v0.6
+     PhD PREP DASHBOARD · v0.1
      Dark academic library aesthetic
      ============================================================ */
 
@@ -167,6 +167,7 @@
     padding: 4px 0;
     border-bottom: 1px solid transparent;
     transition: color 200ms, border-color 200ms;
+    position: relative;
   }
   .nav-links a:hover,
   .nav-links a.active {
@@ -1357,11 +1358,13 @@
     50%       { box-shadow: 0 0 9px 3px rgba(62,207,110,0.9); }
   }
   .stats-notif, .office-notif {
-    display: inline-block;
+    display: block;
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
     width: 6px; height: 6px;
     border-radius: 50%;
-    margin-left: 5px;
-    vertical-align: middle;
     opacity: 0;
     transition: opacity 0.4s ease;
   }
@@ -1427,8 +1430,8 @@
 <!-- Bottom-left sync indicator -->
 <div class="sync-bar" role="status" aria-live="polite">
   <span class="sync-dot" id="syncDot" aria-hidden="true"></span>
-  <span class="sync-label" id="syncLabel">Live</span>
-  <span class="sync-version">v0.9 · Stewart Lab</span>
+  <span class="sync-label" id="syncLabel">—</span>
+  <span class="sync-version">v0.1 · PhD Prep</span>
 </div>
 
 <section id="splash" class="splash">
@@ -1727,12 +1730,10 @@
     const lbl = document.getElementById('syncLabel');
     const probe = new Image();
     probe.onload = () => {
-      if (lbl) lbl.textContent = 'Library';
-      console.log('[Stewart Lab] Background: ./library.webp confirmed (' + probe.naturalWidth + 'x' + probe.naturalHeight + ')');
+      console.log('[PhD Prep] Background: ./library.webp confirmed (' + probe.naturalWidth + 'x' + probe.naturalHeight + ')');
     };
     probe.onerror = () => {
-      if (lbl) lbl.textContent = 'No image';
-      console.warn('[Stewart Lab] ./library.webp failed to load — atmospheric layer only');
+      console.warn('[PhD Prep] ./library.webp failed to load — atmospheric layer only');
     };
     probe.src = './library.webp';
   })();
@@ -1993,9 +1994,17 @@
         buildHeatmap12(weekRows);
         const sub = document.getElementById('statCurrentSub');
         if (sub) sub.textContent = 'Live · synced from Sheet';
+        const _sds = document.getElementById('syncDot');
+        const _sls = document.getElementById('syncLabel');
+        if (_sds) { _sds.classList.remove('error','demo'); }
+        if (_sls) _sls.textContent = 'Synced';
       })
       .catch(err => {
-        console.warn('[Stewart Lab] CSV fetch failed, falling back to sample data:', err);
+        console.warn('[PhD Prep] CSV fetch failed, falling back to sample data:', err);
+        const _sdf = document.getElementById('syncDot');
+        const _slf = document.getElementById('syncLabel');
+        if (_sdf) _sdf.classList.add('error');
+        if (_slf) _slf.textContent = 'Sync Failed';
         renderWeightChart(
           ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12'],
           [158.0,156.7,155.5,154.2,152.9,151.7,150.5,149.3,148.0,146.8,145.5,144.3],
@@ -2144,9 +2153,17 @@
       .then(data => {
         if (data && data.error) throw new Error(data.error);
         renderCalendarEvents(Array.isArray(data) ? data : []);
+        const _sd = document.getElementById('syncDot');
+        const _sl = document.getElementById('syncLabel');
+        if (_sd) { _sd.classList.remove('error','demo'); }
+        if (_sl) _sl.textContent = 'Synced';
       })
       .catch(err => {
-        console.warn('[Stewart Lab] Calendar fetch failed:', err);
+        console.warn('[PhD Prep] Calendar fetch failed:', err);
+        const _sd2 = document.getElementById('syncDot');
+        const _sl2 = document.getElementById('syncLabel');
+        if (_sd2) _sd2.classList.add('error');
+        if (_sl2) _sl2.textContent = 'Sync Failed';
         const ph = document.getElementById('calPlaceholder');
         if (ph) {
           const n = ph.querySelector('.r-note');
