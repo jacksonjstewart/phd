@@ -867,13 +867,13 @@
     font-size: 7px;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: rgba(201,161,74,0.5);
+    color: rgba(62,207,110,0.6);
     text-decoration: none;
-    border: 1px solid rgba(201,161,74,0.18);
+    border: 1px solid rgba(62,207,110,0.22);
     padding: 3px 9px;
     border-radius: 2px;
-    background: rgba(201,161,74,0.04);
-    transition: color 200ms, border-color 200ms, background 200ms;
+    background: rgba(62,207,110,0.04);
+    transition: color 200ms, border-color 200ms, background 200ms, box-shadow 200ms;
     white-space: nowrap;
   }
   .sheet-link::before {
@@ -882,9 +882,25 @@
     opacity: 0.7;
   }
   .sheet-link:hover {
-    color: rgba(201,161,74,0.9);
-    border-color: rgba(201,161,74,0.45);
-    background: rgba(201,161,74,0.08);
+    color: rgba(62,207,110,0.95);
+    border-color: rgba(62,207,110,0.5);
+    background: rgba(62,207,110,0.08);
+  }
+  @keyframes sheetCheckinPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(34,211,238,0); border-color: rgba(34,211,238,0.3); }
+    50%       { box-shadow: 0 0 8px 2px rgba(34,211,238,0.28); border-color: rgba(34,211,238,0.7); }
+  }
+  .sheet-link.needs-checkin {
+    color: rgba(34,211,238,0.85);
+    border-color: rgba(34,211,238,0.35);
+    background: rgba(34,211,238,0.05);
+    animation: sheetCheckinPulse 2.2s ease-in-out infinite;
+  }
+  .sheet-link.needs-checkin::before { content: '◆ '; }
+  .sheet-link.needs-checkin:hover {
+    color: rgba(34,211,238,1);
+    border-color: rgba(34,211,238,0.7);
+    background: rgba(34,211,238,0.1);
   }
 
   .heatmap-12 {
@@ -1732,9 +1748,9 @@
         <!-- Trajectory chart -->
         <div class="chart-section-title">
           <span>12-Week Program Progress</span>
-          <a class="sheet-link"
+          <a class="sheet-link" id="sheetBtn"
              href="https://docs.google.com/spreadsheets/d/1My6fWDsy8EiCZ9qc_0O0yvAcdVTC-V4hTFQm7E_I07c/edit?gid=1100245422#gid=1100245422"
-             target="_blank" rel="noopener" title="Edit in Google Sheets">Edit Sheet</a>
+             target="_blank" rel="noopener" title="Open Google Sheets tracker">View Tracker</a>
         </div>
         <div class="chart-wrap reveal" style="--reveal-delay: 0.1s">
           <canvas id="weightChart" aria-label="Weight trajectory chart" role="img"></canvas>
@@ -2008,6 +2024,32 @@
   }
   function num(v) { const n = parseFloat(v); return isNaN(n) ? null : n; }
 
+  // Update the "View Tracker / Check-In" button based on day + CSV data
+  function updateSheetBtn(weekRows) {
+    const btn = document.getElementById('sheetBtn');
+    if (!btn) return;
+    const MONS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const today = new Date();
+    const isWed = today.getDay() === 3;
+    if (!isWed) {
+      btn.textContent = 'View Tracker';
+      btn.classList.remove('needs-checkin');
+      return;
+    }
+    // Wednesday — build today's date string in "D-Mon" format (e.g. "27-May")
+    const todayStr = today.getDate() + '-' + MONS[today.getMonth()];
+    // Find matching check-in row (column 1 = date, column 5 = CHECK-IN value)
+    const row = weekRows ? weekRows.find(r => (r[1] || '').trim() === todayStr) : null;
+    const checkedIn = row && row[5] && row[5].toString().trim() !== '';
+    if (checkedIn) {
+      btn.textContent = 'View Tracker';
+      btn.classList.remove('needs-checkin');
+    } else {
+      btn.textContent = 'Check-In';
+      btn.classList.add('needs-checkin');
+    }
+  }
+
   function loadPhysiqueFromCSV() {
     fetch(CSV_URL, { cache: 'no-store' })
       .then(r => r.ok ? r.text() : Promise.reject(r.status))
@@ -2024,6 +2066,7 @@
         );
         updatePhysiqueStats(weekRows);
         buildHeatmap12(weekRows);
+        updateSheetBtn(weekRows);
         const sub = document.getElementById('statCurrentSub');
         if (sub) sub.textContent = 'Live · synced from Sheet';
         const _sds = document.getElementById('syncDot');
@@ -2044,6 +2087,7 @@
           [158.0,156.0,153.8,151.7,149.7,147.8,145.8,144.0,142.1,140.3,138.5,136.7],
           [158.0,156.8,155.4,null,null,null,null,null,null,null,null,null]
         );
+        updateSheetBtn(null); // no row data on fallback
       });
   }
 
@@ -2521,6 +2565,7 @@
   setInterval(refreshWeather, 30 * 60 * 1000);
   buildWeekGrid();
   buildHeatmap12();
+  updateSheetBtn(null); // set correct label immediately before CSV loads
   loadPhysiqueFromCSV();
   loadCalendarEvents();
   setInterval(loadCalendarEvents, 10 * 60 * 1000);
