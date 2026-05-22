@@ -668,6 +668,12 @@
     border-style: dashed;
   }
   .r-row.placeholder:hover { border-color: var(--border); transform: none; }
+  /* Calendar-sourced events — distinct dark blue so they stand apart from static tasks */
+  .r-row.cal-event {
+    background: linear-gradient(180deg, rgba(20, 48, 100, 0.72) 0%, rgba(10, 28, 68, 0.88) 100%);
+    border-color: rgba(80, 140, 230, 0.22);
+  }
+  .r-row.cal-event:hover { border-color: rgba(80, 140, 230, 0.5); }
   .r-row .box {
     width: 14px; height: 14px;
     border: 1px solid var(--gold-dim);
@@ -1704,6 +1710,9 @@
     const fmtT = (s) => { if (!s) return ''; const d = new Date(s); return pad(d.getHours()) + ':' + pad(d.getMinutes()); };
 
     events.forEach(ev => {
+      // Skip all-day events (defence in depth — server already filters these)
+      if (ev.start && ev.start.date && !ev.start.dateTime) return;
+
       // Determine which list this event belongs to by start hour
       const start = ev.start && (ev.start.dateTime || ev.start.date);
       const end   = ev.end   && (ev.end.dateTime   || ev.end.date);
@@ -1713,7 +1722,7 @@
       if (!targetList) return;
 
       const li = document.createElement('li');
-      li.className = 'r-row';
+      li.className = 'r-row cal-event';
       li.setAttribute('tabindex', '0');
       li.setAttribute('role', 'checkbox');
       li.setAttribute('aria-checked', 'false');
