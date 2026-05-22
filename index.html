@@ -13,7 +13,7 @@
 
 <!-- Library photograph — served from /lab/library.jpg on GitHub Pages (CONFIRMED working).
      Wikimedia is NOT used (blocks hotlinks). Source: Long Room, Trinity College Dublin · CC BY-SA 3.0 -->
-<link rel="preload" as="image" fetchpriority="high" href="./library.jpg" />
+<link rel="preload" as="image" fetchpriority="high" href="./library.jpg?v=2" />
 
 <!-- Chart.js loaded deferred — only used by Statistics section -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js" defer></script>
@@ -115,7 +115,7 @@
   .bg-photo {
     position: fixed; inset: 0; z-index: -3;
     pointer-events: none;
-    background-image: url('./library.jpg'); /* CONFIRMED: GitHub Pages serves this from /lab/library.jpg */
+    background-image: url('./library.jpg?v=2'); /* CONFIRMED: GitHub Pages serves this from /lab/library.jpg */
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
@@ -1028,23 +1028,32 @@
   /* ============================================================
      STEWARD LINK — cross-app launcher at foot of OFFICE tab
      ============================================================ */
+  /* Steward button — very dark red-tinted tile, same transparency family as cal-event */
   .steward-link {
     display: block;
     margin-top: 24px;
     padding: 16px 24px;
-    background: rgba(80, 10, 10, 0.88);
-    border: 1px solid rgba(160, 40, 40, 0.35);
+    background: rgba(26, 8, 8, 0.93);
+    border: 1px solid rgba(201, 161, 74, 0.18);
     backdrop-filter: blur(3px);
     -webkit-backdrop-filter: blur(3px);
     text-decoration: none;
     cursor: pointer;
     text-align: center;
-    transition: border-color 260ms ease, background 260ms ease, box-shadow 260ms ease;
+    transition: border-color 260ms ease, box-shadow 260ms ease;
   }
   .steward-link:hover {
-    background: rgba(100, 14, 14, 0.95);
-    border-color: rgba(180, 60, 60, 0.5);
-    box-shadow: 0 0 20px rgba(140, 20, 20, 0.2);
+    border-color: rgba(201, 161, 74, 0.42);
+    box-shadow: 0 0 18px rgba(201, 161, 74, 0.08);
+  }
+  /* Zero-actions state — dark green variant */
+  .steward-link.no-actions {
+    background: rgba(8, 24, 10, 0.93);
+    border-color: rgba(60, 180, 80, 0.2);
+  }
+  .steward-link.no-actions:hover {
+    border-color: rgba(60, 180, 80, 0.42);
+    box-shadow: 0 0 18px rgba(40, 160, 60, 0.08);
   }
   .steward-inner {
     display: flex;
@@ -1056,7 +1065,7 @@
     font-family: var(--mono);
     font-size: 9px;
     letter-spacing: 0.45em;
-    color: rgba(232, 180, 160, 0.95);
+    color: var(--gold);
     font-weight: 500;
     text-transform: uppercase;
   }
@@ -1064,19 +1073,22 @@
     font-family: var(--mono);
     font-size: 9px;
     letter-spacing: 0.25em;
-    color: rgba(232, 180, 160, 0.7);
+    color: var(--gold-dim);
     font-weight: 400;
     text-transform: uppercase;
     transition: color 260ms ease;
   }
-  .steward-count.loaded { color: rgba(232, 200, 180, 1); }
+  .steward-count.loaded { color: var(--gold); }
+  .steward-link.no-actions .steward-label,
+  .steward-link.no-actions .steward-count { color: rgba(100, 220, 120, 0.85); }
   .steward-sub {
     font-family: var(--serif);
     font-style: italic;
     font-size: 13px;
-    color: rgba(220, 160, 140, 0.55);
+    color: var(--gold-faint);
     margin-top: 5px;
   }
+  .steward-link.no-actions .steward-sub { color: rgba(80, 180, 100, 0.45); }
 
   /* Completed section — head shows green Done label, no re-open */
   .routine.section-complete .routine-head {
@@ -1417,7 +1429,7 @@
       if (lbl) lbl.textContent = 'No image';
       console.warn('[Stewart Lab] ./library.jpg failed to load — atmospheric layer only');
     };
-    probe.src = './library.jpg';
+    probe.src = './library.jpg?v=2';
   })();
 
   // 2 · Time / date / greeting
@@ -2059,7 +2071,12 @@
           } catch (_) {}
         }
       }
-      if (count !== null) {
+      const btn = document.getElementById('stewardBtn');
+      if (count !== null && count === 0) {
+        el.textContent = 'No remaining actions for today';
+        el.classList.add('loaded');
+        if (btn) btn.classList.add('no-actions');
+      } else if (count !== null && count > 0) {
         el.textContent = '\u2014 ' + count + ' ACTION' + (count !== 1 ? 'S' : '') + ' FOR TODAY';
         el.classList.add('loaded');
       } else {
