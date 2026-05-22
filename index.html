@@ -108,7 +108,7 @@
     background-position: center center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    filter: brightness(0.78) contrast(1.05) saturate(0.92) sepia(0.18);
+    filter: brightness(0.32) contrast(1.05) saturate(0.85) sepia(0.22);
     opacity: 1;
   }
 
@@ -121,12 +121,12 @@
     pointer-events: none;
     background:
       radial-gradient(ellipse 55% 40% at 50% 6%,
-        rgba(201, 161, 74, 0.18) 0%,
+        rgba(201, 161, 74, 0.16) 0%,
         rgba(140, 90, 40, 0.0) 60%),
       linear-gradient(180deg,
-        rgba(10, 8, 6, 0.30) 0%,
-        rgba(10, 8, 6, 0.18) 40%,
-        rgba(6, 5, 3, 0.45) 100%);
+        rgba(10, 8, 6, 0.55) 0%,
+        rgba(10, 8, 6, 0.50) 40%,
+        rgba(6, 5, 3, 0.78) 100%);
   }
 
   .bg-grain {
@@ -932,6 +932,39 @@
     .week-day { min-height: auto; }
 
     .heatmap-12 { grid-template-columns: repeat(6, 1fr); }
+  }
+
+  /* ============================================================
+     CONTENT OPACITY OVERRIDES
+     Library background must not bleed through readable surfaces.
+     Tile/card/row/panel backgrounds get a near-opaque dark layer
+     plus a subtle backdrop blur so text stays crisp on any zoom.
+     ============================================================ */
+  .r-row,
+  .wm-tile,
+  .stat-cell,
+  .scaffold-card,
+  .chart-wrap,
+  .heatmap-12,
+  .week-day,
+  .today-module,
+  .routine-head,
+  .routine-list {
+    background-color: rgba(10, 8, 6, 0.88) !important;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+  .r-row.done {
+    background:
+      linear-gradient(135deg, rgba(12, 36, 24, 0.92) 0%, rgba(8, 24, 15, 0.95) 100%) !important;
+  }
+  .review-banner {
+    background-color: rgba(36, 26, 8, 0.92) !important;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+  .hm-cell {
+    background-color: rgba(10, 8, 6, 0.78) !important;
   }
 
 </style>
