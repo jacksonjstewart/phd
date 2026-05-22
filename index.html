@@ -1651,51 +1651,35 @@
   //   Paste your API key + calendar ID below to turn it on.
   //   Setup steps live in docs/CALENDAR_SETUP.md
   // ============================================================
-  const GCAL_API_KEY = 'AIzaSyAEjj-tigrOzroE_3KDT7G_u6YopYMbVno'; // ← paste your Google Cloud API key here
-  const GCAL_CAL_ID  = 'stewart.jacksonjames@gmail.com'; // ← paste your calendar ID here (e.g. you@gmail.com)
-  const GCAL_WINDOW  = { startHour: 8, endHour: 16 };
+  // ============================================================
+  // GOOGLE CALENDAR — Apps Script proxy (keeps calendar private)
+  //   1. Paste apps-script/calendar-proxy.gs into script.google.com
+  //   2. Deploy as Web App (Execute as: Me, Access: Anyone)
+  //   3. Paste the Web App URL below
+  // ============================================================
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxLidrQWlzMhobF3vNt17ILd5wPbcjOvJI4fc50GWso-ahWbf2D6jDQH2h9ClMjcF86Cw/exec'; // ← paste your Web App URL here
 
-  function tzOffsetStr(d) {
-    const off = -d.getTimezoneOffset();
-    const sign = off >= 0 ? '+' : '-';
-    const h = String(Math.floor(Math.abs(off) / 60)).padStart(2, '0');
-    const m = String(Math.abs(off) % 60).padStart(2, '0');
-    return sign + h + ':' + m;
-  }
   function loadCalendarEvents() {
-    if (!GCAL_API_KEY || !GCAL_CAL_ID) return; // not configured — see CALENDAR_SETUP.md
-    const now = new Date();
-    const tz = tzOffsetStr(now);
-    const ymd = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate());
-    // Fetch the full useful day: 08:00–23:59.
-    // Events are routed to Section II (office, 08–16) or Section III (daily, 16–24) by start hour.
-    const timeMin = ymd + 'T08:00:00' + tz;
-    const timeMax = ymd + 'T23:59:59' + tz;
-    const url = 'https://www.googleapis.com/calendar/v3/calendars/' + encodeURIComponent(GCAL_CAL_ID)
-              + '/events?key=' + GCAL_API_KEY
-              + '&timeMin=' + encodeURIComponent(timeMin)
-              + '&timeMax=' + encodeURIComponent(timeMax)
-              + '&singleEvents=true&orderBy=startTime';
-    fetch(url)
-      .then(r => {
-        if (!r.ok) {
-          return r.json().then(body => Promise.reject({ status: r.status, body }))
-                         .catch(() => Promise.reject({ status: r.status, body: null }));
-        }
-        return r.json();
+    if (!APPS_SCRIPT_URL) {
+      const ph = document.getElementById('calPlaceholder');
+      if (ph) {
+        const n = ph.querySelector('.r-note');
+        if (n) n.textContent = 'Calendar not configured — add your Apps Script URL to index.html';
+      }
+      return;
+    }
+    fetch(APPS_SCRIPT_URL)
+      .then(r => r.ok ? r.json() : Promise.reject(r.status))
+      .then(data => {
+        if (data && data.error) throw new Error(data.error);
+        renderCalendarEvents(Array.isArray(data) ? data : []);
       })
-      .then(d => renderCalendarEvents(d.items || []))
       .catch(err => {
         console.warn('[Stewart Lab] Calendar fetch failed:', err);
-        const placeholder = document.getElementById('calPlaceholder');
-        if (placeholder) {
-          const note = placeholder.querySelector('.r-note');
-          const status = err && err.status ? err.status : '—';
-          const hint = status === 403
-            ? 'API key blocked — check HTTP referrer restrictions in Google Cloud Console (allow jacksonjstewart.github.io/*)'
-            : status === 401 ? 'API key invalid or not authorised.'
-            : 'Calendar fetch failed (status ' + status + ') — check console for details.';
-          if (note) note.textContent = hint;
+        const ph = document.getElementById('calPlaceholder');
+        if (ph) {
+          const n = ph.querySelector('.r-note');
+          if (n) n.textContent = 'Calendar unavailable — check the Apps Script deployment and URL.';
         }
       });
   }
