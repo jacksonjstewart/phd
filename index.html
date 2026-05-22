@@ -1972,6 +1972,21 @@
   }
 
   // ============================================================
+  // SCROLL REVEAL — IntersectionObserver for .reveal elements
+  // ============================================================
+  function initScrollReveal() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  }
+
+  // ============================================================
   // BOOT
   // ============================================================
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
@@ -1991,40 +2006,37 @@
   setInterval(loadCalendarEvents, 10 * 60 * 1000);
 
   // ============================================================
-  // STEWARD COUNT — reads Steward app’s localStorage (same GitHub Pages origin:
-  // jacksonjstewart.github.io, so keys are shared across /lab/ and /stewardapp/).
+  // STEWARD COUNT
+  // Both apps share the same GitHub Pages origin (jacksonjstewart.github.io)
+  // so localStorage is readable cross-path.
   // ============================================================
   function loadStewardCount() {
     const el = document.getElementById('stewardCount');
     if (!el) return;
     try {
-      const STEWARD_CANDIDATES = [
+      const CANDIDATES = [
         'steward-tasks', 'stewardTasks', 'steward_tasks',
         'steward-data',  'stewardData',  'steward_data',
         'stewartTasks',  'tasks',        'steward-state',
         'steward',       'taskList',     'task-list'
       ];
-      let actionCount = null;
-
-      // Step 1: try known key candidates
-      for (const key of STEWARD_CANDIDATES) {
+      let count = null;
+      for (const key of CANDIDATES) {
         const raw = localStorage.getItem(key);
         if (!raw) continue;
         try {
           const data = JSON.parse(raw);
           if (Array.isArray(data) && data.length > 0) {
-            actionCount = data.filter(t => t && !t.done && !t.completed && !t.finished).length;
+            count = data.filter(t => t && !t.done && !t.completed && !t.finished).length;
             break;
           }
           if (data && typeof data === 'object') {
-            if (typeof data.left  === 'number') { actionCount = data.left;  break; }
-            if (typeof data.total === 'number') { actionCount = data.total; break; }
+            if (typeof data.left  === 'number') { count = data.left;  break; }
+            if (typeof data.total === 'number') { count = data.total; break; }
           }
         } catch (_) {}
       }
-
-      // Step 2: broader scan — any key whose value is a task-shaped array
-      if (actionCount === null) {
+      if (count === null) {
         for (let i = 0; i < localStorage.length; i++) {
           const key = localStorage.key(i);
           if (!key || key.startsWith('stewlab-')) continue;
@@ -2033,26 +2045,23 @@
           try {
             const data = JSON.parse(raw);
             if (Array.isArray(data) && data.length > 0 && data[0] && typeof data[0] === 'object') {
-              actionCount = data.filter(t => !t.done && !t.completed && !t.finished).length;
+              count = data.filter(t => !t.done && !t.completed && !t.finished).length;
               break;
             }
           } catch (_) {}
         }
       }
-
-      // Step 3: render
-      if (actionCount !== null) {
-        el.textContent = '— ' + actionCount + ' ACTION' + (actionCount !== 1 ? 'S' : '') + ' FOR TODAY';
+      if (count !== null) {
+        el.textContent = '\u2014 ' + count + ' ACTION' + (count !== 1 ? 'S' : '') + ' FOR TODAY';
         el.classList.add('loaded');
       } else {
-        el.textContent = '— OPEN APP →';
+        el.textContent = '\u2014 OPEN APP \u2192';
       }
     } catch (_) {
-      const el2 = document.getElementById('stewardCount');
-      if (el2) el2.textContent = '— OPEN APP →';
+      const e2 = document.getElementById('stewardCount');
+      if (e2) e2.textContent = '\u2014 OPEN APP \u2192';
     }
   }
-
   loadStewardCount();
 
 </script>
