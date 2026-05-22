@@ -1260,6 +1260,11 @@
     text-align: center;
     flex: 1;
   }
+  #phDayWeek {
+    color: #3ecf6e;
+    font-size: 10px;
+    text-shadow: 0 0 8px rgba(62,207,110,0.45);
+  }
   .pp-bar-track {
     position: relative;
     height: 5px;
@@ -1346,19 +1351,34 @@
     border-color: var(--gold-dim);
   }
 
-  /* ── Stats nav notification dot (Wednesday check-in reminder) ── */
-  .stats-notif {
+  /* ── Nav notification dots ── */
+  @keyframes notifPulse {
+    0%, 100% { box-shadow: 0 0 4px 1px rgba(62,207,110,0.55); }
+    50%       { box-shadow: 0 0 9px 3px rgba(62,207,110,0.9); }
+  }
+  .stats-notif, .office-notif {
     display: inline-block;
     width: 6px; height: 6px;
-    background: #3ecf6e;
     border-radius: 50%;
     margin-left: 5px;
     vertical-align: middle;
-    box-shadow: 0 0 5px rgba(62,207,110,0.7);
     opacity: 0;
     transition: opacity 0.4s ease;
   }
-  .stats-notif.visible { opacity: 1; }
+  .stats-notif {
+    background: #3ecf6e;
+    box-shadow: 0 0 5px rgba(62,207,110,0.7);
+  }
+  .office-notif {
+    background: #f0b429;
+    box-shadow: 0 0 5px rgba(240,180,41,0.7);
+  }
+  @keyframes officeNotifPulse {
+    0%, 100% { box-shadow: 0 0 4px 1px rgba(240,180,41,0.55); }
+    50%       { box-shadow: 0 0 9px 3px rgba(240,180,41,0.9); }
+  }
+  .stats-notif.visible  { opacity: 1; animation: notifPulse 2.5s ease-in-out infinite; }
+  .office-notif.visible { opacity: 1; animation: officeNotifPulse 2.5s ease-in-out infinite; }
 
   /* ── All-day event keyword colour chips ── */
   .wd-allday.kw-dayoff {
@@ -1398,7 +1418,7 @@
 <div class="topleft">
   <ul class="nav-links" aria-label="Primary navigation">
     <li><a href="#splash"     data-nav>Home</a></li>
-    <li><a href="#office"     data-nav>Office</a></li>
+    <li><a href="#office"     data-nav id="officeNavLink">Office<span class="office-notif" id="officeNotif"></span></a></li>
     <li><a href="#weekly"     data-nav>Weekly</a></li>
     <li><a href="#statistics" data-nav id="statsNavLink">Statistics<span class="stats-notif" id="statsNotif"></span></a></li>
   </ul>
@@ -2301,6 +2321,7 @@
     // Check if whole section is now done
     const routine = row.closest('.routine');
     if (routine) checkSectionCompletion(routine);
+    updateOfficeNotif();
   }
 
   // Attach listeners to all static rows
@@ -2421,6 +2442,7 @@
   onScroll();
   initRoutines();
   restoreCheckState();
+  updateOfficeNotif();
   initScrollReveal();
   initStatsNotif();
   refreshWeather();
@@ -2436,6 +2458,29 @@
   // Both apps share the same GitHub Pages origin (jacksonjstewart.github.io)
   // so localStorage is readable cross-path.
   // ============================================================
+  // Tracks last-known steward action count for office dot updates
+  let _stewardActionCount = null;
+
+  function updateOfficeNotif() {
+    const dot = document.getElementById('officeNotif');
+    if (!dot) return;
+    // Unchecked routine rows in the Office section
+    const offSec = document.getElementById('office');
+    let hasUnchecked = false;
+    if (offSec) {
+      const rows = Array.from(offSec.querySelectorAll('.routine .r-row:not(.placeholder)'))
+                        .filter(r => !r.hasAttribute('hidden'));
+      hasUnchecked = rows.some(r => !r.classList.contains('done'));
+    }
+    // Steward has outstanding actions
+    const stewardBusy = _stewardActionCount !== null && _stewardActionCount > 0;
+    if (hasUnchecked || stewardBusy) {
+      dot.classList.add('visible');
+    } else {
+      dot.classList.remove('visible');
+    }
+  }
+
   function loadStewardCount() {
     const el = document.getElementById('stewardCount');
     if (!el) return;
@@ -2482,12 +2527,16 @@
         el.textContent = 'No remaining actions for today';
         el.classList.add('loaded');
         if (btn) btn.classList.add('no-actions');
+        _stewardActionCount = 0;
       } else if (count !== null && count > 0) {
         el.textContent = '\u2014 ' + count + ' ACTION' + (count !== 1 ? 'S' : '') + ' FOR TODAY';
         el.classList.add('loaded');
+        _stewardActionCount = count;
       } else {
         el.textContent = '\u2014 OPEN APP \u2192';
+        _stewardActionCount = null;
       }
+      updateOfficeNotif();
     } catch (_) {
       const e2 = document.getElementById('stewardCount');
       if (e2) e2.textContent = '\u2014 OPEN APP \u2192';
