@@ -841,7 +841,7 @@
     margin-bottom: 40px;
     background: linear-gradient(180deg, rgba(255,255,255,0.008) 0%, rgba(0,0,0,0.2) 100%);
   }
-  .chart-wrap canvas { max-height: 420px; }
+  .chart-wrap canvas { max-height: 500px; }
 
   .heatmap-12 {
     display: grid;
@@ -1152,6 +1152,12 @@
   }
 
   /* ── Physique Progress panel ── */
+  .pp-top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
   .pp-heading {
     font-family: var(--mono);
     font-size: 9px;
@@ -1159,20 +1165,73 @@
     color: var(--gold);
     text-transform: uppercase;
     font-weight: 500;
-    margin-bottom: 20px;
   }
+  /* Status pill */
+  .pp-status {
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 2px;
+    background: rgba(201,161,74,0.1);
+    color: var(--gold-dim);
+    border: 1px solid var(--border);
+    transition: background 0.5s, color 0.5s, border-color 0.5s;
+  }
+  .pp-status.ahead   { background: rgba(42,157,110,0.18); color: rgba(60,210,140,0.95); border-color: rgba(42,157,110,0.4); }
+  .pp-status.ontrack { background: rgba(201,161,74,0.15); color: var(--gold);           border-color: var(--gold-dim); }
+  .pp-status.behind  { background: rgba(192,57,43,0.18);  color: rgba(230,90,70,0.95); border-color: rgba(192,57,43,0.4); }
+  /* Hero weight */
+  .pp-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 22px;
+    margin-bottom: 22px;
+    border-bottom: 1px solid var(--border);
+  }
+  .pp-hero-weight { display: flex; align-items: baseline; gap: 8px; }
+  .pp-weight-val {
+    font-family: var(--serif);
+    font-size: 62px;
+    font-weight: 300;
+    color: var(--text);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .pp-weight-unit {
+    font-family: var(--mono);
+    font-size: 16px;
+    color: var(--text-faint);
+  }
+  .pp-hero-right { text-align: right; }
+  .pp-hero-lost {
+    font-family: var(--mono);
+    font-size: 22px;
+    color: var(--gold);
+    letter-spacing: -0.01em;
+  }
+  .pp-hero-pct {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--text-faint);
+    margin-top: 3px;
+  }
+  /* Timeline */
   .pp-timeline { margin-bottom: 28px; }
   .pp-dates {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     gap: 8px;
   }
   .pp-date-start, .pp-date-end {
     font-family: var(--mono);
     font-size: 9px;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.12em;
     color: var(--text-faint);
     white-space: nowrap;
   }
@@ -1187,28 +1246,28 @@
   }
   .pp-bar-track {
     position: relative;
-    height: 4px;
-    background: rgba(201,161,74,0.12);
-    border-radius: 2px;
+    height: 5px;
+    background: rgba(201,161,74,0.10);
+    border-radius: 3px;
     overflow: visible;
     margin-bottom: 8px;
   }
   .pp-bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, rgba(201,161,74,0.5) 0%, var(--gold) 100%);
-    border-radius: 2px;
-    transition: width 1.2s ease;
+    background: linear-gradient(90deg, rgba(201,161,74,0.35) 0%, var(--gold) 100%);
+    border-radius: 3px;
+    transition: width 1.4s cubic-bezier(.4,0,.2,1);
   }
   .pp-bar-marker {
     position: absolute;
     top: 50%;
     transform: translate(-50%, -50%);
-    width: 10px; height: 10px;
+    width: 13px; height: 13px;
     background: var(--gold);
     border-radius: 50%;
     border: 2px solid var(--bg);
-    box-shadow: 0 0 8px rgba(201,161,74,0.6);
-    transition: left 1.2s ease;
+    box-shadow: 0 0 10px rgba(201,161,74,0.65);
+    transition: left 1.4s cubic-bezier(.4,0,.2,1);
   }
   .pp-bar-sub {
     font-family: var(--mono);
@@ -1216,6 +1275,39 @@
     letter-spacing: 0.2em;
     color: var(--text-faint);
     text-align: right;
+    text-transform: uppercase;
+  }
+  /* Stat tiles grid */
+  .pp-tiles {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 900px) { .pp-tiles { grid-template-columns: 1fr 1fr; } }
+  .pp-tile {
+    background: rgba(14,14,18,0.93);
+    border: 1px solid var(--border);
+    padding: 16px 12px 14px;
+    text-align: center;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    transition: border-color 260ms;
+  }
+  .pp-tile:hover { border-color: var(--gold-dim); }
+  .pp-tile-val {
+    font-family: var(--mono);
+    font-size: 15px;
+    color: var(--text);
+    font-weight: 400;
+    margin-bottom: 7px;
+    letter-spacing: -0.01em;
+  }
+  .pp-tile-label {
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 0.3em;
+    color: var(--text-faint);
     text-transform: uppercase;
   }
 
@@ -1471,9 +1563,25 @@
       <!-- Right: physique panel -->
       <div class="stats-right reveal">
 
-        <div class="pp-heading">Physique Progress</div>
+        <!-- Header bar -->
+        <div class="pp-top-bar">
+          <div class="pp-heading">Physique Progress</div>
+          <div class="pp-status" id="ppStatus">&mdash;</div>
+        </div>
 
-        <!-- Program timeline -->
+        <!-- Hero: current weight + total lost -->
+        <div class="pp-hero">
+          <div class="pp-hero-weight">
+            <span class="pp-weight-val" id="ppCurrentWeight">&mdash;</span>
+            <span class="pp-weight-unit">lb</span>
+          </div>
+          <div class="pp-hero-right">
+            <div class="pp-hero-lost" id="ppHeroLost">&mdash; lb lost</div>
+            <div class="pp-hero-pct" id="ppHeroPct">(&mdash;%  since May 20)</div>
+          </div>
+        </div>
+
+        <!-- Timeline bar -->
         <div class="pp-timeline">
           <div class="pp-dates">
             <span class="pp-date-start">May 20, 2026</span>
@@ -1487,31 +1595,31 @@
           <div class="pp-bar-sub" id="phRemaining">&mdash; days remaining</div>
         </div>
 
-        <!-- Stats rows -->
-        <div class="physique-stats">
-          <div class="ps-row">
-            <span class="ps-label">Last Check-in</span>
-            <span class="ps-value" id="psLastWeight">&mdash;</span>
+        <!-- Stat tiles -->
+        <div class="pp-tiles">
+          <div class="pp-tile">
+            <div class="pp-tile-val" id="psTotalLost">&mdash;</div>
+            <div class="pp-tile-label">Total Lost</div>
           </div>
-          <div class="ps-row">
-            <span class="ps-label">Total Lost</span>
-            <span class="ps-value" id="psTotalLost">&mdash;</span>
+          <div class="pp-tile">
+            <div class="pp-tile-val" id="psAvgWeek">&mdash;</div>
+            <div class="pp-tile-label">Avg / Week</div>
           </div>
-          <div class="ps-row">
-            <span class="ps-label">Avg / Week</span>
-            <span class="ps-value" id="psAvgWeek">&mdash;</span>
+          <div class="pp-tile">
+            <div class="pp-tile-val" id="psNextCheckin">&mdash;</div>
+            <div class="pp-tile-label">Next Check-in</div>
           </div>
-          <div class="ps-row">
-            <span class="ps-label">Avg / Day</span>
-            <span class="ps-value" id="psAvgDay">&mdash;</span>
+          <div class="pp-tile">
+            <div class="pp-tile-val" id="psAvgDay">&mdash;</div>
+            <div class="pp-tile-label">Avg / Day</div>
           </div>
-          <div class="ps-row">
-            <span class="ps-label">Next Check-in</span>
-            <span class="ps-value" id="psNextCheckin">&mdash;</span>
+          <div class="pp-tile">
+            <div class="pp-tile-val" id="psProjected">&mdash;</div>
+            <div class="pp-tile-label">Projected Final</div>
           </div>
-          <div class="ps-row">
-            <span class="ps-label">Projected Final</span>
-            <span class="ps-value" id="psProjected">&mdash;</span>
+          <div class="pp-tile">
+            <div class="pp-tile-val" id="psLastCheckin">&mdash;</div>
+            <div class="pp-tile-label">Last Check-in</div>
           </div>
         </div>
 
@@ -1687,7 +1795,13 @@
       const dayName  = DAYS_SHORT[d.getDay()];
       const dateLabel= (MONTHS[d.getMonth()].slice(0,3) + ' ' + d.getDate()).toUpperCase();
       const dateStr  = localDate(d);
-      const dayEvs   = _allCalEvents.filter(ev => {
+      const dayEvs = _allCalEvents.filter(ev => {
+        if (ev.allDay) {
+          // All-day events: Google end date is EXCLUSIVE (event ending Sun has end=Mon)
+          const evStart = ev.date || (ev.start && ev.start.date) || '';
+          const evEnd   = (ev.end && ev.end.date) || evStart;
+          return evStart <= dateStr && dateStr < evEnd;
+        }
         const evDate = ev.date || (ev.start && ev.start.dateTime
           ? localDate(new Date(ev.start.dateTime)) : null);
         return evDate === dateStr;
@@ -1886,17 +2000,38 @@
     const avgPctWk     = avgPerWeek / startW * 100;
     const projected    = lastVal - (avgPerDay * daysLeft);
 
-    const f1  = n => (n >= 0 ? '' : '−') + Math.abs(n).toFixed(1);
+    const f1  = n => (n >= 0 ? '−' : '+') + Math.abs(n).toFixed(1);
     const f2  = n => Math.abs(n).toFixed(2);
     const f3  = n => Math.abs(n).toFixed(3);
-    const fpc = n => '(' + f2(Math.abs(n)) + '%)';
+    const fpc = n => f2(Math.abs(n)) + '%';
 
     const ciLabel = weekRows[lastIdx][0] || ('Week ' + (lastIdx + 1));
-    set('psLastWeight', lastVal.toFixed(1) + ' lb  ·  ' + ciLabel);
-    set('psTotalLost',  f1(totalLost) + ' lb  ' + fpc(totalLostPct));
-    set('psAvgWeek',    f1(avgPerWeek) + ' lb/wk  ' + fpc(avgPctWk));
-    set('psAvgDay',     (avgPerDay >= 0 ? '-' : '+') + f3(avgPerDay) + ' lb/day');
-    set('psProjected',  projected.toFixed(1) + ' lb  (at current pace)');
+
+    // Hero
+    set('ppCurrentWeight', lastVal.toFixed(1));
+    set('ppHeroLost',      f1(totalLost) + ' lb lost');
+    set('ppHeroPct',       '(' + fpc(totalLostPct) + '  since May 20)');
+
+    // Status pill
+    const minT = num(weekRows[lastIdx][2]);
+    const maxT = num(weekRows[lastIdx][4]);
+    const pill = document.getElementById('ppStatus');
+    if (pill) {
+      pill.classList.remove('ahead','ontrack','behind');
+      if (minT !== null && maxT !== null) {
+        if (lastVal <= minT)      { pill.textContent = 'Ahead ●';    pill.classList.add('ahead'); }
+        else if (lastVal <= maxT) { pill.textContent = 'On Track ●'; pill.classList.add('ontrack'); }
+        else                      { pill.textContent = 'Behind ●';   pill.classList.add('behind'); }
+      } else { pill.textContent = 'Loading…'; }
+    }
+
+    // Tiles
+    set('psTotalLost',   f1(totalLost) + ' lb  (' + fpc(totalLostPct) + ')');
+    set('psAvgWeek',     f1(avgPerWeek) + ' lb/wk  (' + fpc(avgPctWk) + ')');
+    set('psAvgDay',      '−' + f3(Math.abs(avgPerDay)) + ' lb/day');
+    set('psNextCheckin', wedLabel + '  (' + daysToWed + 'd)');
+    set('psProjected',   projected.toFixed(1) + ' lb');
+    set('psLastCheckin', lastVal.toFixed(1) + ' lb  ·  ' + ciLabel);
   }
 
   // ============================================================
