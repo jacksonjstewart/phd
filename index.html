@@ -1150,6 +1150,93 @@
     font-family: var(--serif);
     font-size: 13px;
   }
+
+  /* ── Physique Progress panel ── */
+  .pp-heading {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.5em;
+    color: var(--gold);
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 20px;
+  }
+  .pp-timeline { margin-bottom: 28px; }
+  .pp-dates {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+    gap: 8px;
+  }
+  .pp-date-start, .pp-date-end {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--text-faint);
+    white-space: nowrap;
+  }
+  .pp-date-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    text-align: center;
+    flex: 1;
+  }
+  .pp-bar-track {
+    position: relative;
+    height: 4px;
+    background: rgba(201,161,74,0.12);
+    border-radius: 2px;
+    overflow: visible;
+    margin-bottom: 8px;
+  }
+  .pp-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, rgba(201,161,74,0.5) 0%, var(--gold) 100%);
+    border-radius: 2px;
+    transition: width 1.2s ease;
+  }
+  .pp-bar-marker {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px; height: 10px;
+    background: var(--gold);
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 8px rgba(201,161,74,0.6);
+    transition: left 1.2s ease;
+  }
+  .pp-bar-sub {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--text-faint);
+    text-align: right;
+    text-transform: uppercase;
+  }
+
+  /* ── Week grid all-day event chips ── */
+  .wd-allday {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: rgba(201,161,74,0.10);
+    border: 1px solid rgba(201,161,74,0.22);
+    color: var(--text-dim);
+    padding: 5px 8px;
+    margin-bottom: 6px;
+    border-radius: 1px;
+  }
+  .wd-allday.wd-review {
+    background: rgba(201,161,74,0.18);
+    color: var(--gold);
+    border-color: var(--gold-dim);
+  }
 </style>
 </head>
 <body>
@@ -1383,12 +1470,24 @@
 
       <!-- Right: physique panel -->
       <div class="stats-right reveal">
-        <div class="physique-header">
-          <span class="ph-day" id="phDay">DAY &mdash;</span>
-          <span class="ph-dot">&middot;</span>
-          <span class="ph-week" id="phWeek">WEEK &mdash;</span>
-          <span class="ph-remaining" id="phRemaining">&mdash; days remaining</span>
+
+        <div class="pp-heading">Physique Progress</div>
+
+        <!-- Program timeline -->
+        <div class="pp-timeline">
+          <div class="pp-dates">
+            <span class="pp-date-start">May 20, 2026</span>
+            <span class="pp-date-label" id="phDayWeek">DAY &mdash; &middot; WEEK &mdash; of 12</span>
+            <span class="pp-date-end">Aug 12, 2026</span>
+          </div>
+          <div class="pp-bar-track">
+            <div class="pp-bar-fill" id="ppBarFill" style="width:0%"></div>
+            <div class="pp-bar-marker" id="ppBarMarker" style="left:0%"></div>
+          </div>
+          <div class="pp-bar-sub" id="phRemaining">&mdash; days remaining</div>
         </div>
+
+        <!-- Stats rows -->
         <div class="physique-stats">
           <div class="ps-row">
             <span class="ps-label">Last Check-in</span>
@@ -1415,9 +1514,12 @@
             <span class="ps-value" id="psProjected">&mdash;</span>
           </div>
         </div>
+
+        <!-- Trajectory chart -->
         <div class="chart-wrap reveal" style="--reveal-delay: 0.1s">
           <canvas id="weightChart" aria-label="Weight trajectory chart" role="img"></canvas>
         </div>
+
       </div>
 
     </div>
@@ -1592,8 +1694,16 @@
       });
       html += '<div class="week-day' + (isToday ? ' today' : '') + '">';
       html += '<div class="wd-head"><span class="wd-name">' + dayName + (isToday ? ' · TODAY' : '') + '</span><span class="wd-date">' + dateLabel + '</span></div>';
-      if (dayEvs.length > 0) {
-        dayEvs.forEach(ev => {
+      const allDayEvs = dayEvs.filter(ev => ev.allDay);
+      const timedEvs  = dayEvs.filter(ev => !ev.allDay);
+      if (allDayEvs.length > 0) {
+        allDayEvs.forEach(ev => {
+          const isReview = ev.summary && ev.summary.toLowerCase().includes('review');
+          html += '<div class="wd-allday' + (isReview ? ' wd-review' : '') + '">' + (ev.summary || 'Event') + '</div>';
+        });
+      }
+      if (timedEvs.length > 0) {
+        timedEvs.forEach(ev => {
           const isReview = ev.summary && ev.summary.toLowerCase().includes('review');
           const st = ev.start && ev.start.dateTime ? new Date(ev.start.dateTime) : null;
           const et = ev.end   && ev.end.dateTime   ? new Date(ev.end.dateTime)   : null;
@@ -1602,7 +1712,8 @@
           if (timeStr) html += '<span class="h">' + timeStr + '</span>';
           html += (ev.summary || 'Event') + '</div>';
         });
-      } else {
+      }
+      if (dayEvs.length === 0) {
         html += '<div class="wd-block wd-empty">Clear</div>';
       }
       html += '</div>';
@@ -1744,8 +1855,16 @@
     const wedLabel   = 'Wed ' + MONTHS[nextWed.getMonth()].slice(0,3) + ' ' + nextWed.getDate();
 
     const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-    set('phDay',       'DAY ' + dayNum);
-    set('phWeek',      'WEEK ' + weekNum);
+    // Progress bar (% through the 84-day program)
+    const totalDays = Math.ceil((PROG_END - PROG_START) / MS_DAY);
+    const elapsed   = Math.max(0, Math.min(totalDays, dayNum - 1));
+    const pct       = Math.round(elapsed / totalDays * 100);
+    const fill   = document.getElementById('ppBarFill');
+    const marker = document.getElementById('ppBarMarker');
+    if (fill)   fill.style.width = pct + '%';
+    if (marker) marker.style.left = pct + '%';
+
+    set('phDayWeek',   'DAY ' + dayNum + ' · WEEK ' + weekNum + ' of 12');
     set('phRemaining', daysLeft + ' DAYS REMAINING');
     set('psNextCheckin', wedLabel + '  (' + daysToWed + ' day' + (daysToWed !== 1 ? 's' : '') + ')');
 
@@ -1825,28 +1944,37 @@
 
     _allCalEvents = Array.isArray(events) ? events : [];
 
+    // Compute today's local date string for filtering
+    const _p2 = n => String(n).padStart(2, '0');
+    const _td = new Date();
+    const todayStr = _td.getFullYear() + '-' + _p2(_td.getMonth()+1) + '-' + _p2(_td.getDate());
+
+    // Only today's TIMED events go into OFFICE/Daily sections
+    const todayTimed = _allCalEvents.filter(ev => ev.date === todayStr && !ev.allDay);
+
     // Clear any cal-events from a previous render to avoid duplicates on refresh
     [officeList, dailyList].forEach(list => {
       if (list) list.querySelectorAll('.cal-event').forEach(el => el.remove());
     });
 
-    // If calendar is empty for today, update the placeholder and leave it
-    if (!events || events.length === 0) {
+    // Also refresh the week grid with the full 7-day set
+    buildWeekGrid();
+
+    // If no timed events for today, update placeholder and leave
+    if (todayTimed.length === 0) {
       if (placeholder) {
         const note = placeholder.querySelector('.r-note');
-        if (note) note.textContent = 'No action for today — calendar is clear for this window.';
+        if (note) note.textContent = 'No events scheduled — calendar is clear for this window.';
       }
       return;
     }
 
-    // Events present — remove placeholder and render
+    // Timed events for today — remove placeholder and render
     if (placeholder) placeholder.remove();
 
     const fmtT = (s) => { if (!s) return ''; const d = new Date(s); return pad(d.getHours()) + ':' + pad(d.getMinutes()); };
 
-    events.forEach(ev => {
-      // Skip all-day events (defence in depth — server already filters these)
-      if (ev.start && ev.start.date && !ev.start.dateTime) return;
+    todayTimed.forEach(ev => {
 
       // Determine which list this event belongs to by start hour
       const start = ev.start && (ev.start.dateTime || ev.start.date);
@@ -1884,7 +2012,6 @@
         dailyList.appendChild(li);
       }
     });
-    buildWeekGrid();
   }
 
   // ============================================================
