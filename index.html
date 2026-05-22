@@ -60,7 +60,15 @@
     text-rendering: optimizeLegibility;
     overflow-x: hidden;
   }
-  body { min-height: 100vh; position: relative; }
+  body {
+    min-height: 100vh; position: relative;
+    opacity: 0;
+    animation: fadeInPage 1.1s ease 0.05s forwards;
+  }
+  @keyframes fadeInPage {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
 
   /* Visible focus ring for keyboard users */
   :focus-visible {
@@ -1180,7 +1188,7 @@
       <ul class="routine-list" id="officeHoursList">
         <li class="r-row placeholder" id="calPlaceholder">
           <div class="label-stack">
-            <div class="r-note">Google Calendar integration coming &mdash; scheduled events between 08:00 and 16:00 will populate here automatically.</div>
+            <div class="r-note">Loading calendar&hellip;</div>
           </div>
         </li>
 
@@ -1665,9 +1673,27 @@
               + '&timeMax=' + encodeURIComponent(timeMax)
               + '&singleEvents=true&orderBy=startTime';
     fetch(url)
-      .then(r => r.ok ? r.json() : Promise.reject(r.status))
+      .then(r => {
+        if (!r.ok) {
+          return r.json().then(body => Promise.reject({ status: r.status, body }))
+                         .catch(() => Promise.reject({ status: r.status, body: null }));
+        }
+        return r.json();
+      })
       .then(d => renderCalendarEvents(d.items || []))
-      .catch(err => console.warn('[Stewart Lab] Calendar fetch failed:', err));
+      .catch(err => {
+        console.warn('[Stewart Lab] Calendar fetch failed:', err);
+        const placeholder = document.getElementById('calPlaceholder');
+        if (placeholder) {
+          const note = placeholder.querySelector('.r-note');
+          const status = err && err.status ? err.status : '—';
+          const hint = status === 403
+            ? 'API key blocked — check HTTP referrer restrictions in Google Cloud Console (allow jacksonjstewart.github.io/*)'
+            : status === 401 ? 'API key invalid or not authorised.'
+            : 'Calendar fetch failed (status ' + status + ') — check console for details.';
+          if (note) note.textContent = hint;
+        }
+      });
   }
 
   function renderCalendarEvents(events) {
@@ -1896,10 +1922,13 @@
     }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
     document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
   }
-  // ============================================================
+
   // ============================================================
   // BOOT
   // ============================================================
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  window.scrollTo({ top: 0, behavior: 'instant' });
+
   tick();
   setInterval(tick, 30 * 1000);
   onScroll();
