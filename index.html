@@ -49,6 +49,10 @@
 
   *, *::before, *::after { box-sizing: border-box; }
 
+  html {
+    background: #0a0806; /* prevents white flash before body fades in */
+  }
+
   html, body {
     margin: 0; padding: 0;
     background: transparent;  /* CRITICAL: must be transparent so negative-z-indexed .bg-photo can show through. Dark fallback color lives on .bg-fallback at z-index -4. */
