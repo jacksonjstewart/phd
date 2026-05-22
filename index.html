@@ -841,7 +841,7 @@
     margin-bottom: 40px;
     background: linear-gradient(180deg, rgba(255,255,255,0.008) 0%, rgba(0,0,0,0.2) 100%);
   }
-  .chart-wrap canvas { max-height: 320px; }
+  .chart-wrap canvas { max-height: 420px; }
 
   .heatmap-12 {
     display: grid;
@@ -1001,7 +1001,7 @@
     display: block;
     margin-top: 24px;
     padding: 16px 24px;
-    background: rgba(26, 8, 8, 0.93);
+    background: rgba(14, 3, 3, 0.96);
     border: 1px solid rgba(201, 161, 74, 0.18);
     backdrop-filter: blur(3px);
     -webkit-backdrop-filter: blur(3px);
@@ -1075,6 +1075,81 @@
     letter-spacing: 0.42em;
   }
 
+
+  /* ── Stats two-column split ── */
+  .stats-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+  @media (max-width: 900px) { .stats-split { grid-template-columns: 1fr; } }
+  .stats-left .scaffold-card { margin-top: 0; }
+
+  /* ── Physique header (DAY · WEEK · remaining) ── */
+  .physique-header {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .ph-day, .ph-week {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.35em;
+    color: var(--gold);
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+  .ph-dot { color: var(--gold-dim); font-family: var(--mono); }
+  .ph-remaining {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    margin-left: auto;
+  }
+
+  /* ── Physique stats rows ── */
+  .physique-stats { margin-bottom: 24px; }
+  .ps-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .ps-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.28em;
+    color: var(--text-faint);
+    text-transform: uppercase;
+  }
+  .ps-value {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text);
+    text-align: right;
+  }
+
+  /* ── Week grid: review events (gold) and empty state ── */
+  .wd-block.wd-review {
+    color: var(--gold);
+    border-left: 2px solid var(--gold-dim);
+    padding-left: 8px;
+  }
+  .wd-block.wd-review .h { color: var(--gold-dim); }
+  .wd-block.wd-empty {
+    color: var(--text-faint);
+    font-style: italic;
+    font-family: var(--serif);
+    font-size: 13px;
+  }
 </style>
 </head>
 <body>
@@ -1118,7 +1193,7 @@
 <!-- ========== OFFICE ========== -->
 <section id="office" class="section" aria-labelledby="office-title">
   <div class="section-inner">
-    <p class="section-eyebrow">I &middot; The Office</p>
+    <p class="section-eyebrow">OFFICE</p>
     <header class="today-module">
       <div class="tm-main">
         <div class="tm-day"  id="officeDayBig">&mdash;</div>
@@ -1290,90 +1365,67 @@
 <!-- ========== WEEKLY ========== -->
 <section id="weekly" class="section" aria-labelledby="weekly-title">
   <div class="section-inner">
-    <p class="section-eyebrow">II · The Week Ahead</p>
-    <h2 class="section-title" id="weekly-title">Seven days, written down.</h2>
-    <p class="section-sub">Deep focus blocks · weekly rituals · adherence trackers</p>
-
+    <p class="section-eyebrow">II &middot; The Week Ahead</p>
     <div class="week-grid" id="weekGrid"><!-- populated by JS --></div>
-
-    <h3 style="font-family: var(--mono); font-size: 9px; letter-spacing: 0.45em; text-transform: uppercase; color: var(--gold); font-weight: 400; margin: 0 0 12px 0;">Weekly Minimums</h3>
-    <div class="week-minimums">
-      <div class="wm-tile reveal" style="--reveal-delay: 0s">
-        <div class="wm-label">Resistance</div>
-        <div class="wm-value">0 <span style="color:var(--text-faint);font-size:18px;">/ 5</span></div>
-        <div class="wm-target">Sessions completed</div>
-      </div>
-      <div class="wm-tile reveal" style="--reveal-delay: 0.1s">
-        <div class="wm-label">Cardio 30m+</div>
-        <div class="wm-value">0 <span style="color:var(--text-faint);font-size:18px;">/ 5</span></div>
-        <div class="wm-target">Sessions completed</div>
-      </div>
-      <div class="wm-tile reveal" style="--reveal-delay: 0.2s">
-        <div class="wm-label">50 / 50 / 20</div>
-        <div class="wm-value">0</div>
-        <div class="wm-target">Day streak with Wayne</div>
-      </div>
-      <div class="wm-tile reveal" style="--reveal-delay: 0.3s">
-        <div class="wm-value">0 <span style="color:var(--text-faint);font-size:18px;">/ 7</span></div>
-        <div class="wm-target">Nights honoured</div>
-      </div>
-    </div>
   </div>
 </section>
 
 <!-- ========== STATISTICS ========== -->
 <section id="statistics" class="section" aria-labelledby="stats-title">
   <div class="section-inner">
-    <p class="section-eyebrow">III · Statistics</p>
-    <h2 class="section-title" id="stats-title">The body, the months, the milestones.</h2>
-    <p class="section-sub">Physique · monthly markers · habit heatmap · PhD timeline</p>
+    <p class="section-eyebrow">III &middot; Statistics</p>
+    <div class="stats-split">
 
-    <div class="phase-head reveal">
-      <div>
-        <div class="phase-name">Nightwing 2026 · Cut Phase</div>
-        <div class="phase-dates">May 20 — August 11, 2026 · 12 weeks</div>
+      <!-- Left: future content -->
+      <div class="stats-left">
+        <div class="scaffold-card">PhD timeline &middot; milestones &middot; habit heatmap &middot; next iteration</div>
       </div>
-      <div class="status-pill ontrack" id="statusPill">On Track</div>
-    </div>
 
-    <div class="stat-grid">
-      <div class="stat-cell reveal" style="--reveal-delay: 0s">
-        <div class="label">Current</div>
-        <div class="value" id="statCurrent">158.0<span style="font-size:18px;color:var(--text-faint);"> lb</span></div>
-        <div class="sub" id="statCurrentSub">Sample data — awaiting CSV</div>
+      <!-- Right: physique panel -->
+      <div class="stats-right reveal">
+        <div class="physique-header">
+          <span class="ph-day" id="phDay">DAY &mdash;</span>
+          <span class="ph-dot">&middot;</span>
+          <span class="ph-week" id="phWeek">WEEK &mdash;</span>
+          <span class="ph-remaining" id="phRemaining">&mdash; days remaining</span>
+        </div>
+        <div class="physique-stats">
+          <div class="ps-row">
+            <span class="ps-label">Last Check-in</span>
+            <span class="ps-value" id="psLastWeight">&mdash;</span>
+          </div>
+          <div class="ps-row">
+            <span class="ps-label">Total Lost</span>
+            <span class="ps-value" id="psTotalLost">&mdash;</span>
+          </div>
+          <div class="ps-row">
+            <span class="ps-label">Avg / Week</span>
+            <span class="ps-value" id="psAvgWeek">&mdash;</span>
+          </div>
+          <div class="ps-row">
+            <span class="ps-label">Avg / Day</span>
+            <span class="ps-value" id="psAvgDay">&mdash;</span>
+          </div>
+          <div class="ps-row">
+            <span class="ps-label">Next Check-in</span>
+            <span class="ps-value" id="psNextCheckin">&mdash;</span>
+          </div>
+          <div class="ps-row">
+            <span class="ps-label">Projected Final</span>
+            <span class="ps-value" id="psProjected">&mdash;</span>
+          </div>
+        </div>
+        <div class="chart-wrap reveal" style="--reveal-delay: 0.1s">
+          <canvas id="weightChart" aria-label="Weight trajectory chart" role="img"></canvas>
+        </div>
       </div>
-      <div class="stat-cell reveal" style="--reveal-delay: 0.1s">
-        <div class="label">Lost</div>
-        <div class="value" id="statLost">0.0<span style="font-size:18px;color:var(--text-faint);"> lb</span></div>
-        <div class="sub">From 158.0 start</div>
-      </div>
-      <div class="stat-cell reveal" style="--reveal-delay: 0.2s">
-        <div class="label">This Week</div>
-        <div class="value" id="statWeek">—</div>
-        <div class="sub">&Delta; from last check-in</div>
-      </div>
-      <div class="stat-cell reveal" style="--reveal-delay: 0.3s">
-        <div class="label">Remaining</div>
-        <div class="value" id="statRemaining">15.8<span style="font-size:18px;color:var(--text-faint);"> lb</span></div>
-        <div class="sub">To 140.0 goal</div>
-      </div>
-    </div>
 
-    <div class="chart-wrap reveal" style="--reveal-delay: 0.15s">
-      <canvas id="weightChart" aria-label="Weight trajectory chart" role="img"></canvas>
-    </div>
-
-    <h3 style="font-family: var(--mono); font-size: 9px; letter-spacing: 0.45em; text-transform: uppercase; color: var(--gold); font-weight: 400; margin: 0 0 12px 0;">12-Week Heatmap</h3>
-    <div class="heatmap-12 reveal" id="heatmap12"></div>
-
-    <div class="scaffold">
-      <div class="scaffold-card">Monthly markers &middot; habit heatmap (48 mo) &middot; PhD timeline &middot; next iteration</div>
     </div>
   </div>
 </section>
 
 <footer class="footer">
-  <div class="crest">The Stewart Lab</div>
+  <div class="crest">Dr. Jackson J. Stewart, PhD.</div>
   <div class="tag">Jackson J. Stewart &middot; University of Alberta &middot; MMXXVI</div>
   <div class="credit">
     Background photograph: <a href="https://commons.wikimedia.org/wiki/File:Long_Room_Interior,_Trinity_College_Dublin,_Ireland_-_Diliff.jpg" target="_blank" rel="noopener">Long Room, Trinity College Dublin</a>
@@ -1517,33 +1569,43 @@
     }
   }
 
-  // 6 · Weekly grid — Mon..Sun for current week
-  function startOfWeek(d) {
-    const dow = (d.getDay() + 6) % 7;
-    const s = new Date(d); s.setDate(d.getDate() - dow); s.setHours(0,0,0,0); return s;
-  }
-  const WEEKLY_RITUALS = {1:null, 2:'Family activity night', 3:'Finance review (biweekly)', 4:'Boys hangout', 5:'Family / date night', 6:'Saturday activity · Home/Health review', 0:'AM cafe · Professional review'};
+  // 6 · Weekly grid — Today + 6 days, populated with calendar events
+  let _allCalEvents = [];
+
   function buildWeekGrid() {
     const grid = document.getElementById('weekGrid');
     if (!grid) return;
     const now = new Date();
-    const monday = startOfWeek(now);
-    const todayIdx = (now.getDay() + 6) % 7;
+    const p2 = n => String(n).padStart(2, '0');
+    const localDate = d => d.getFullYear() + '-' + p2(d.getMonth()+1) + '-' + p2(d.getDate());
     let html = '';
     for (let i = 0; i < 7; i++) {
-      const d = new Date(monday); d.setDate(monday.getDate() + i);
-      const isoDow = (i === 6) ? 0 : i + 1;
-      const isToday = i === todayIdx;
-      const dayName = DAYS_SHORT[isoDow];
-      const dateLabel = (MONTHS[d.getMonth()].slice(0,3) + ' ' + d.getDate()).toUpperCase();
-      const ritual = WEEKLY_RITUALS[isoDow];
-      html += '<div class="week-day' + (isToday ? ' today' : '') + '">'
-           +  '<div class="wd-head"><span class="wd-name">' + dayName + (isToday ? ' · TODAY' : '') + '</span><span class="wd-date">' + dateLabel + '</span></div>'
-           +  '<div class="wd-block"><span class="h">08–12</span>Research</div>'
-           +  '<div class="wd-block"><span class="h">12–17</span>Clinical</div>'
-           +  '<div class="wd-block"><span class="h">17–20:30</span>Family</div>'
-           +  (ritual ? '<div class="wd-ritual">' + ritual + '</div>' : '')
-           +  '</div>';
+      const d = new Date(now); d.setDate(now.getDate() + i); d.setHours(0,0,0,0);
+      const isToday  = (i === 0);
+      const dayName  = DAYS_SHORT[d.getDay()];
+      const dateLabel= (MONTHS[d.getMonth()].slice(0,3) + ' ' + d.getDate()).toUpperCase();
+      const dateStr  = localDate(d);
+      const dayEvs   = _allCalEvents.filter(ev => {
+        const evDate = ev.date || (ev.start && ev.start.dateTime
+          ? localDate(new Date(ev.start.dateTime)) : null);
+        return evDate === dateStr;
+      });
+      html += '<div class="week-day' + (isToday ? ' today' : '') + '">';
+      html += '<div class="wd-head"><span class="wd-name">' + dayName + (isToday ? ' · TODAY' : '') + '</span><span class="wd-date">' + dateLabel + '</span></div>';
+      if (dayEvs.length > 0) {
+        dayEvs.forEach(ev => {
+          const isReview = ev.summary && ev.summary.toLowerCase().includes('review');
+          const st = ev.start && ev.start.dateTime ? new Date(ev.start.dateTime) : null;
+          const et = ev.end   && ev.end.dateTime   ? new Date(ev.end.dateTime)   : null;
+          const timeStr = st ? p2(st.getHours()) + ':' + p2(st.getMinutes()) + (et ? '—' + p2(et.getHours()) + ':' + p2(et.getMinutes()) : '') : '';
+          html += '<div class="wd-block' + (isReview ? ' wd-review' : '') + '">';
+          if (timeStr) html += '<span class="h">' + timeStr + '</span>';
+          html += (ev.summary || 'Event') + '</div>';
+        });
+      } else {
+        html += '<div class="wd-block wd-empty">Clear</div>';
+      }
+      html += '</div>';
     }
     grid.innerHTML = html;
   }
@@ -1665,36 +1727,57 @@
   }
 
   function updatePhysiqueStats(weekRows) {
+    const now        = new Date();
+    const PROG_START = new Date(2026, 4, 20);  // May 20 — from Sheet first entry
+    const PROG_END   = new Date(2026, 7, 12);  // Aug 12 — Sheet Week 12 check-in
+    const MS_DAY     = 24 * 3600 * 1000;
+
+    // Program position
+    const dayNum   = Math.max(1, Math.floor((now - PROG_START) / MS_DAY) + 1);
+    const weekNum  = Math.ceil(dayNum / 7);
+    const daysLeft = Math.max(0, Math.ceil((PROG_END - now) / MS_DAY));
+
+    // Next Wednesday check-in
+    const dow        = now.getDay();  // 0=Sun
+    const daysToWed  = (dow === 3) ? 7 : (dow < 3 ? 3 - dow : 10 - dow);
+    const nextWed    = new Date(now); nextWed.setDate(now.getDate() + daysToWed);
+    const wedLabel   = 'Wed ' + MONTHS[nextWed.getMonth()].slice(0,3) + ' ' + nextWed.getDate();
+
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    set('phDay',       'DAY ' + dayNum);
+    set('phWeek',      'WEEK ' + weekNum);
+    set('phRemaining', daysLeft + ' DAYS REMAINING');
+    set('psNextCheckin', wedLabel + '  (' + daysToWed + ' day' + (daysToWed !== 1 ? 's' : '') + ')');
+
+    // Last recorded check-in weight
     let lastIdx = -1, lastVal = null;
     for (let i = weekRows.length - 1; i >= 0; i--) {
       const v = num(weekRows[i][5]);
       if (v !== null) { lastIdx = i; lastVal = v; break; }
     }
     if (lastVal === null) return;
-    const fmt = (n) => (n >= 0 ? '' : '−') + Math.abs(n).toFixed(1);
-    const lbSpan = '<span style="font-size:18px;color:var(--text-faint);"> lb</span>';
-    document.getElementById('statCurrent').innerHTML   = lastVal.toFixed(1) + lbSpan;
-    document.getElementById('statLost').innerHTML      = fmt(PHASE_START - lastVal) + lbSpan;
-    document.getElementById('statRemaining').innerHTML = fmt(lastVal - PHASE_GOAL) + lbSpan;
-    let weekDelta = null;
-    for (let i = lastIdx - 1; i >= 0; i--) {
-      const v = num(weekRows[i][5]);
-      if (v !== null) { weekDelta = lastVal - v; break; }
-    }
-    const weekEl = document.getElementById('statWeek');
-    if (weekEl) {
-      if (weekDelta === null) weekEl.textContent = '—';
-      else weekEl.innerHTML = (weekDelta > 0 ? '+' : '') + weekDelta.toFixed(1) + lbSpan;
-    }
-    const minT = num(weekRows[lastIdx][2]);
-    const maxT = num(weekRows[lastIdx][4]);
-    const pill = document.getElementById('statusPill');
-    if (pill && minT !== null && maxT !== null) {
-      pill.classList.remove('ontrack','behind');
-      if (lastVal <= minT)      { pill.textContent = 'Ahead'; }
-      else if (lastVal <= maxT) { pill.textContent = 'On Track'; pill.classList.add('ontrack'); }
-      else                      { pill.textContent = 'Behind';   pill.classList.add('behind'); }
-    }
+
+    const startW       = PHASE_START;  // 158.0
+    const totalLost    = startW - lastVal;
+    const totalLostPct = totalLost / startW * 100;
+    const weeksElapsed = Math.max(1, lastIdx + 1);
+    const daysElapsed  = Math.max(1, weeksElapsed * 7);
+    const avgPerWeek   = totalLost / weeksElapsed;
+    const avgPerDay    = totalLost / daysElapsed;
+    const avgPctWk     = avgPerWeek / startW * 100;
+    const projected    = lastVal - (avgPerDay * daysLeft);
+
+    const f1  = n => (n >= 0 ? '' : '−') + Math.abs(n).toFixed(1);
+    const f2  = n => Math.abs(n).toFixed(2);
+    const f3  = n => Math.abs(n).toFixed(3);
+    const fpc = n => '(' + f2(Math.abs(n)) + '%)';
+
+    const ciLabel = weekRows[lastIdx][0] || ('Week ' + (lastIdx + 1));
+    set('psLastWeight', lastVal.toFixed(1) + ' lb  ·  ' + ciLabel);
+    set('psTotalLost',  f1(totalLost) + ' lb  ' + fpc(totalLostPct));
+    set('psAvgWeek',    f1(avgPerWeek) + ' lb/wk  ' + fpc(avgPctWk));
+    set('psAvgDay',     (avgPerDay >= 0 ? '-' : '+') + f3(avgPerDay) + ' lb/day');
+    set('psProjected',  projected.toFixed(1) + ' lb  (at current pace)');
   }
 
   // ============================================================
@@ -1739,6 +1822,8 @@
     const officeList  = document.getElementById('officeHoursList');
     const dailyList   = document.getElementById('dailyList');
     const placeholder = document.getElementById('calPlaceholder');
+
+    _allCalEvents = Array.isArray(events) ? events : [];
 
     // Clear any cal-events from a previous render to avoid duplicates on refresh
     [officeList, dailyList].forEach(list => {
@@ -1799,6 +1884,7 @@
         dailyList.appendChild(li);
       }
     });
+    buildWeekGrid();
   }
 
   // ============================================================
