@@ -2433,6 +2433,29 @@
   }
 
   // ============================================================
+  // OFFICE NOTIFICATION DOT
+  // ============================================================
+  let _stewardActionCount = null;
+
+  function updateOfficeNotif() {
+    const dot = document.getElementById('officeNotif');
+    if (!dot) return;
+    const offSec = document.getElementById('office');
+    let hasUnchecked = false;
+    if (offSec) {
+      const rows = Array.from(offSec.querySelectorAll('.routine .r-row:not(.placeholder)'))
+                        .filter(r => !r.hasAttribute('hidden'));
+      hasUnchecked = rows.some(r => !r.classList.contains('done'));
+    }
+    const stewardBusy = _stewardActionCount !== null && _stewardActionCount > 0;
+    if (hasUnchecked || stewardBusy) {
+      dot.classList.add('visible');
+    } else {
+      dot.classList.remove('visible');
+    }
+  }
+
+  // ============================================================
   // BOOT
   // ============================================================
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
@@ -2458,29 +2481,6 @@
   // Both apps share the same GitHub Pages origin (jacksonjstewart.github.io)
   // so localStorage is readable cross-path.
   // ============================================================
-  // Tracks last-known steward action count for office dot updates
-  let _stewardActionCount = null;
-
-  function updateOfficeNotif() {
-    const dot = document.getElementById('officeNotif');
-    if (!dot) return;
-    // Unchecked routine rows in the Office section
-    const offSec = document.getElementById('office');
-    let hasUnchecked = false;
-    if (offSec) {
-      const rows = Array.from(offSec.querySelectorAll('.routine .r-row:not(.placeholder)'))
-                        .filter(r => !r.hasAttribute('hidden'));
-      hasUnchecked = rows.some(r => !r.classList.contains('done'));
-    }
-    // Steward has outstanding actions
-    const stewardBusy = _stewardActionCount !== null && _stewardActionCount > 0;
-    if (hasUnchecked || stewardBusy) {
-      dot.classList.add('visible');
-    } else {
-      dot.classList.remove('visible');
-    }
-  }
-
   function loadStewardCount() {
     const el = document.getElementById('stewardCount');
     if (!el) return;
