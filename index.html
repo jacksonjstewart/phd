@@ -1282,6 +1282,8 @@
   .cp-widget.earned{display:flex;}
   .cp-widget-office{position:absolute;top:140px;right:40px;}
   @media(max-width:900px){.cp-widget-office{top:90px;right:18px;}}
+  /* On phone widths, drop absolute positioning so ring doesn't clash with today-module */
+  @media(max-width:600px){.cp-widget-office{position:static;margin:0 0 20px auto;}}
   .cp-widget-stats-wrap{display:flex;justify-content:center;margin-top:56px;padding-top:40px;border-top:1px solid var(--border-soft);}
   .cp-widget-label{font-family:var(--mono);font-size:7px;letter-spacing:0.35em;text-transform:uppercase;color:var(--text-faint);}
   .cp-ring-wrap{position:relative;width:80px;height:80px;}
@@ -2839,6 +2841,7 @@
       if (tog) tog.textContent = '+';
     }
     checkForCP();
+    updateOfficeNotif();
   }
 
   // ============================================================
@@ -3061,9 +3064,20 @@
           // Local is ahead (sheet not yet updated) — push it up
           syncCPToSheets(local);
         }
+        _cpSheetsReady = true;
+        if (_cpCheckQueued) { _cpCheckQueued = false; checkForCP(); }
       })
-      .catch(function() {}); // silent fail — localStorage works as fallback
+      .catch(function() {
+        // Sheets unreachable — unblock CP check so localStorage guard still works
+        _cpSheetsReady = true;
+        if (_cpCheckQueued) { _cpCheckQueued = false; checkForCP(); }
+      });
   }
+
+  // Flag set when loadCPFromSheets() resolves (or fails). Prevents double-award
+  // on devices where tasks complete before the Sheets fetch returns.
+  let _cpSheetsReady = false;
+  let _cpCheckQueued = false;
 
   function checkForCP() {
     // All 3 routines section-complete AND steward = 0
@@ -3073,6 +3087,7 @@
     const stewardOk = _stewardActionCount !== null && _stewardActionCount === 0;
     if (!allDone || !stewardOk) return;
 
+    if (!_cpSheetsReady) { _cpCheckQueued = true; return; } // wait for Sheets sync
     const data  = loadCPData();
     const today = todayISO();
     if (data.lastEarned === today) return; // already earned today
