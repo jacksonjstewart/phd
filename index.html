@@ -3202,6 +3202,7 @@
   loadStewardCount();
   renderCPWidgets();
   loadCPFromSheets();
+  setInterval(loadCPFromSheets, 5 * 60 * 1000); // re-poll every 5 min — keeps ring in sync cross-device
 
 </script>
 </body>
