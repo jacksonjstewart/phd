@@ -1692,7 +1692,7 @@
     <div class="cp-widget-sub" id="cpSubOffice">0 / 10</div>
     <div class="cp-tooltip">
       <div class="cp-tooltip-title" id="cpTitleOffice">—</div>
-      <div class="cp-tooltip-row" id="cpRow1Office">Competence Level 0</div>
+      <div class="cp-tooltip-row" id="cpRow1Office">Level 0</div>
       <div class="cp-tooltip-row" id="cpRow2Office">0 CP Total</div>
       <div class="cp-tooltip-row" id="cpRow3Office">0 / 10 to Level 1</div>
       <div class="cp-tooltip-msg" id="cpMsgOffice">Begin your discipline.</div>
@@ -2024,7 +2024,7 @@
         <div class="cp-widget-sub" id="cpSubStats">0 / 10</div>
         <div class="cp-tooltip">
           <div class="cp-tooltip-title" id="cpTitleStats">—</div>
-          <div class="cp-tooltip-row" id="cpRow1Stats">Competence Level 0</div>
+          <div class="cp-tooltip-row" id="cpRow1Stats">Level 0</div>
           <div class="cp-tooltip-row" id="cpRow2Stats">0 CP Total</div>
           <div class="cp-tooltip-row" id="cpRow3Stats">0 / 10 to Level 1</div>
           <div class="cp-tooltip-msg" id="cpMsgStats">Begin your discipline.</div>
@@ -3007,9 +3007,9 @@
 
       // Tooltip
       const titleEl = document.getElementById('cpTitle' + sfx);
-      if (titleEl) titleEl.textContent = title || 'Level 0';
+      if (titleEl) titleEl.textContent = 'Competence Level ' + lv;
       const r1 = document.getElementById('cpRow1' + sfx);
-      if (r1) r1.textContent = 'Competence Level ' + lv + (title ? ' — ' + title : '');
+      if (r1) r1.textContent = 'Level ' + lv + (title ? ' — ' + title : '');
       const r2 = document.getElementById('cpRow2' + sfx);
       if (r2) r2.textContent = total + ' CP Total';
       const r3 = document.getElementById('cpRow3' + sfx);
