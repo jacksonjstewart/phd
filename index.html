@@ -1092,14 +1092,16 @@
     border-color: rgba(201, 161, 74, 0.42);
     box-shadow: 0 0 18px rgba(201, 161, 74, 0.08);
   }
-  /* Zero-actions state — dark green variant */
+  /* Zero-actions state — very dark, subtle green */
   .steward-link.no-actions {
-    background: rgba(8, 24, 10, 0.93);
-    border-color: rgba(60, 180, 80, 0.2);
+    background: rgba(4, 14, 6, 0.98);
+    border-color: rgba(35, 90, 45, 0.18);
+    animation: none;
   }
   .steward-link.no-actions:hover {
-    border-color: rgba(60, 180, 80, 0.42);
-    box-shadow: 0 0 18px rgba(40, 160, 60, 0.08);
+    border-color: rgba(45, 110, 55, 0.32);
+    box-shadow: 0 0 14px rgba(30, 90, 40, 0.07);
+    animation: none;
   }
   .steward-inner {
     display: flex;
@@ -1126,7 +1128,7 @@
   }
   .steward-count.loaded { color: var(--gold); }
   .steward-link.no-actions .steward-label,
-  .steward-link.no-actions .steward-count { color: rgba(100, 220, 120, 0.85); }
+  .steward-link.no-actions .steward-count { color: rgba(65, 140, 75, 0.75); }
   .steward-sub {
     font-family: var(--serif);
     font-style: italic;
@@ -1134,7 +1136,7 @@
     color: var(--gold-faint);
     margin-top: 5px;
   }
-  .steward-link.no-actions .steward-sub { color: rgba(80, 180, 100, 0.45); }
+  .steward-link.no-actions .steward-sub { color: rgba(45, 100, 55, 0.4); }
 
   /* Completed section — head shows green Done label, no re-open */
   .routine.section-complete .routine-head {
@@ -1289,6 +1291,8 @@
   .cp-widget-sub{font-family:var(--mono);font-size:7px;letter-spacing:0.12em;color:var(--text-faint);text-align:center;}
   .cp-ring-title{font-family:var(--mono);font-size:7px;letter-spacing:0.35em;text-transform:uppercase;color:rgba(201,161,74,0.75);text-align:center;margin-top:1px;}
   .cp-tooltip{position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);width:224px;background:rgba(10,8,6,0.97);border:1px solid rgba(201,161,74,0.28);padding:14px 16px;pointer-events:none;opacity:0;transition:opacity 200ms;z-index:200;}
+  /* Office ring is at right:40px — anchor tooltip to left to avoid edge clipping */
+  .cp-widget-office .cp-tooltip{bottom:auto;top:50%;left:auto;right:calc(100% + 14px);transform:translateY(-50%);}
   .cp-widget:hover .cp-tooltip{opacity:1;}
   .cp-tooltip-title{font-family:var(--mono);font-size:8px;letter-spacing:0.4em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
   .cp-tooltip-row{font-family:var(--mono);font-size:8px;letter-spacing:0.08em;color:var(--text-dim);margin-bottom:3px;}
@@ -1626,7 +1630,7 @@
     0%, 100% { box-shadow: 0 0 0 0 rgba(120,20,20,0); }
     50%       { box-shadow: 0 0 10px 3px rgba(120,20,20,0.22); }
   }
-  .steward-link { animation: stewardPulse 5s ease-in-out infinite; }
+  .steward-link:not(.no-actions) { animation: stewardPulse 5s ease-in-out infinite; }
   .steward-link:hover { animation: none; }
 </style>
 </head>
@@ -1688,7 +1692,7 @@
     <div class="cp-widget-sub" id="cpSubOffice">0 / 10</div>
     <div class="cp-tooltip">
       <div class="cp-tooltip-title" id="cpTitleOffice">—</div>
-      <div class="cp-tooltip-row" id="cpRow1Office">Level 0</div>
+      <div class="cp-tooltip-row" id="cpRow1Office">Competence Level 0</div>
       <div class="cp-tooltip-row" id="cpRow2Office">0 CP Total</div>
       <div class="cp-tooltip-row" id="cpRow3Office">0 / 10 to Level 1</div>
       <div class="cp-tooltip-msg" id="cpMsgOffice">Begin your discipline.</div>
@@ -2020,7 +2024,7 @@
         <div class="cp-widget-sub" id="cpSubStats">0 / 10</div>
         <div class="cp-tooltip">
           <div class="cp-tooltip-title" id="cpTitleStats">—</div>
-          <div class="cp-tooltip-row" id="cpRow1Stats">Level 0</div>
+          <div class="cp-tooltip-row" id="cpRow1Stats">Competence Level 0</div>
           <div class="cp-tooltip-row" id="cpRow2Stats">0 CP Total</div>
           <div class="cp-tooltip-row" id="cpRow3Stats">0 / 10 to Level 1</div>
           <div class="cp-tooltip-msg" id="cpMsgStats">Begin your discipline.</div>
@@ -3005,7 +3009,7 @@
       const titleEl = document.getElementById('cpTitle' + sfx);
       if (titleEl) titleEl.textContent = title || 'Level 0';
       const r1 = document.getElementById('cpRow1' + sfx);
-      if (r1) r1.textContent = 'Level ' + lv + (title ? ' — ' + title : '');
+      if (r1) r1.textContent = 'Competence Level ' + lv + (title ? ' — ' + title : '');
       const r2 = document.getElementById('cpRow2' + sfx);
       if (r2) r2.textContent = total + ' CP Total';
       const r3 = document.getElementById('cpRow3' + sfx);
