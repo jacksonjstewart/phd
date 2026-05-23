@@ -3117,43 +3117,48 @@
     const el = document.getElementById('stewardCount');
     if (!el) return;
     try {
-      const CANDIDATES = [
-        'steward-tasks', 'stewardTasks', 'steward_tasks',
-        'steward-data',  'stewardData',  'steward_data',
-        'stewartTasks',  'tasks',        'steward-state',
-        'steward',       'taskList',     'task-list'
-      ];
       let count = null;
-      for (const key of CANDIDATES) {
-        const raw = localStorage.getItem(key);
-        if (!raw) continue;
+      const todayStr = (function() {
+        const d = new Date();
+        return d.getFullYear() + '-' +
+          String(d.getMonth() + 1).padStart(2, '0') + '-' +
+          String(d.getDate()).padStart(2, '0');
+      })();
+
+      // 1. Dedicated key — most accurate. Add this one line to Steward wherever
+      //    today's pending list is computed:
+      //    localStorage.setItem('st_today_pending', String(pendingTasks.length));
+      const direct = localStorage.getItem('st_today_pending');
+      if (direct !== null) {
+        const n = parseInt(direct, 10);
+        if (!isNaN(n) && n >= 0) count = n;
+      }
+
+      // 2. Derive from st_pro (Steward's proactive task engine).
+      //    A task is pending if its suppressUntil has expired and it wasn't done today.
+      //    NOTE: Steward may store dates as 'YYYY-M-D' (no zero-pad); normDate() handles both.
+      if (count === null) {
         try {
-          const data = JSON.parse(raw);
-          if (Array.isArray(data) && data.length > 0) {
-            count = data.filter(t => t && !t.done && !t.completed && !t.finished).length;
-            break;
+          function normDate(s) {
+            if (!s) return '';
+            var p = String(s).split('-');
+            if (p.length !== 3) return String(s);
+            return p[0] + '-' + String(p[1]).padStart(2,'0') + '-' + String(p[2]).padStart(2,'0');
           }
-          if (data && typeof data === 'object') {
-            if (typeof data.left  === 'number') { count = data.left;  break; }
-            if (typeof data.total === 'number') { count = data.total; break; }
+          const stPro = JSON.parse(localStorage.getItem('st_pro') || 'null');
+          if (stPro && typeof stPro === 'object' && !Array.isArray(stPro)) {
+            let pending = 0;
+            Object.values(stPro).forEach(function(v) {
+              if (!v || !v.suppressUntil) return;
+              if (normDate(v.doneOn) === todayStr) return; // completed today — skip
+              if (normDate(v.suppressUntil) <= todayStr) pending++; // overdue/active and not done
+            });
+            count = pending; // 0 when all proactive tasks done
           }
         } catch (_) {}
       }
-      if (count === null) {
-        for (let i = 0; i < localStorage.length; i++) {
-          const key = localStorage.key(i);
-          if (!key || key.startsWith('stewlab-')) continue;
-          const raw = localStorage.getItem(key);
-          if (!raw || raw[0] !== '[') continue;
-          try {
-            const data = JSON.parse(raw);
-            if (Array.isArray(data) && data.length > 0 && data[0] && typeof data[0] === 'object') {
-              count = data.filter(t => !t.done && !t.completed && !t.finished).length;
-              break;
-            }
-          } catch (_) {}
-        }
-      }
+
+      // 3. Render
       const btn = document.getElementById('stewardBtn');
       if (count !== null && count === 0) {
         el.textContent = 'No remaining actions for today';
@@ -3162,7 +3167,7 @@
         _stewardActionCount = 0;
         checkForCP();
       } else if (count !== null && count > 0) {
-        el.textContent = '\u2014 ' + count + ' ACTION' + (count !== 1 ? 'S' : '') + ' FOR TODAY';
+        el.textContent = '\u2014 ' + count + ' REMAINING ACTION' + (count !== 1 ? 'S' : '') + ' FOR TODAY';
         el.classList.add('loaded');
         _stewardActionCount = count;
       } else {
