@@ -2627,6 +2627,12 @@
     [officeList, dailyList].forEach(list => {
       if (list) list.querySelectorAll('.cal-event').forEach(el => el.remove());
     });
+    // After clearing stale cal-events re-check section completion (removal may unblock Complete btn)
+    [officeList, dailyList].forEach(list => {
+      if (!list) return;
+      const routine = list.closest('.routine');
+      if (routine && !routine.classList.contains('section-complete')) checkSectionCompletion(routine);
+    });
 
     // Also refresh the week grid with the full 7-day set
     buildWeekGrid();
@@ -2683,6 +2689,23 @@
         dailyList.appendChild(li);
       }
     });
+
+    // restoreCheckState() ran before cal-events existed — re-apply saved .done states now
+    const _calSaved = loadCheckState();
+    [officeList, dailyList].forEach(list => {
+      if (!list) return;
+      list.querySelectorAll('.cal-event[data-task]').forEach(row => {
+        if (_calSaved[row.dataset.task]) {
+          row.classList.add('done');
+          row.setAttribute('aria-checked', 'true');
+        }
+      });
+      // Re-evaluate section completion: hide Complete btn if new rows are undone,
+      // or show it if cal-events were already ticked and everything is now done
+      const routine = list.closest('.routine');
+      if (routine) checkSectionCompletion(routine);
+    });
+    updateOfficeNotif();
   }
 
   // ============================================================
