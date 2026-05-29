@@ -2249,7 +2249,17 @@
     const wrap = document.getElementById('heatmap12');
     if (!wrap) return;
     const now = new Date();
-    function _pd(v) { if (!v) return null; const d = new Date(v.toString().trim()); return isNaN(d) ? null : d; }
+    function _pd(v) {
+      if (!v) return null;
+      const s = v.toString().trim();
+      const MO = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+      const yr = new Date().getFullYear();
+      const dmy = s.match(/^(\d{1,2})-([A-Za-z]{3})(?:-(\d{4}))?$/);
+      if (dmy) { const mo = MO[dmy[2].toLowerCase()]; if (mo !== undefined) return new Date(dmy[3] ? +dmy[3] : yr, mo, +dmy[1]); }
+      const mdy = s.match(/^([A-Za-z]{3})\s+(\d{1,2})(?:,\s*(\d{4}))?$/);
+      if (mdy) { const mo = MO[mdy[1].toLowerCase()]; if (mo !== undefined) return new Date(mdy[3] ? +mdy[3] : yr, mo, +mdy[2]); }
+      const d = new Date(s); return (!isNaN(d) && d.getFullYear() > 2020) ? d : null;
+    }
     const phaseStart = (allRows && allRows[1] ? _pd(allRows[1][1]) : null) || new Date(2026, 4, 29);
     const msPerWeek = 7 * 24 * 3600 * 1000;
     const currentWeek = Math.max(0, Math.min(11, Math.floor((now - phaseStart) / msPerWeek)));
@@ -2487,8 +2497,25 @@
     // Fall back to safe defaults if cells are missing/unparseable
     function parseSheetDate(v) {
       if (!v) return null;
-      const d = new Date(v.toString().trim());
-      return isNaN(d) ? null : d;
+      const s = v.toString().trim();
+      const MO = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+      const yr = new Date().getFullYear();
+      // "29-May" or "29-May-2026"
+      const dmy = s.match(/^(\d{1,2})-([A-Za-z]{3})(?:-(\d{4}))?$/);
+      if (dmy) {
+        const mo = MO[dmy[2].toLowerCase()];
+        if (mo !== undefined) return new Date(dmy[3] ? +dmy[3] : yr, mo, +dmy[1]);
+      }
+      // "May 29" or "May 29, 2026"
+      const mdy = s.match(/^([A-Za-z]{3})\s+(\d{1,2})(?:,\s*(\d{4}))?$/);
+      if (mdy) {
+        const mo = MO[mdy[1].toLowerCase()];
+        if (mo !== undefined) return new Date(mdy[3] ? +mdy[3] : yr, mo, +mdy[2]);
+      }
+      // ISO / M/D/YYYY fallback
+      const d = new Date(s);
+      if (!isNaN(d) && d.getFullYear() > 2020 && d.getFullYear() < 2100) return d;
+      return null;
     }
     const PROG_START = (allRows && allRows[1] ? parseSheetDate(allRows[1][1]) : null)
                        || new Date(2026, 4, 29);
