@@ -1956,9 +1956,9 @@
         <!-- Timeline bar -->
         <div class="pp-timeline">
           <div class="pp-dates">
-            <span class="pp-date-start">May 20, 2026</span>
+            <span class="pp-date-start" id="ppDateStart">—</span>
             <span class="pp-date-label" id="phDayWeek">DAY &mdash; &middot; WEEK &mdash; of 12</span>
-            <span class="pp-date-end">Aug 12, 2026</span>
+            <span class="pp-date-end" id="ppDateEnd">—</span>
           </div>
           <div class="pp-bar-track">
             <div class="pp-bar-fill" id="ppBarFill" style="width:0%"></div>
@@ -2245,11 +2245,12 @@
   //    Pass weekRows to compute cell status from actual vs min/max bands.
   //    Called once on boot (no data → just numbers + current marker),
   //    then re-called from CSV loader once real data arrives.
-  function buildHeatmap12(weekRows) {
+  function buildHeatmap12(weekRows, allRows) {
     const wrap = document.getElementById('heatmap12');
     if (!wrap) return;
     const now = new Date();
-    const phaseStart = new Date(2026, 4, 20); // May 20, 2026
+    function _pd(v) { if (!v) return null; const d = new Date(v.toString().trim()); return isNaN(d) ? null : d; }
+    const phaseStart = (allRows && allRows[1] ? _pd(allRows[1][1]) : null) || new Date(2026, 4, 29);
     const msPerWeek = 7 * 24 * 3600 * 1000;
     const currentWeek = Math.max(0, Math.min(11, Math.floor((now - phaseStart) / msPerWeek)));
     let html = '';
@@ -2273,8 +2274,7 @@
 
   // ----- LIVE CSV (PHYSIQUE ACADEMY tab, published from Google Sheets) -----
   const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSm6d7HdIKw7iYXdo1B5-IUBc6e33FO3wxKp3FmnGGChnqk_MmPl1593rv5XJ3F4Sweg-HyBVwSQGgK/pub?output=csv';
-  const PHASE_START = 158.0;
-  const PHASE_GOAL  = 140.0;
+  let _checkinDOW = 5; // day-of-week for check-ins; derived from Sheet start date (0=Sun…6=Sat)
   let _chart = null;
 
   function parseCSV(text) {
@@ -2304,13 +2304,13 @@
     if (!btn) return;
     const MONS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     const today = new Date();
-    const isWed = today.getDay() === 3;
-    if (!isWed) {
+    const isCheckinDay = today.getDay() === _checkinDOW;
+    if (!isCheckinDay) {
       btn.textContent = 'View Tracker';
       btn.classList.remove('needs-checkin');
       return;
     }
-    // Wednesday — build today's date string in "D-Mon" format (e.g. "27-May")
+    // Check-in day — build today's date string in "D-Mon" format (e.g. "29-May")
     const todayStr = today.getDate() + '-' + MONS[today.getMonth()];
     // Find matching check-in row (column 1 = date, column 5 = CHECK-IN value)
     const row = weekRows ? weekRows.find(r => (r[1] || '').trim() === todayStr) : null;
@@ -2422,8 +2422,8 @@
           weekRows.map(r => num(r[4])),
           weekRows.map(r => num(r[5]))
         );
-        updatePhysiqueStats(weekRows);
-        buildHeatmap12(weekRows);
+        updatePhysiqueStats(weekRows, rows);
+        buildHeatmap12(weekRows, rows);
         updateSheetBtn(weekRows);
         buildChemTracker(rows);
         updateProgramName(rows);
@@ -2479,22 +2479,36 @@
     });
   }
 
-  function updatePhysiqueStats(weekRows) {
-    const now        = new Date();
-    const PROG_START = new Date(2026, 4, 29);  // May 29 — program start (updated)
-    const PROG_END   = new Date(2026, 7, 20);  // Aug 20 — Sheet Week 12 check-in
-    const MS_DAY     = 24 * 3600 * 1000;
+  function updatePhysiqueStats(weekRows, allRows) {
+    const now     = new Date();
+    const MS_DAY  = 24 * 3600 * 1000;
+
+    // Read program bounds + starting weight from Sheet (B2, C2, N17)
+    // Fall back to safe defaults if cells are missing/unparseable
+    function parseSheetDate(v) {
+      if (!v) return null;
+      const d = new Date(v.toString().trim());
+      return isNaN(d) ? null : d;
+    }
+    const PROG_START = (allRows && allRows[1] ? parseSheetDate(allRows[1][1]) : null)
+                       || new Date(2026, 4, 29);
+    const PROG_END   = (allRows && allRows[16] ? parseSheetDate(allRows[16][13]) : null)
+                       || new Date(2026, 7, 20);
+    const startW     = (allRows && allRows[1] ? parseFloat(allRows[1][2]) : NaN);
 
     // Program position
     const dayNum   = Math.max(1, Math.floor((now - PROG_START) / MS_DAY) + 1);
     const weekNum  = Math.ceil(dayNum / 7);
     const daysLeft = Math.max(0, Math.ceil((PROG_END - now) / MS_DAY));
 
-    // Next Wednesday check-in
-    const dow        = now.getDay();  // 0=Sun
-    const daysToWed  = (dow === 3) ? 7 : (dow < 3 ? 3 - dow : 10 - dow);
-    const nextWed    = new Date(now); nextWed.setDate(now.getDate() + daysToWed);
-    const wedLabel   = 'Wed ' + MONTHS[nextWed.getMonth()].slice(0,3) + ' ' + nextWed.getDate();
+    // Next check-in day — same DOTW as program start date
+    _checkinDOW = PROG_START.getDay();
+    const DOW_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    const dow        = now.getDay();
+    const diff       = (_checkinDOW - dow + 7) % 7;
+    const daysToNext = diff === 0 ? 7 : diff;  // if today IS check-in day, show next week's
+    const nextCheckin = new Date(now); nextCheckin.setDate(now.getDate() + daysToNext);
+    const wedLabel   = DOW_NAMES[_checkinDOW] + ' ' + MONTHS[nextCheckin.getMonth()].slice(0,3) + ' ' + nextCheckin.getDate();
 
     const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
     // Progress bar (% through the 84-day program)
@@ -2507,8 +2521,13 @@
     if (marker) marker.style.left = pct + '%';
 
     set('phDayWeek',   'DAY ' + dayNum + ' · WEEK ' + weekNum + ' of 12');
+    // Update timeline date labels from Sheet values
+    const _dm = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const _fmt = d => _dm[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+    set('ppDateStart', _fmt(PROG_START));
+    set('ppDateEnd',   _fmt(PROG_END));
     set('phRemaining', daysLeft + ' DAYS REMAINING');
-    set('psNextCheckin', wedLabel + '  (' + daysToWed + ' day' + (daysToWed !== 1 ? 's' : '') + ')');
+    set('psNextCheckin', wedLabel + '  (' + daysToNext + ' day' + (daysToNext !== 1 ? 's' : '') + ')');
 
     // Last recorded check-in weight
     let lastIdx = -1, lastVal = null;
@@ -2518,14 +2537,15 @@
     }
     if (lastVal === null) return;
 
-    const startW       = PHASE_START;  // 158.0
-    const totalLost    = startW - lastVal;
-    const totalLostPct = totalLost / startW * 100;
+    const startW_val   = isNaN(startW) ? null : startW;
+    if (startW_val === null) return;
+    const totalLost    = startW_val - lastVal;
+    const totalLostPct = totalLost / startW_val * 100;
     const weeksElapsed = Math.max(1, lastIdx + 1);
     const daysElapsed  = Math.max(1, weeksElapsed * 7);
     const avgPerWeek   = totalLost / weeksElapsed;
     const avgPerDay    = totalLost / daysElapsed;
-    const avgPctWk     = avgPerWeek / startW * 100;
+    const avgPctWk     = avgPerWeek / startW_val * 100;
     const projected    = lastVal - (avgPerDay * daysLeft);
 
     const f1  = n => (n >= 0 ? '−' : '+') + Math.abs(n).toFixed(1);
@@ -2538,7 +2558,9 @@
     // Hero
     set('ppCurrentWeight', lastVal.toFixed(1));
     set('ppHeroLost',      f1(totalLost) + ' lb lost');
-    set('ppHeroPct',       '(' + fpc(totalLostPct) + '  since May 20)');
+    const _sm = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const _sinceLabel = _sm[PROG_START.getMonth()] + ' ' + PROG_START.getDate();
+    set('ppHeroPct',       '(' + fpc(totalLostPct) + '  since ' + _sinceLabel + ')');
 
     // Status pill
     const minT = num(weekRows[lastIdx][2]);
@@ -2557,7 +2579,7 @@
     set('psTotalLost',   f1(totalLost) + ' lb  (' + fpc(totalLostPct) + ')');
     set('psAvgWeek',     f1(avgPerWeek) + ' lb/wk  (' + fpc(avgPctWk) + ')');
     set('psAvgDay',      '−' + f3(Math.abs(avgPerDay)) + ' lb/day');
-    set('psNextCheckin', wedLabel + '  (' + daysToWed + 'd)');
+    set('psNextCheckin', wedLabel + '  (' + daysToNext + 'd)');
     set('psProjected',   projected.toFixed(1) + ' lb');
     set('psLastCheckin', lastVal.toFixed(1) + ' lb  ·  ' + ciLabel);
   }
@@ -2883,9 +2905,9 @@
   }
 
   // ============================================================
-  // STATS NAV NOTIFICATION — green dot on Wednesdays (check-in day)
+  // STATS NAV NOTIFICATION — green dot on check-in day (DOTW derived from Sheet start date)
   // Disappears when Statistics is clicked; persists via localStorage
-  // until the following Wednesday resets it.
+  // until the following check-in day resets it.
   // ============================================================
   function initStatsNotif() {
     const dot  = document.getElementById('statsNotif');
@@ -2893,10 +2915,10 @@
     if (!dot || !link) return;
 
     const now = new Date();
-    const isWed = now.getDay() === 3;
-    if (!isWed) return;
+    const isCheckinDay = now.getDay() === _checkinDOW;
+    if (!isCheckinDay) return;
 
-    // Key is specific to this Wednesday's date
+    // Key is specific to this check-in date
     const p2 = n => String(n).padStart(2, '0');
     const wedKey = 'stewlab-checkin-notif-' + now.getFullYear() + '-' + p2(now.getMonth()+1) + '-' + p2(now.getDate());
 
