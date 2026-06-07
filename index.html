@@ -55,12 +55,12 @@
   *, *::before, *::after { box-sizing: border-box; }
 
   html {
-    background: #0a0806; /* prevents white flash before body fades in */
+    background: #0a0806;
   }
 
   html, body {
     margin: 0; padding: 0;
-    background: transparent;  /* CRITICAL: must be transparent so negative-z-indexed .bg-photo can show through. Dark fallback color lives on .bg-fallback at z-index -4. */
+    background: transparent;
     color: var(--text);
     font-family: var(--serif);
     font-weight: 300;
@@ -79,13 +79,11 @@
     to   { opacity: 1; }
   }
 
-  /* Visible focus ring for keyboard users */
   :focus-visible {
     outline: 1.5px solid var(--gold);
     outline-offset: 3px;
   }
 
-  /* Respect reduced motion */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation-duration: 0.001ms !important;
@@ -108,7 +106,7 @@
   .bg-photo {
     position: fixed; inset: 0; z-index: -3;
     pointer-events: none;
-    background-image: url('./library.webp'); /* CONFIRMED: GitHub Pages serves this from /lab/library.webp */
+    background-image: url('./library.webp');
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
@@ -127,10 +125,6 @@
     background: rgba(0, 0, 0, 0.45);
   }
 
-  /* bg-grain removed — caused warm colour cast */
-
-  /* bg-vignette removed — was creating oval centre-glow artefact */
-
   /* ============================================================
      TOP-LEFT CLUSTER
      ============================================================ */
@@ -144,8 +138,6 @@
     transition: top 360ms ease, left 360ms ease, padding 360ms ease;
     padding: 10px 16px 12px 0;
   }
-  /* When scrolled past splash, give the cluster its own soft backdrop
-     so it doesn't collide with section eyebrows / titles. */
   .topleft::before {
     content: '';
     position: absolute;
@@ -210,8 +202,6 @@
     display: flex; align-items: center; justify-content: center;
     padding: 0 32px;
   }
-  /* Splash-anchored stamp — sits top-left of splash, NOT fixed.
-     Scrolls away normally when user navigates down. */
   .splash-stamp {
     position: absolute;
     top: 92px; left: 32px;
@@ -268,7 +258,7 @@
     color: var(--gold-dim); margin: 0 8px;
   }
 
-  /* Office "Today" module — day/date/time left, weather right */
+  /* Office "Today" module */
   .today-module {
     margin-bottom: 48px;
     padding-bottom: 28px;
@@ -379,7 +369,6 @@
   #weekly { padding-left: 18px; padding-right: 18px; }
   #weekly .section-inner { max-width: 1560px; }
 
-  /* OFFICE hugs the LEFT — narrow column, no auto-centering, right side blank */
   #office .section-inner { max-width: 580px; margin: 0; }
   #office .routine-list  { max-width: 100%; }
   #office .review-banner { max-width: 100%; }
@@ -578,11 +567,10 @@
   .review-banner.hidden { display: none; animation: none; }
 
   /* ============================================================
-     ROUTINE BLOCKS (Morning / Office Hours / Daily)
+     ROUTINE BLOCKS
      ============================================================ */
   .routine { margin-top: 18px; }
   .routine:first-of-type { margin-top: 0; }
-  /* Collapsible header — clickable button styled as a heading */
   button.routine-head {
     width: 100%; background: none;
     border: none; border-bottom: 1px solid var(--border);
@@ -617,7 +605,6 @@
     max-height: 2400px;
     padding-top: 14px;
   }
-  /* TILES — each task is its own bordered box */
   .r-row {
     display: flex; align-items: flex-start; gap: 14px;
     padding: 16px 20px;
@@ -632,7 +619,6 @@
     border-color: var(--gold-dim);
     transform: translateY(-1px);
   }
-  /* Subtle satisfying sweep on toggle */
   .r-row::after {
     content: '';
     position: absolute;
@@ -654,8 +640,6 @@
     border-style: dashed;
   }
   .r-row.placeholder:hover { border-color: var(--border); transform: none; }
-  /* Calendar-sourced events — midnight-blue tint: nearly identical to dark grey tiles but
-     with a subtle blue cast (r=9 g=11 b=25 vs normal r=14 g=14 b=18). Gold rim intact. */
   .r-row.cal-event {
     background: rgba(9, 11, 25, 0.93) !important;
     border-color: rgba(201, 161, 74, 0.22) !important;
@@ -687,7 +671,6 @@
     flex: 0 0 auto;
     align-self: flex-start; padding-top: 6px;
   }
-  /* COMPLETE STATE — dark green fill */
   .r-row.done {
     background: linear-gradient(135deg, #0c2418 0%, #08180f 100%);
     border-color: rgba(42, 157, 110, 0.55);
@@ -711,8 +694,6 @@
   }
   .r-row.done .r-note { color: rgba(180,200,180,0.5); }
   .r-row.done .r-meta { color: rgba(42, 157, 110, 0.7); }
-
-  /* Hidden when day-conditional doesn't match */
   .r-row[hidden] { display: none; }
 
   /* ============================================================
@@ -858,12 +839,12 @@
     padding: 22px;
     margin-bottom: 40px;
     background: linear-gradient(180deg, rgba(255,255,255,0.008) 0%, rgba(0,0,0,0.2) 100%);
-    height: 442px;         /* explicit height so Chart.js can fill it */
+    height: 442px;
     position: relative;
   }
   .chart-wrap canvas {
     position: absolute;
-    inset: 22px;           /* respects the padding */
+    inset: 22px;
     width: calc(100% - 44px) !important;
     height: calc(100% - 44px) !important;
   }
@@ -939,7 +920,6 @@
   .hm-cell.behind  { background: rgba(192,57,43,0.22);  border-color: rgba(192,57,43,0.4); color: var(--text); }
   .hm-cell.current { box-shadow: 0 0 0 1.5px var(--gold-bright); }
 
-  /* Scaffold placeholders (Weekly fully built, Statistics partly built) */
   .scaffold { border-top: 1px solid var(--border); padding-top: 30px; }
   .scaffold-card {
     border: 1px dashed var(--border);
@@ -971,11 +951,9 @@
   .footer .credit a { color: var(--gold-dim); text-decoration: none; }
   .crest-gold { color: var(--gold); }
 
-
   /* ============================================================
      SCROLL-REVEAL
      ============================================================ */
-
   .reveal {
     opacity: 0;
     transform: translateY(22px);
@@ -986,7 +964,6 @@
     opacity: 1;
     transform: translateY(0);
   }
-  /* Never animate for users who prefer it */
   @media (prefers-reduced-motion: reduce) {
     .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
   }
@@ -994,7 +971,6 @@
   /* ============================================================
      MOBILE
      ============================================================ */
-
   @media (max-width: 880px) {
     .topleft { top: 18px; left: 20px; gap: 10px; }
     .nav-links { gap: 14px; }
@@ -1002,27 +978,20 @@
     .stamp .day { font-size: 7px; }
     .stamp .date { font-size: 8px; }
     .stamp .time-weather { font-size: 9px; }
-
     .sync-bar { left: 20px; bottom: 16px; }
     .splash { padding: 0 20px; }
     .splash-greeting { font-size: clamp(42px, 11vw, 56px); max-width: 95%; gap: 12px; }
-
     .section { padding: 120px 22px 60px; }
     .office-grid { grid-template-columns: 1fr; gap: 50px; }
     .block-window { width: 100px; font-size: 8px; }
     .block-title { font-size: 22px; }
-
-    /* Week — stack on mobile */
     .week-grid { grid-template-columns: 1fr; }
     .week-day { min-height: auto; }
-
     .heatmap-12 { grid-template-columns: repeat(6, 1fr); }
   }
 
   /* ============================================================
      CONTENT OPACITY OVERRIDES
-     Tiles use neutral dark grey so the warm library bg doesn't
-     bleed through and tint everything brown.
      ============================================================ */
   .r-row,
   .wm-tile,
@@ -1072,9 +1041,8 @@
   }
 
   /* ============================================================
-     STEWARD LINK — cross-app launcher at foot of OFFICE tab
+     STEWARD LINK
      ============================================================ */
-  /* Steward button — very dark red-tinted tile, same transparency family as cal-event */
   .steward-link {
     display: block;
     margin-top: 24px;
@@ -1092,7 +1060,6 @@
     border-color: rgba(201, 161, 74, 0.42);
     box-shadow: 0 0 18px rgba(201, 161, 74, 0.08);
   }
-  /* Zero-actions state — very dark, subtle green */
   .steward-link.no-actions {
     background: rgba(4, 14, 6, 0.98);
     border-color: rgba(35, 90, 45, 0.18);
@@ -1138,7 +1105,6 @@
   }
   .steward-link.no-actions .steward-sub { color: rgba(45, 100, 55, 0.4); }
 
-  /* Completed section — head shows green Done label, no re-open */
   .routine.section-complete .routine-head {
     color: rgba(42, 157, 110, 0.65);
     border-bottom-color: rgba(42, 157, 110, 0.15);
@@ -1155,8 +1121,6 @@
     letter-spacing: 0.42em;
   }
 
-
-  /* ── Stats two-column split ── */
   /* ── Chemistry Study Tracker ── */
   .chem-tracker { width: 100%; }
   .chem-tracker-head {
@@ -1219,7 +1183,6 @@
     border-color: rgba(255,255,255,0.07);
     color: rgba(255,255,255,0.22);
   }
-  /* Donut summary */
   .chem-donut-wrap {
     display: flex; flex-direction: column;
     align-items: center;
@@ -1235,7 +1198,7 @@
   }
   .chem-donut-hole {
     position: absolute;
-    inset: 32px;          /* ~75% hole */
+    inset: 32px;
     border-radius: 50%; background: var(--bg);
   }
   .chem-donut-pct {
@@ -1250,7 +1213,6 @@
     letter-spacing: 0.3em; text-transform: uppercase;
     color: var(--text-faint); margin-top: 14px; margin-bottom: 28px;
   }
-  /* Future actions list */
   .chem-next {
     width: 100%;
     border-top: 1px solid var(--border-soft);
@@ -1282,7 +1244,6 @@
   .cp-widget.earned{display:flex;}
   .cp-widget-office{position:absolute;top:140px;right:40px;}
   @media(max-width:900px){.cp-widget-office{top:90px;right:18px;}}
-  /* On phone widths, drop absolute positioning so ring doesn't clash with today-module */
   @media(max-width:600px){.cp-widget-office{position:static;margin:0 0 20px auto;}}
   .cp-widget-stats-wrap{display:flex;justify-content:center;margin-top:56px;padding-top:40px;border-top:1px solid var(--border-soft);}
   .cp-widget-label{font-family:var(--mono);font-size:7px;letter-spacing:0.35em;text-transform:uppercase;color:var(--text-faint);}
@@ -1293,7 +1254,6 @@
   .cp-widget-sub{font-family:var(--mono);font-size:7px;letter-spacing:0.12em;color:var(--text-faint);text-align:center;}
   .cp-ring-title{font-family:var(--mono);font-size:7px;letter-spacing:0.35em;text-transform:uppercase;color:rgba(201,161,74,0.75);text-align:center;margin-top:1px;}
   .cp-tooltip{position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);width:224px;background:rgba(10,8,6,0.97);border:1px solid rgba(201,161,74,0.28);padding:14px 16px;pointer-events:none;opacity:0;transition:opacity 200ms;z-index:200;}
-  /* Office ring is at right:40px — anchor tooltip to left to avoid edge clipping */
   .cp-widget-office .cp-tooltip{bottom:auto;top:50%;left:auto;right:calc(100% + 14px);transform:translateY(-50%);}
   .cp-widget:hover .cp-tooltip{opacity:1;}
   .cp-tooltip-title{font-family:var(--mono);font-size:8px;letter-spacing:0.4em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
@@ -1321,7 +1281,7 @@
   @media (max-width: 900px) { .stats-split { grid-template-columns: 1fr; } }
   .stats-left .scaffold-card { margin-top: 0; }
 
-  /* ── Physique header (DAY · WEEK · remaining) ── */
+  /* ── Physique header ── */
   .physique-header {
     display: flex;
     align-items: baseline;
@@ -1372,7 +1332,7 @@
     text-align: right;
   }
 
-  /* ── Week grid: review events (gold) and empty state ── */
+  /* ── Week grid: review events ── */
   .wd-block.wd-review {
     color: var(--gold);
     border-left: 2px solid var(--gold-dim);
@@ -1409,7 +1369,6 @@
     letter-spacing: 0.04em;
     margin-top: 3px;
   }
-  /* Status pill */
   .pp-status {
     font-family: var(--mono);
     font-size: 8px;
@@ -1425,7 +1384,6 @@
   .pp-status.ahead   { background: rgba(42,157,110,0.18); color: rgba(60,210,140,0.95); border-color: rgba(42,157,110,0.4); }
   .pp-status.ontrack { background: rgba(201,161,74,0.15); color: var(--gold);           border-color: var(--gold-dim); }
   .pp-status.behind  { background: rgba(192,57,43,0.18);  color: rgba(230,90,70,0.95); border-color: rgba(192,57,43,0.4); }
-  /* Hero weight */
   .pp-hero {
     display: flex;
     align-items: center;
@@ -1462,7 +1420,6 @@
     color: var(--text-faint);
     margin-top: 3px;
   }
-  /* Timeline */
   .pp-timeline { margin-bottom: 28px; }
   .pp-dates {
     display: flex;
@@ -1525,7 +1482,6 @@
     text-align: right;
     text-transform: uppercase;
   }
-  /* Stat tiles grid */
   .pp-tiles {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -1634,6 +1590,301 @@
   }
   .steward-link:not(.no-actions) { animation: stewardPulse 5s ease-in-out infinite; }
   .steward-link:hover { animation: none; }
+
+  /* ============================================================
+     DOMAIN HEALTH RINGS
+     ============================================================ */
+  .domain-rings-section {
+    margin-top: 56px;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+  }
+  .domain-rings-eyebrow {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 36px;
+  }
+  .domain-rings-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    align-items: start;
+  }
+  @media (max-width: 880px) {
+    .domain-rings-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  }
+  @media (max-width: 480px) {
+    .domain-rings-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
+  }
+  .domain-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 24px 16px 20px;
+    background: rgba(14,14,18,0.93);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    transition: border-color 260ms ease;
+  }
+  .domain-card:hover { border-color: var(--gold-dim); }
+  .domain-ring-wrap {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    flex-shrink: 0;
+  }
+  .domain-ring-wrap svg { display: block; overflow: visible; }
+  .domain-ring-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    pointer-events: none;
+  }
+  .domain-ring-pct {
+    font-family: var(--mono);
+    font-size: 16px;
+    color: var(--text);
+    font-weight: 400;
+    line-height: 1;
+  }
+  .domain-ring-sub {
+    font-family: var(--mono);
+    font-size: 7px;
+    letter-spacing: 0.2em;
+    color: var(--text-faint);
+    text-transform: uppercase;
+  }
+  .domain-label {
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 0.38em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-align: center;
+    line-height: 1.5;
+  }
+  .domain-btns { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+  .domain-btn {
+    font-family: var(--mono);
+    font-size: 7px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    padding: 7px 10px;
+    border: 1px solid var(--gold-dim);
+    background: transparent;
+    color: var(--gold);
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    transition: background 200ms, border-color 200ms, color 200ms, box-shadow 200ms;
+    white-space: nowrap;
+  }
+  .domain-btn:hover { background: rgba(201,161,74,0.08); border-color: var(--gold); }
+  .domain-btn.checkin-disabled {
+    color: var(--text-faint);
+    border-color: rgba(232,226,208,0.1);
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  .domain-btn.checkin-active {
+    color: rgba(34,211,238,0.95);
+    border-color: rgba(34,211,238,0.55);
+    background: rgba(34,211,238,0.06);
+    cursor: pointer;
+    pointer-events: all;
+    animation: domainCheckinPulse 2.4s ease-in-out infinite;
+  }
+  .domain-btn.checkin-active:hover {
+    background: rgba(34,211,238,0.12);
+    border-color: rgba(34,211,238,0.85);
+    animation: none;
+  }
+  @keyframes domainCheckinPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(34,211,238,0); }
+    50%       { box-shadow: 0 0 10px 2px rgba(34,211,238,0.28); }
+  }
+
+  /* ── Domain Review Modal ── */
+  .domain-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.88);
+    z-index: 9998;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 20px;
+    overflow-y: auto;
+  }
+  .domain-modal-overlay.open { display: flex; }
+  .domain-modal-box {
+    background: rgba(11,9,6,0.99);
+    border: 1px solid rgba(201,161,74,0.3);
+    box-shadow: 0 0 80px rgba(201,161,74,0.08);
+    width: 100%;
+    max-width: 900px;
+    animation: dmModalIn 0.4s ease forwards;
+    margin: auto;
+  }
+  @keyframes dmModalIn {
+    from { opacity:0; transform:translateY(16px) scale(0.98); }
+    to   { opacity:1; transform:translateY(0) scale(1); }
+  }
+  .dm-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 32px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .dm-eyebrow {
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+  .dm-title {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 28px;
+    color: var(--text);
+    line-height: 1.1;
+  }
+  .dm-close {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    background: none;
+    border: 1px solid var(--border);
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: color 200ms, border-color 200ms;
+    flex-shrink: 0;
+  }
+  .dm-close:hover { color: var(--gold); border-color: var(--gold-dim); }
+  .dm-body {
+    display: grid;
+    grid-template-columns: 1fr 220px;
+    gap: 0;
+  }
+  @media (max-width: 680px) {
+    .dm-body { grid-template-columns: 1fr; }
+    .dm-ring-col {
+      border-left: none !important;
+      border-top: 1px solid var(--border);
+      padding: 28px 32px !important;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+  .dm-list-col {
+    padding: 28px 32px 36px;
+    overflow-y: auto;
+    max-height: 70vh;
+  }
+  @media (max-width: 680px) { .dm-list-col { max-height: none; } }
+  .dm-subcategory { margin-bottom: 28px; }
+  .dm-subcat-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .dm-subcat-name {
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 0.38em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .dm-subcat-name.complete   { color: rgba(42,157,110,0.85); }
+  .dm-subcat-name.incomplete { color: var(--gold); }
+  .dm-subcat-count {
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    color: var(--text-faint);
+  }
+  .dm-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .dm-item:last-child { border-bottom: none; }
+  .dm-item-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; margin-top:5px; }
+  .dm-item-dot.done { background: rgba(42,157,110,0.85); }
+  .dm-item-dot.todo { background: rgba(201,161,74,0.7); }
+  .dm-item-text { font-family:var(--serif); font-size:15px; line-height:1.35; flex:1; }
+  .dm-item-text.done { color:var(--text-faint); text-decoration:line-through; text-decoration-color:rgba(42,157,110,0.3); }
+  .dm-item-text.todo { color:var(--text); }
+  .dm-item-meta {
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 0.15em;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    flex-shrink: 0;
+    padding-top: 4px;
+  }
+  .dm-ring-col {
+    border-left: 1px solid var(--border);
+    padding: 36px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    background: rgba(6,5,3,0.6);
+  }
+  .dm-ring-label {
+    font-family: var(--mono);
+    font-size: 7px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    text-align: center;
+  }
+  .dm-ring-big-wrap { position:relative; width:160px; height:160px; }
+  .dm-ring-big-inner {
+    position:absolute; inset:0;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    gap:4px; pointer-events:none;
+  }
+  .dm-ring-big-pct { font-family:var(--mono); font-size:28px; color:var(--text); font-weight:400; line-height:1; }
+  .dm-ring-big-sub { font-family:var(--mono); font-size:7px; letter-spacing:0.25em; color:var(--text-faint); text-transform:uppercase; }
+  .dm-legend { width:100%; display:flex; flex-direction:column; gap:8px; margin-top:8px; }
+  .dm-legend-row { display:flex; align-items:center; gap:8px; }
+  .dm-legend-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .dm-legend-dot.complete   { background:rgba(42,157,110,0.85); }
+  .dm-legend-dot.incomplete { background:rgba(201,161,74,0.75); }
+  .dm-legend-text { font-family:var(--mono); font-size:7.5px; letter-spacing:0.2em; color:var(--text-faint); text-transform:uppercase; }
+  .dm-segment-legend { width:100%; margin-top:16px; padding-top:16px; border-top:1px solid var(--border-soft); display:flex; flex-direction:column; gap:6px; }
+  .dm-seg-legend-title { font-family:var(--mono); font-size:7px; letter-spacing:0.35em; text-transform:uppercase; color:var(--text-faint); margin-bottom:4px; }
+  .dm-seg-row { display:flex; align-items:center; gap:8px; }
+  .dm-seg-swatch { width:18px; height:3px; border-radius:2px; flex-shrink:0; }
+  .dm-seg-swatch.complete   { background:rgba(42,157,110,0.85); }
+  .dm-seg-swatch.incomplete { background:rgba(201,161,74,0.75); }
+  .dm-seg-name { font-family:var(--mono); font-size:7.5px; letter-spacing:0.08em; color:var(--text-dim); text-transform:uppercase; line-height:1.4; }
 </style>
 </head>
 <body>
@@ -1643,7 +1894,7 @@
 <div class="bg-photo" id="bgPhoto"></div>
 <div class="bg-tint"></div>
 
-<!-- Top-left fixed — nav links only. Stamp anchored to splash (scrolls away). -->
+<!-- Top-left fixed — nav links only -->
 <div class="topleft">
   <ul class="nav-links" aria-label="Primary navigation">
     <li><a href="#splash"     data-nav>Home</a></li>
@@ -1661,7 +1912,6 @@
 </div>
 
 <section id="splash" class="splash">
-  <!-- Stamp lives top-left of splash, anchored to this section. -->
   <div class="splash-stamp" aria-label="Date, time, and weather">
     <div class="day"  id="splashDay">—</div>
     <div class="date" id="splashDate">—</div>
@@ -1715,7 +1965,6 @@
       </div>
     </header>
 
-    <!-- Day-aware review banner (Sunday PhD / biweekly Wed Finance / biweekly Sat Home & Health) -->
     <div class="review-banner hidden" id="reviewBanner">
       <span class="icon" id="reviewIcon">REVIEW</span>
       <span class="text" id="reviewText">&mdash;</span>
@@ -1728,7 +1977,6 @@
         <span class="rh-toggle" aria-hidden="true">+</span>
       </button>
       <ul class="routine-list" id="morningList">
-
         <li class="r-row" data-cond="always" data-task="wake-up" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
@@ -1736,7 +1984,6 @@
             <div class="r-note">Start the day properly. Wake up &amp; get out of bed early to start your day intentionally.</div>
           </div>
         </li>
-
         <li class="r-row" data-cond="always" data-task="weigh" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
@@ -1744,7 +1991,6 @@
             <div class="r-note">Measure &amp; record an accurate post-void body-weight to track ongoing physique progress.</div>
           </div>
         </li>
-
         <li class="r-row" data-cond="always" data-task="hydrate" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
@@ -1752,7 +1998,6 @@
             <div class="r-note">Drink a full glass of lemon / citrus water to properly hydrate first thing in the morning.</div>
           </div>
         </li>
-
         <li class="r-row" data-cond="always" data-task="coffee" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
@@ -1760,7 +2005,6 @@
             <div class="r-note">Over a cup of coffee, review your schedule &amp; task list for the day.</div>
           </div>
         </li>
-
         <li class="r-row" data-cond="always" data-task="supplements" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
@@ -1768,8 +2012,6 @@
             <div class="r-note">Creatine &middot; Vitamin D &middot; Rosuvastatin &middot; Ezetimibe &middot; Ashwagandha. Every single day.</div>
           </div>
         </li>
-
-        <!-- Adaptive training row (content changes by day) -->
         <li class="r-row" id="trainingRow" data-cond="always" data-task="training" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
@@ -1777,7 +2019,6 @@
             <div class="r-note">Resistance training. Hit the programmed lifts for today.</div>
           </div>
         </li>
-
         <li class="r-row" data-cond="not-mon" data-task="steam" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
@@ -1785,7 +2026,6 @@
             <div class="r-note">A short steam or sauna session.</div>
           </div>
         </li>
-
         <li class="r-row" data-cond="always" data-task="hygiene" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
@@ -1793,7 +2033,6 @@
             <div class="r-note">Shower, skincare, dental hygiene, nails, body hair management. Every single day.</div>
           </div>
         </li>
-
         <li class="r-row" data-cond="always" data-task="dress" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
@@ -1801,7 +2040,6 @@
             <div class="r-note">Select from a minimalist set of refined outfit choices every single day.</div>
           </div>
         </li>
-
       </ul>
     </div>
 
@@ -1817,7 +2055,6 @@
             <div class="r-note">Loading calendar&hellip;</div>
           </div>
         </li>
-
         <li class="r-row" data-cond="always" data-task="email-inbox" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
@@ -1825,7 +2062,6 @@
             <div class="r-note">Answer all emails within 24 hours, and clear your inbox for breathing room, daily.</div>
           </div>
         </li>
-
         <li class="r-row" data-cond="tue-only" data-task="tue-planning" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
@@ -1834,7 +2070,6 @@
           </div>
           <span class="r-meta">ACE Coffee</span>
         </li>
-
         <li class="r-row" data-cond="first-thu" data-task="thu-travel" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
@@ -1863,7 +2098,7 @@
       </ul>
     </div>
 
-    <!-- STEWARD — cross-app launcher -->
+    <!-- STEWARD -->
     <a href="https://jacksonjstewart.github.io/stewardapp/"
        target="_blank" rel="noopener"
        class="steward-link reveal"
@@ -1875,7 +2110,6 @@
       </div>
       <div class="steward-sub">Household &middot; Finances &middot; Logistics</div>
     </a>
-
   </div>
 </section>
 
@@ -1884,8 +2118,51 @@
   <div class="section-inner">
     <p class="section-eyebrow">II &middot; The Week Ahead</p>
     <div class="week-grid" id="weekGrid"><!-- populated by JS --></div>
+
+    <!-- DOMAIN HEALTH RINGS -->
+    <div class="domain-rings-section reveal" style="--reveal-delay:0.15s">
+      <p class="domain-rings-eyebrow">Domain Health</p>
+      <div class="domain-rings-grid" id="domainRingsGrid">
+        <div class="domain-card" id="dr-health"></div>
+        <div class="domain-card" id="dr-finances"></div>
+        <div class="domain-card" id="dr-home"></div>
+        <div class="domain-card" id="dr-logistics"></div>
+      </div>
+    </div>
+
   </div>
 </section>
+
+<!-- DOMAIN REVIEW MODAL -->
+<div class="domain-modal-overlay" id="domainModal" role="dialog" aria-modal="true" aria-labelledby="dmModalTitle">
+  <div class="domain-modal-box">
+    <div class="dm-header">
+      <div class="dm-header-left">
+        <div class="dm-eyebrow">Domain Review</div>
+        <div class="dm-title" id="dmModalTitle">&mdash;</div>
+      </div>
+      <button class="dm-close" id="dmModalClose" type="button">Close</button>
+    </div>
+    <div class="dm-body">
+      <div class="dm-list-col" id="dmListCol"></div>
+      <div class="dm-ring-col" id="dmRingCol">
+        <div class="dm-ring-label">Overall Completion</div>
+        <div class="dm-ring-big-wrap">
+          <svg id="dmBigRingSvg" viewBox="0 0 160 160" width="160" height="160"></svg>
+          <div class="dm-ring-big-inner">
+            <span class="dm-ring-big-pct" id="dmBigPct">&mdash;</span>
+            <span class="dm-ring-big-sub">complete</span>
+          </div>
+        </div>
+        <div class="dm-legend">
+          <div class="dm-legend-row"><div class="dm-legend-dot complete"></div><span class="dm-legend-text">Subcategory complete</span></div>
+          <div class="dm-legend-row"><div class="dm-legend-dot incomplete"></div><span class="dm-legend-text">Needs attention</span></div>
+        </div>
+        <div class="dm-segment-legend" id="dmSegLegend"></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ========== STATISTICS ========== -->
 <section id="statistics" class="section" aria-labelledby="stats-title">
@@ -1931,8 +2208,6 @@
 
       <!-- Right: physique panel -->
       <div class="stats-right reveal">
-
-        <!-- Header bar -->
         <div class="pp-top-bar">
           <div>
             <div class="pp-heading">Physique Progress</div>
@@ -1940,8 +2215,6 @@
           </div>
           <div class="pp-status" id="ppStatus">&mdash;</div>
         </div>
-
-        <!-- Hero: current weight + total lost -->
         <div class="pp-hero">
           <div class="pp-hero-weight">
             <span class="pp-weight-val" id="ppCurrentWeight">&mdash;</span>
@@ -1952,8 +2225,6 @@
             <div class="pp-hero-pct" id="ppHeroPct">(&mdash;%  since May 20)</div>
           </div>
         </div>
-
-        <!-- Timeline bar -->
         <div class="pp-timeline">
           <div class="pp-dates">
             <span class="pp-date-start" id="ppDateStart">—</span>
@@ -1966,36 +2237,14 @@
           </div>
           <div class="pp-bar-sub" id="phRemaining">&mdash; days remaining</div>
         </div>
-
-        <!-- Stat tiles -->
         <div class="pp-tiles">
-          <div class="pp-tile">
-            <div class="pp-tile-val" id="psTotalLost">&mdash;</div>
-            <div class="pp-tile-label">Total Lost</div>
-          </div>
-          <div class="pp-tile">
-            <div class="pp-tile-val" id="psAvgWeek">&mdash;</div>
-            <div class="pp-tile-label">Avg / Week</div>
-          </div>
-          <div class="pp-tile">
-            <div class="pp-tile-val" id="psNextCheckin">&mdash;</div>
-            <div class="pp-tile-label">Next Check-in</div>
-          </div>
-          <div class="pp-tile">
-            <div class="pp-tile-val" id="psAvgDay">&mdash;</div>
-            <div class="pp-tile-label">Avg / Day</div>
-          </div>
-          <div class="pp-tile">
-            <div class="pp-tile-val" id="psProjected">&mdash;</div>
-            <div class="pp-tile-label">Projected Final</div>
-          </div>
-          <div class="pp-tile">
-            <div class="pp-tile-val" id="psLastCheckin">&mdash;</div>
-            <div class="pp-tile-label">Last Check-in</div>
-          </div>
+          <div class="pp-tile"><div class="pp-tile-val" id="psTotalLost">&mdash;</div><div class="pp-tile-label">Total Lost</div></div>
+          <div class="pp-tile"><div class="pp-tile-val" id="psAvgWeek">&mdash;</div><div class="pp-tile-label">Avg / Week</div></div>
+          <div class="pp-tile"><div class="pp-tile-val" id="psNextCheckin">&mdash;</div><div class="pp-tile-label">Next Check-in</div></div>
+          <div class="pp-tile"><div class="pp-tile-val" id="psAvgDay">&mdash;</div><div class="pp-tile-label">Avg / Day</div></div>
+          <div class="pp-tile"><div class="pp-tile-val" id="psProjected">&mdash;</div><div class="pp-tile-label">Projected Final</div></div>
+          <div class="pp-tile"><div class="pp-tile-val" id="psLastCheckin">&mdash;</div><div class="pp-tile-label">Last Check-in</div></div>
         </div>
-
-        <!-- Trajectory chart -->
         <div class="chart-section-title">
           <span>12-Week Program Progress</span>
           <a class="sheet-link" id="sheetBtn"
@@ -2005,7 +2254,6 @@
         <div class="chart-wrap reveal" style="--reveal-delay: 0.1s">
           <canvas id="weightChart" aria-label="Weight trajectory chart" role="img"></canvas>
         </div>
-
       </div>
 
     </div>
@@ -2068,24 +2316,20 @@
     setText('splashDay',      dayName);
     setText('splashDate',     dateLine.toUpperCase());
     setText('splashTime',     timeStr);
-    // Time-aware greeting
     const _gr = h < 12 ? 'Good morning, Doctor.'
               : h < 17 ? 'Good afternoon, Doctor.'
               : h < 21 ? 'Good evening, Doctor.'
               :           'Good night, Doctor.';
     setText('splashGreeting', _gr);
-
-    // Big today-header on Office page (mixed case for date, italic display)
     setText('officeDayBig',   dayName.charAt(0) + dayName.slice(1).toLowerCase());
     setText('officeDateBig',  dateLine);
     setText('officeTimeBig',  timeStr);
-
     updateReviewBanner(now);
     applyDayConditions(now);
     updateMorningTraining(now);
   }
 
-  // 3 · Weather (Open-Meteo, no API key needed)
+  // 3 · Weather
   const WEATHER_CODES = {0:'Clear',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',45:'Fog',48:'Rime fog',51:'Light drizzle',53:'Drizzle',55:'Dense drizzle',61:'Light rain',63:'Rain',65:'Heavy rain',71:'Light snow',73:'Snow',75:'Heavy snow',77:'Snow grains',80:'Rain showers',81:'Showers',82:'Violent showers',85:'Snow showers',86:'Heavy snow showers',95:'Thunderstorm',96:'Storm w/ hail',99:'Severe storm'};
   function refreshWeather() {
     fetch('https://api.open-meteo.com/v1/forecast?latitude=53.5461&longitude=-113.4938&current=temperature_2m,weather_code&temperature_unit=celsius&timezone=auto', { cache: 'no-store' })
@@ -2095,17 +2339,12 @@
         const cond = WEATHER_CODES[d.current.weather_code] || 'Edmonton';
         const txt = 'Edmonton · ' + t + '°C · ' + cond;
         setText('splashWeather', txt);
-        // Office module shows "Edmonton" as a label above, so value is bare temp+cond
         setText('officeWeatherBig', t + '°C · ' + cond);
       })
       .catch(err => console.warn('[Stewart Lab] Weather fetch failed:', err));
   }
 
-  // 4 · Day-aware visibility for Office routine rows
-  //    Reference dates for biweekly cadences:
-  //      Wednesday Finance Review  → starts May 27, 2026
-  //      Saturday Home & Health    → starts May 23, 2026
-  //      Monthly Travel Planning   → first Thursday of each month, starts June 4, 2026
+  // 4 · Day-aware conditions
   function isBiweeklyFrom(now, refDate, weekday) {
     if (now.getDay() !== weekday) return false;
     const day0 = new Date(refDate.getFullYear(), refDate.getMonth(), refDate.getDate());
@@ -2120,7 +2359,7 @@
     return now.getDate() === 1 + offset;
   }
   function applyDayConditions(now) {
-    const dow = now.getDay(); // 0 Sun ... 6 Sat
+    const dow = now.getDay();
     document.querySelectorAll('[data-cond]').forEach(el => {
       let show = true;
       switch (el.dataset.cond) {
@@ -2157,7 +2396,7 @@
     }
   }
 
-  // 5 · Day-aware review banner — keeps the boxed style for Sun/biweekly Wed/biweekly Sat
+  // 5 · Review banner
   function updateReviewBanner(now) {
     const banner = document.getElementById('reviewBanner');
     const icon   = document.getElementById('reviewIcon');
@@ -2179,7 +2418,7 @@
     }
   }
 
-  // 6 · Weekly grid — Today + 6 days, populated with calendar events
+  // 6 · Weekly grid
   let _allCalEvents = [];
 
   function buildWeekGrid() {
@@ -2197,7 +2436,6 @@
       const dateStr  = localDate(d);
       const dayEvs = _allCalEvents.filter(ev => {
         if (ev.allDay) {
-          // All-day events: Google end date is EXCLUSIVE (event ending Sun has end=Mon)
           const evStart = ev.date || (ev.start && ev.start.date) || '';
           const evEnd   = (ev.end && ev.end.date) || evStart;
           return evStart <= dateStr && dateStr < evEnd;
@@ -2241,10 +2479,7 @@
     grid.innerHTML = html;
   }
 
-  // 7 · Statistics — 12-week heatmap + Chart.js trajectory (live from CSV)
-  //    Pass weekRows to compute cell status from actual vs min/max bands.
-  //    Called once on boot (no data → just numbers + current marker),
-  //    then re-called from CSV loader once real data arrives.
+  // 7 · Statistics — heatmap + Chart.js
   function buildHeatmap12(weekRows, allRows) {
     const wrap = document.getElementById('heatmap12');
     if (!wrap) return;
@@ -2282,9 +2517,9 @@
     wrap.innerHTML = html;
   }
 
-  // ----- LIVE CSV (PHYSIQUE ACADEMY tab, published from Google Sheets) -----
+  // CSV
   const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSm6d7HdIKw7iYXdo1B5-IUBc6e33FO3wxKp3FmnGGChnqk_MmPl1593rv5XJ3F4Sweg-HyBVwSQGgK/pub?output=csv';
-  let _checkinDOW = 5; // day-of-week for check-ins; derived from Sheet start date (0=Sun…6=Sat)
+  let _checkinDOW = 5;
   let _chart = null;
 
   function parseCSV(text) {
@@ -2308,7 +2543,6 @@
   }
   function num(v) { const n = parseFloat(v); return isNaN(n) ? null : n; }
 
-  // Update the "View Tracker / Check-In" button based on day + CSV data
   function updateSheetBtn(weekRows) {
     const btn = document.getElementById('sheetBtn');
     if (!btn) return;
@@ -2320,9 +2554,7 @@
       btn.classList.remove('needs-checkin');
       return;
     }
-    // Check-in day — build today's date string in "D-Mon" format (e.g. "29-May")
     const todayStr = today.getDate() + '-' + MONS[today.getMonth()];
-    // Find matching check-in row (column 1 = date, column 5 = CHECK-IN value)
     const row = weekRows ? weekRows.find(r => (r[1] || '').trim() === todayStr) : null;
     const checkedIn = row && row[5] && row[5].toString().trim() !== '';
     if (checkedIn) {
@@ -2334,7 +2566,6 @@
     }
   }
 
-  // ── Chemistry tracker (from sheet columns P+, starting where row[15] is TRUE/FALSE) ──
   function buildChemTracker(allRows) {
     const countEl   = document.getElementById('chemCount');
     const fillEl    = document.getElementById('chemFill');
@@ -2342,8 +2573,6 @@
     const donutEl   = document.getElementById('chemDonut');
     const donutPct  = document.getElementById('chemDonutPct');
     if (!groupEl) return;
-
-    // Collect all (done, name) pairs
     const modules = [];
     for (const row of allRows) {
       const v = (row[15] || '').toString().trim().toUpperCase();
@@ -2357,20 +2586,14 @@
       }
     }
     if (!modules.length) return;
-
     const total    = modules.length;
     const complete = modules.filter(m => m.done).length;
     const pct      = Math.round((complete / total) * 100);
-
     if (countEl) countEl.textContent = complete + ' / ' + total + '  ·  ' + pct + '%';
     if (fillEl)  fillEl.style.width  = pct + '%';
-
-    // Donut
     if (donutEl) donutEl.style.background =
       'conic-gradient(rgba(62,207,110,0.85) 0% ' + pct + '%, rgba(255,255,255,0.07) ' + pct + '% 100%)';
     if (donutPct) donutPct.textContent = pct + '%';
-
-    // Group & sort numerically within each group
     const groups = { 'CHEM': [], 'OC': [], 'BC': [] };
     for (const m of modules) {
       const key = m.name.startsWith('CHEM') ? 'CHEM'
@@ -2380,14 +2603,11 @@
     }
     const numOf = name => parseInt((name.match(/\d+/) || [0])[0]);
     for (const k of Object.keys(groups)) groups[k].sort((a,b) => numOf(a.name) - numOf(b.name));
-
-    // Per-group config: label, CSS vars for colour
     const GRP = {
       CHEM: { label: 'General Chemistry',  color: 'rgba(96,165,250,0.85)',  bg: 'rgba(59,130,246,0.08)',  border: 'rgba(96,165,250,0.18)'  },
       OC:   { label: 'Organic Chemistry',  color: 'rgba(251,146,60,0.9)',   bg: 'rgba(234,88,12,0.08)',   border: 'rgba(251,146,60,0.2)'   },
       BC:   { label: 'Biochemistry',       color: 'rgba(167,139,250,0.9)',  bg: 'rgba(139,92,246,0.08)',  border: 'rgba(167,139,250,0.2)'  }
     };
-
     let html = '';
     for (const [key, mods] of Object.entries(groups)) {
       if (!mods.length) continue;
@@ -2408,7 +2628,6 @@
     groupEl.innerHTML = html;
   }
 
-  // ── Program name from M4 (rows[3][12]) ──
   function updateProgramName(allRows) {
     const el = document.getElementById('ppProgramName');
     if (!el) return;
@@ -2423,7 +2642,7 @@
       .then(r => r.ok ? r.text() : Promise.reject(r.status))
       .then(text => {
         const rows = parseCSV(text);
-        const weekRows = rows.slice(3, 15); // rows 4-15 (1-indexed) = indices 3-14
+        const weekRows = rows.slice(3, 15);
         const labels = weekRows.map((r,i) => r[0] || ('W' + (i+1)));
         renderWeightChart(
           labels,
@@ -2437,8 +2656,6 @@
         updateSheetBtn(weekRows);
         buildChemTracker(rows);
         updateProgramName(rows);
-        const sub = document.getElementById('statCurrentSub');
-        if (sub) sub.textContent = 'Live · synced from Sheet';
         const _sds = document.getElementById('syncDot');
         const _sls = document.getElementById('syncLabel');
         if (_sds) { _sds.classList.remove('error','demo'); }
@@ -2457,7 +2674,7 @@
           [158.0,156.0,153.8,151.7,149.7,147.8,145.8,144.0,142.1,140.3,138.5,136.7],
           [158.0,156.8,155.4,null,null,null,null,null,null,null,null,null]
         );
-        updateSheetBtn(null); // no row data on fallback
+        updateSheetBtn(null);
       });
   }
 
@@ -2492,53 +2709,33 @@
   function updatePhysiqueStats(weekRows, allRows) {
     const now     = new Date();
     const MS_DAY  = 24 * 3600 * 1000;
-
-    // Read program bounds + starting weight from Sheet (B2, C2, N17)
-    // Fall back to safe defaults if cells are missing/unparseable
     function parseSheetDate(v) {
       if (!v) return null;
       const s = v.toString().trim();
       const MO = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
       const yr = new Date().getFullYear();
-      // "29-May" or "29-May-2026"
       const dmy = s.match(/^(\d{1,2})-([A-Za-z]{3})(?:-(\d{4}))?$/);
-      if (dmy) {
-        const mo = MO[dmy[2].toLowerCase()];
-        if (mo !== undefined) return new Date(dmy[3] ? +dmy[3] : yr, mo, +dmy[1]);
-      }
-      // "May 29" or "May 29, 2026"
+      if (dmy) { const mo = MO[dmy[2].toLowerCase()]; if (mo !== undefined) return new Date(dmy[3] ? +dmy[3] : yr, mo, +dmy[1]); }
       const mdy = s.match(/^([A-Za-z]{3})\s+(\d{1,2})(?:,\s*(\d{4}))?$/);
-      if (mdy) {
-        const mo = MO[mdy[1].toLowerCase()];
-        if (mo !== undefined) return new Date(mdy[3] ? +mdy[3] : yr, mo, +mdy[2]);
-      }
-      // ISO / M/D/YYYY fallback
+      if (mdy) { const mo = MO[mdy[1].toLowerCase()]; if (mo !== undefined) return new Date(mdy[3] ? +mdy[3] : yr, mo, +mdy[2]); }
       const d = new Date(s);
       if (!isNaN(d) && d.getFullYear() > 2020 && d.getFullYear() < 2100) return d;
       return null;
     }
-    const PROG_START = (allRows && allRows[1] ? parseSheetDate(allRows[1][1]) : null)
-                       || new Date(2026, 4, 29);
-    const PROG_END   = (allRows && allRows[16] ? parseSheetDate(allRows[16][13]) : null)
-                       || new Date(2026, 7, 20);
+    const PROG_START = (allRows && allRows[1] ? parseSheetDate(allRows[1][1]) : null) || new Date(2026, 4, 29);
+    const PROG_END   = (allRows && allRows[16] ? parseSheetDate(allRows[16][13]) : null) || new Date(2026, 7, 20);
     const startW     = (allRows && allRows[1] ? parseFloat(allRows[1][2]) : NaN);
-
-    // Program position
     const dayNum   = Math.max(1, Math.floor((now - PROG_START) / MS_DAY) + 1);
     const weekNum  = Math.ceil(dayNum / 7);
     const daysLeft = Math.max(0, Math.ceil((PROG_END - now) / MS_DAY));
-
-    // Next check-in day — same DOTW as program start date
     _checkinDOW = PROG_START.getDay();
     const DOW_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
     const dow        = now.getDay();
     const diff       = (_checkinDOW - dow + 7) % 7;
-    const daysToNext = diff === 0 ? 7 : diff;  // if today IS check-in day, show next week's
+    const daysToNext = diff === 0 ? 7 : diff;
     const nextCheckin = new Date(now); nextCheckin.setDate(now.getDate() + daysToNext);
     const wedLabel   = DOW_NAMES[_checkinDOW] + ' ' + MONTHS[nextCheckin.getMonth()].slice(0,3) + ' ' + nextCheckin.getDate();
-
     const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-    // Progress bar (% through the 84-day program)
     const totalDays = Math.ceil((PROG_END - PROG_START) / MS_DAY);
     const elapsed   = Math.max(0, Math.min(totalDays, dayNum - 1));
     const pct       = Math.round(elapsed / totalDays * 100);
@@ -2546,24 +2743,19 @@
     const marker = document.getElementById('ppBarMarker');
     if (fill)   fill.style.width = pct + '%';
     if (marker) marker.style.left = pct + '%';
-
     set('phDayWeek',   'DAY ' + dayNum + ' · WEEK ' + weekNum + ' of 12');
-    // Update timeline date labels from Sheet values
     const _dm = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     const _fmt = d => _dm[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
     set('ppDateStart', _fmt(PROG_START));
     set('ppDateEnd',   _fmt(PROG_END));
     set('phRemaining', daysLeft + ' DAYS REMAINING');
     set('psNextCheckin', wedLabel + '  (' + daysToNext + ' day' + (daysToNext !== 1 ? 's' : '') + ')');
-
-    // Last recorded check-in weight
     let lastIdx = -1, lastVal = null;
     for (let i = weekRows.length - 1; i >= 0; i--) {
       const v = num(weekRows[i][5]);
       if (v !== null) { lastIdx = i; lastVal = v; break; }
     }
     if (lastVal === null) return;
-
     const startW_val   = isNaN(startW) ? null : startW;
     if (startW_val === null) return;
     const totalLost    = startW_val - lastVal;
@@ -2574,22 +2766,16 @@
     const avgPerDay    = totalLost / daysElapsed;
     const avgPctWk     = avgPerWeek / startW_val * 100;
     const projected    = lastVal - (avgPerDay * daysLeft);
-
     const f1  = n => (n >= 0 ? '−' : '+') + Math.abs(n).toFixed(1);
     const f2  = n => Math.abs(n).toFixed(2);
     const f3  = n => Math.abs(n).toFixed(3);
     const fpc = n => f2(Math.abs(n)) + '%';
-
     const ciLabel = weekRows[lastIdx][0] || ('Week ' + (lastIdx + 1));
-
-    // Hero
     set('ppCurrentWeight', lastVal.toFixed(1));
     set('ppHeroLost',      f1(totalLost) + ' lb lost');
     const _sm = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     const _sinceLabel = _sm[PROG_START.getMonth()] + ' ' + PROG_START.getDate();
     set('ppHeroPct',       '(' + fpc(totalLostPct) + '  since ' + _sinceLabel + ')');
-
-    // Status pill
     const minT = num(weekRows[lastIdx][2]);
     const maxT = num(weekRows[lastIdx][4]);
     const pill = document.getElementById('ppStatus');
@@ -2601,8 +2787,6 @@
         else                      { pill.textContent = 'Behind ●';   pill.classList.add('behind'); }
       } else { pill.textContent = 'Loading…'; }
     }
-
-    // Tiles
     set('psTotalLost',   f1(totalLost) + ' lb  (' + fpc(totalLostPct) + ')');
     set('psAvgWeek',     f1(avgPerWeek) + ' lb/wk  (' + fpc(avgPctWk) + ')');
     set('psAvgDay',      '−' + f3(Math.abs(avgPerDay)) + ' lb/day');
@@ -2612,25 +2796,14 @@
   }
 
   // ============================================================
-  // GOOGLE CALENDAR INTEGRATION
-  //   Paste your API key + calendar ID below to turn it on.
-  //   Setup steps live in docs/CALENDAR_SETUP.md
+  // GOOGLE CALENDAR
   // ============================================================
-  // ============================================================
-  // GOOGLE CALENDAR — Apps Script proxy (keeps calendar private)
-  //   1. Paste apps-script/calendar-proxy.gs into script.google.com
-  //   2. Deploy as Web App (Execute as: Me, Access: Anyone)
-  //   3. Paste the Web App URL below
-  // ============================================================
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxLidrQWlzMhobF3vNt17ILd5wPbcjOvJI4fc50GWso-ahWbf2D6jDQH2h9ClMjcF86Cw/exec'; // ← paste your Web App URL here
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxLidrQWlzMhobF3vNt17ILd5wPbcjOvJI4fc50GWso-ahWbf2D6jDQH2h9ClMjcF86Cw/exec';
 
   function loadCalendarEvents() {
     if (!APPS_SCRIPT_URL) {
       const ph = document.getElementById('calPlaceholder');
-      if (ph) {
-        const n = ph.querySelector('.r-note');
-        if (n) n.textContent = 'Calendar not configured — add your Apps Script URL to index.html';
-      }
+      if (ph) { const n = ph.querySelector('.r-note'); if (n) n.textContent = 'Calendar not configured'; }
       return;
     }
     fetch(APPS_SCRIPT_URL)
@@ -2650,10 +2823,7 @@
         if (_sd2) _sd2.classList.add('error');
         if (_sl2) _sl2.textContent = 'Sync Failed';
         const ph = document.getElementById('calPlaceholder');
-        if (ph) {
-          const n = ph.querySelector('.r-note');
-          if (n) n.textContent = 'Calendar unavailable — check the Apps Script deployment and URL.';
-        }
+        if (ph) { const n = ph.querySelector('.r-note'); if (n) n.textContent = 'Calendar unavailable — check Apps Script deployment.'; }
       });
   }
 
@@ -2661,62 +2831,38 @@
     const officeList  = document.getElementById('officeHoursList');
     const dailyList   = document.getElementById('dailyList');
     const placeholder = document.getElementById('calPlaceholder');
-
     _allCalEvents = Array.isArray(events) ? events : [];
-
-    // Compute today's local date string for filtering
     const _p2 = n => String(n).padStart(2, '0');
     const _td = new Date();
     const todayStr = _td.getFullYear() + '-' + _p2(_td.getMonth()+1) + '-' + _p2(_td.getDate());
-
-    // Only today's TIMED events go into OFFICE/Daily sections
     const todayTimed = _allCalEvents.filter(ev => ev.date === todayStr && !ev.allDay);
-
-    // Clear any cal-events from a previous render to avoid duplicates on refresh
     [officeList, dailyList].forEach(list => {
       if (list) list.querySelectorAll('.cal-event').forEach(el => el.remove());
     });
-    // After clearing stale cal-events re-check section completion (removal may unblock Complete btn)
     [officeList, dailyList].forEach(list => {
       if (!list) return;
       const routine = list.closest('.routine');
       if (routine && !routine.classList.contains('section-complete')) checkSectionCompletion(routine);
     });
-
-    // Also refresh the week grid with the full 7-day set
     buildWeekGrid();
-
-    // If no timed events for today, update placeholder and leave
     if (todayTimed.length === 0) {
-      if (placeholder) {
-        const note = placeholder.querySelector('.r-note');
-        if (note) note.textContent = 'No events scheduled — calendar is clear for this window.';
-      }
+      if (placeholder) { const note = placeholder.querySelector('.r-note'); if (note) note.textContent = 'No events scheduled — calendar is clear for this window.'; }
       return;
     }
-
-    // Timed events for today — remove placeholder and render
     if (placeholder) placeholder.remove();
-
     const fmtT = (s) => { if (!s) return ''; const d = new Date(s); return pad(d.getHours()) + ':' + pad(d.getMinutes()); };
-
     todayTimed.forEach(ev => {
-
-      // Determine which list this event belongs to by start hour
       const start = ev.start && (ev.start.dateTime || ev.start.date);
       const end   = ev.end   && (ev.end.dateTime   || ev.end.date);
       const startHour = start ? new Date(start).getHours() : 8;
-      // Section II: 08:00–15:59  |  Section III: 16:00–23:59
       const targetList = (startHour >= 16 && dailyList) ? dailyList : officeList;
       if (!targetList) return;
-
       const li = document.createElement('li');
       li.className = 'r-row cal-event';
       li.setAttribute('tabindex', '0');
       li.setAttribute('role', 'checkbox');
       li.setAttribute('aria-checked', 'false');
       li.dataset.task = 'cal-' + (ev.id ? ev.id.slice(0, 20) : Math.random().toString(36).slice(2));
-
       const when = (start && end && !ev.start.date) ? (fmtT(start) + ' — ' + fmtT(end)) : 'All-day';
       const where = ev.location || '';
       li.innerHTML =
@@ -2727,30 +2873,20 @@
         '</div>';
       li.addEventListener('click', () => toggleRow(li));
       li.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleRow(li); } });
-
-      // Office events insert before the static day-conditional rows
       if (targetList === officeList) {
         const firstStatic = officeList.querySelector('li[data-cond]');
         if (firstStatic) officeList.insertBefore(li, firstStatic);
         else officeList.appendChild(li);
       } else {
-        // Daily: append after existing items
         dailyList.appendChild(li);
       }
     });
-
-    // restoreCheckState() ran before cal-events existed — re-apply saved .done states now
     const _calSaved = loadCheckState();
     [officeList, dailyList].forEach(list => {
       if (!list) return;
       list.querySelectorAll('.cal-event[data-task]').forEach(row => {
-        if (_calSaved[row.dataset.task]) {
-          row.classList.add('done');
-          row.setAttribute('aria-checked', 'true');
-        }
+        if (_calSaved[row.dataset.task]) { row.classList.add('done'); row.setAttribute('aria-checked', 'true'); }
       });
-      // Re-evaluate section completion: hide Complete btn if new rows are undone,
-      // or show it if cal-events were already ticked and everything is now done
       const routine = list.closest('.routine');
       if (routine) checkSectionCompletion(routine);
     });
@@ -2758,10 +2894,7 @@
   }
 
   // ============================================================
-  // ROUTINE COLLAPSIBLES — time-aware default expand
-  //   Morning (04–08)  →  I · Morning Routine
-  //   Office  (08–17)  →  II · Office Hours
-  //   else             →  III · Daily Routine
+  // ROUTINE COLLAPSIBLES
   // ============================================================
   function activeRoutineWindow(h) {
     if (h >= 4 && h < 8)  return 'morning';
@@ -2774,7 +2907,7 @@
     _routineInited = true;
     const win = activeRoutineWindow(new Date().getHours());
     document.querySelectorAll('.routine').forEach(r => {
-      if (r.classList.contains('section-complete')) return; // already completed today, leave collapsed
+      if (r.classList.contains('section-complete')) return;
       const open = r.dataset.window === win;
       r.classList.toggle('open', open);
       const head = r.querySelector('.routine-head');
@@ -2783,13 +2916,13 @@
   }
   function toggleRoutine(headEl) {
     const r = headEl.parentElement;
-    if (r.classList.contains('section-complete')) return; // locked until midnight
+    if (r.classList.contains('section-complete')) return;
     r.classList.toggle('open');
     headEl.setAttribute('aria-expanded', r.classList.contains('open') ? 'true' : 'false');
   }
 
   // ============================================================
-  // 8 · Scroll — active nav link + body class
+  // SCROLL
   // ============================================================
   const links = document.querySelectorAll('.nav-links a[data-nav]');
   const sections = ['splash','office','weekly','statistics'].map(id => document.getElementById(id));
@@ -2812,10 +2945,8 @@
   });
 
   // ============================================================
-  // 9 · Checkbox interaction + localStorage persistence
+  // CHECKBOX + LOCALSTORAGE
   // ============================================================
-
-  // Date-scoped key — naturally resets at midnight as the date changes
   function getTodayKey() {
     const d = new Date();
     return 'stewlab-' + d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
@@ -2841,15 +2972,12 @@
     const isChecked = !row.classList.contains('done');
     row.classList.toggle('done', isChecked);
     if (row.hasAttribute('role')) row.setAttribute('aria-checked', isChecked ? 'true' : 'false');
-    // Persist
     if (row.dataset.task) saveCheckState(row.dataset.task, isChecked);
-    // Check if whole section is now done
     const routine = row.closest('.routine');
     if (routine) checkSectionCompletion(routine);
     updateOfficeNotif();
   }
 
-  // Attach listeners to all static rows
   document.querySelectorAll('.r-row').forEach(row => {
     row.addEventListener('click', () => toggleRow(row));
     row.addEventListener('keydown', (e) => {
@@ -2857,7 +2985,6 @@
     });
   });
 
-  // Restore today's check state on load
   function restoreCheckState() {
     const state = loadCheckState();
     document.querySelectorAll('.r-row[data-task]').forEach(row => {
@@ -2866,20 +2993,17 @@
         if (row.hasAttribute('role')) row.setAttribute('aria-checked', 'true');
       }
     });
-    // Restore completed sections
     document.querySelectorAll('.routine[data-window]').forEach(r => {
       if (isSectionComplete(r.dataset.window)) markSectionDone(r);
     });
-    // Then check each section in case all were already ticked
     document.querySelectorAll('.routine').forEach(r => checkSectionCompletion(r));
   }
 
   // ============================================================
-  // 10 · Complete-section logic
+  // SECTION COMPLETION
   // ============================================================
   function checkSectionCompletion(routineEl) {
     if (routineEl.classList.contains('section-complete')) return;
-    // Only count visible, non-placeholder rows
     const rows = Array.from(routineEl.querySelectorAll('.r-row:not(.placeholder)'))
                       .filter(r => !r.hasAttribute('hidden'));
     if (rows.length === 0) return;
@@ -2901,7 +3025,6 @@
     routineEl.classList.add('section-complete');
     const windowKey = routineEl.dataset.window;
     if (windowKey) saveSectionComplete(windowKey);
-    // Collapse
     const list = routineEl.querySelector('.routine-list');
     if (list) list.style.display = 'none';
     const btn = routineEl.querySelector('.complete-btn');
@@ -2917,42 +3040,30 @@
   }
 
   // ============================================================
-  // SCROLL REVEAL — IntersectionObserver for .reveal elements
+  // SCROLL REVEAL
   // ============================================================
   function initScrollReveal() {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          observer.unobserve(entry.target);
-        }
+        if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
       });
     }, { threshold: 0.08 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
   }
 
   // ============================================================
-  // STATS NAV NOTIFICATION — green dot on check-in day (DOTW derived from Sheet start date)
-  // Disappears when Statistics is clicked; persists via localStorage
-  // until the following check-in day resets it.
+  // STATS NOTIF
   // ============================================================
   function initStatsNotif() {
     const dot  = document.getElementById('statsNotif');
     const link = document.getElementById('statsNavLink');
     if (!dot || !link) return;
-
     const now = new Date();
     const isCheckinDay = now.getDay() === _checkinDOW;
     if (!isCheckinDay) return;
-
-    // Key is specific to this check-in date
     const p2 = n => String(n).padStart(2, '0');
     const wedKey = 'stewlab-checkin-notif-' + now.getFullYear() + '-' + p2(now.getMonth()+1) + '-' + p2(now.getDate());
-
-    if (!localStorage.getItem(wedKey)) {
-      dot.classList.add('visible');
-    }
-
+    if (!localStorage.getItem(wedKey)) { dot.classList.add('visible'); }
     link.addEventListener('click', () => {
       dot.classList.remove('visible');
       try { localStorage.setItem(wedKey, '1'); } catch(e) {}
@@ -2960,7 +3071,7 @@
   }
 
   // ============================================================
-  // OFFICE NOTIFICATION DOT
+  // OFFICE NOTIF
   // ============================================================
   let _stewardActionCount = null;
 
@@ -2975,42 +3086,28 @@
       hasUnchecked = rows.some(r => !r.classList.contains('done'));
     }
     const stewardBusy = _stewardActionCount !== null && _stewardActionCount > 0;
-    if (hasUnchecked || stewardBusy) {
-      dot.classList.add('visible');
-    } else {
-      dot.classList.remove('visible');
-    }
+    if (hasUnchecked || stewardBusy) { dot.classList.add('visible'); }
+    else { dot.classList.remove('visible'); }
   }
-
 
   // ============================================================
   // COMPETENCE SYSTEM
   // ============================================================
   const CP_KEY = 'stewlab-competence';
-  const CP_C   = 0.0925; // quadratic coefficient (tuned for level 99 ≈ 3 yrs daily)
+  const CP_C   = 0.0925;
 
   function cpCost(n) {
-    // CP required to advance from level (n-1) to level n
     if (n <= 0) return 0;
     return Math.floor(10 + 2*(n-1) + CP_C*(n-1)*(n-1));
   }
   function levelFromCP(total) {
     let lv = 0, spent = 0;
-    while (lv < 99) {
-      const cost = cpCost(lv + 1);
-      if (spent + cost > total) break;
-      spent += cost; lv++;
-    }
+    while (lv < 99) { const cost = cpCost(lv + 1); if (spent + cost > total) break; spent += cost; lv++; }
     return lv;
   }
   function cpInLevel(total) {
-    // CP accumulated inside current level (toward next)
     let lv = 0, spent = 0;
-    while (lv < 99) {
-      const cost = cpCost(lv + 1);
-      if (spent + cost > total) return total - spent;
-      spent += cost; lv++;
-    }
+    while (lv < 99) { const cost = cpCost(lv + 1); if (spent + cost > total) return total - spent; spent += cost; lv++; }
     return total - spent;
   }
   function cpTitle(lv) {
@@ -3035,9 +3132,7 @@
     try { return JSON.parse(localStorage.getItem(CP_KEY) || 'null') || { totalCP:0, lastEarned:null, log:[] }; }
     catch(_) { return { totalCP:0, lastEarned:null, log:[] }; }
   }
-  function saveCPData(d) {
-    try { localStorage.setItem(CP_KEY, JSON.stringify(d)); } catch(_) {}
-  }
+  function saveCPData(d) { try { localStorage.setItem(CP_KEY, JSON.stringify(d)); } catch(_) {} }
   function todayISO() {
     const d = new Date();
     return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
@@ -3053,34 +3148,18 @@
     const circ  = 188.5;
     const pct   = toNext ? inLv / toNext : 1;
     const offset = circ * (1 - pct);
-
     ['Office','Stats'].forEach(sfx => {
       const widget = document.getElementById('cpWidget' + sfx);
       if (!widget) return;
-
-      // Show/hide
       if (total > 0) widget.classList.add('earned');
-
-      // Arc
       const arc = document.getElementById('cpArc' + sfx);
       if (arc) arc.setAttribute('stroke-dashoffset', offset.toFixed(1));
-
-      // Level numeral
       const lvEl = document.getElementById('cpLevel' + sfx);
       if (lvEl) lvEl.textContent = lv;
-
-      // Sub-line
       const subEl = document.getElementById('cpSub' + sfx);
       if (subEl) subEl.textContent = lv < 99 ? inLv + ' / ' + toNext : total + ' CP';
-
-      // Title below ring (always visible when earned, hidden when no title yet)
       const ringTitleEl = document.getElementById('cpRingTitle' + sfx);
-      if (ringTitleEl) {
-        ringTitleEl.textContent = title;
-        ringTitleEl.style.display = title ? '' : 'none';
-      }
-
-      // Tooltip
+      if (ringTitleEl) { ringTitleEl.textContent = title; ringTitleEl.style.display = title ? '' : 'none'; }
       const titleEl = document.getElementById('cpTitle' + sfx);
       if (titleEl) titleEl.textContent = 'Competence Level ' + lv;
       const r1 = document.getElementById('cpRow1' + sfx);
@@ -3119,6 +3198,9 @@
     fetch(url).catch(function() {});
   }
 
+  let _cpSheetsReady = false;
+  let _cpCheckQueued = false;
+
   function loadCPFromSheets() {
     if (!APPS_SCRIPT_URL) return;
     fetch(APPS_SCRIPT_URL + '?action=getCP', { cache: 'no-store' })
@@ -3128,45 +3210,32 @@
         var local = loadCPData();
         var localCP = local.totalCP || 0;
         if (remote.totalCP > localCP) {
-          // Sheet is ahead (earned on another device) — pull it down
           var merged = { totalCP: remote.totalCP, lastEarned: remote.lastEarned || null, log: local.log || [] };
-          saveCPData(merged);
-          renderCPWidgets();
+          saveCPData(merged); renderCPWidgets();
         } else if (localCP > remote.totalCP) {
-          // Local is ahead (sheet not yet updated) — push it up
           syncCPToSheets(local);
         }
         _cpSheetsReady = true;
         if (_cpCheckQueued) { _cpCheckQueued = false; checkForCP(); }
       })
       .catch(function() {
-        // Sheets unreachable — unblock CP check so localStorage guard still works
         _cpSheetsReady = true;
         if (_cpCheckQueued) { _cpCheckQueued = false; checkForCP(); }
       });
   }
 
-  // Flag set when loadCPFromSheets() resolves (or fails). Prevents double-award
-  // on devices where tasks complete before the Sheets fetch returns.
-  let _cpSheetsReady = false;
-  let _cpCheckQueued = false;
-
   function checkForCP() {
-    // All 3 routines section-complete AND steward = 0
     const routines = document.querySelectorAll('.routine[data-window]');
-    const allDone  = routines.length > 0 &&
-                     Array.from(routines).every(r => r.classList.contains('section-complete'));
+    const allDone  = routines.length > 0 && Array.from(routines).every(r => r.classList.contains('section-complete'));
     const stewardOk = _stewardActionCount !== null && _stewardActionCount === 0;
     if (!allDone || !stewardOk) return;
-
-    if (!_cpSheetsReady) { _cpCheckQueued = true; return; } // wait for Sheets sync
+    if (!_cpSheetsReady) { _cpCheckQueued = true; return; }
     const data  = loadCPData();
     const today = todayISO();
-    if (data.lastEarned === today) return; // already earned today
-
+    if (data.lastEarned === today) return;
     data.totalCP   = (data.totalCP || 0) + 1;
     data.lastEarned = today;
-    data.log        = [...(data.log || []), today].slice(-3650); // keep ~10yr
+    data.log        = [...(data.log || []), today].slice(-3650);
     saveCPData(data);
     syncCPToSheets(data);
     renderCPWidgets();
@@ -3178,31 +3247,210 @@
   });
 
   // ============================================================
-  // BOOT
+  // DOMAIN HEALTH RINGS
   // ============================================================
-  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-  window.scrollTo({ top: 0, behavior: 'instant' });
-  tick();
-  setInterval(tick, 30 * 1000);
-  onScroll();
-  initRoutines();
-  restoreCheckState();
-  updateOfficeNotif();
-  initScrollReveal();
-  initStatsNotif();
-  refreshWeather();
-  setInterval(refreshWeather, 30 * 60 * 1000);
-  buildWeekGrid();
-  buildHeatmap12();
-  updateSheetBtn(null); // set correct label immediately before CSV loads
-  loadPhysiqueFromCSV();
-  loadCalendarEvents();
-  setInterval(loadCalendarEvents, 10 * 60 * 1000);
+  const DOMAINS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSm6d7HdIKw7iYXdo1B5-IUBc6e33FO3wxKp3FmnGGChnqk_MmPl1593rv5XJ3F4Sweg-HyBVwSQGgK/pub?gid=863378788&single=true&output=csv';
+  const DOMAINS_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1My6fWDsy8EiCZ9qc_0O0yvAcdVTC-V4hTFQm7E_I07c/edit#gid=863378788';
+
+  const DOMAIN_CONFIG = {
+    health:    { id:'health',    label:'Health & Fitness', cardId:'dr-health',    segments:5, biweekly:true,  reviewDOW:6, reviewRef:new Date(2026,4,23) },
+    finances:  { id:'finances',  label:'Finances',          cardId:'dr-finances',  segments:5, biweekly:true,  reviewDOW:3, reviewRef:new Date(2026,4,27) },
+    home:      { id:'home',      label:'Home & Vehicle',    cardId:'dr-home',      segments:5, biweekly:true,  reviewDOW:6, reviewRef:new Date(2026,4,23) },
+    logistics: { id:'logistics', label:'Family Logistics',  cardId:'dr-logistics', segments:3, biweekly:false, reviewDOW:0, reviewRef:null },
+  };
+
+  let _domainData = null;
+
+  function isDomainCheckinDay(cfg) {
+    const now = new Date();
+    if (cfg.biweekly) return isBiweeklyFrom(now, cfg.reviewRef, cfg.reviewDOW);
+    return now.getDay() === cfg.reviewDOW;
+  }
+
+  function parseDomainsCSV(text) {
+    const rows = parseCSV(text);
+    const domains = { health:{subcategories:[]}, finances:{subcategories:[]}, home:{subcategories:[]}, logistics:{subcategories:[]} };
+    let leftDomain=null, rightDomain=null, leftSubcat=null, rightSubcat=null, skipLeft=false, skipRight=false;
+    function getOrCreateSubcat(dk, name) {
+      if (!dk) return null;
+      const d = domains[dk];
+      let sc = d.subcategories.find(s => s.name === name);
+      if (!sc) { sc = { name, items:[] }; d.subcategories.push(sc); }
+      return sc;
+    }
+    function isBool(v) { const u=(v||'').trim().toUpperCase(); return u==='TRUE'||u==='FALSE'; }
+    function isTrue(v) { return (v||'').trim().toUpperCase()==='TRUE'; }
+    function isSubcatHeader(v) {
+      if (!v||!v.trim()) return false;
+      const u=v.trim().toUpperCase();
+      if (u==='TRUE'||u==='FALSE') return false;
+      if (['HEALTH & FITNESS','FINANCES','HOME & VEHICLE','LOGISTICS','DOMAIN CHECKLISTS','ANALYTICS'].some(d=>u.startsWith(d))) return false;
+      return true;
+    }
+    function isOneTime(v) { return (v||'').trim().toUpperCase().includes('ONE-TIME ONLY'); }
+    function detectSentinel(row) {
+      const c0=(row[0]||'').trim().toUpperCase();
+      if (c0==='HEALTH & FITNESS'||c0.startsWith('HEALTH & FITNESS,')) return 'health';
+      if (c0==='FINANCES') return 'finances';
+      if (c0==='HOME & VEHICLE') return 'home';
+      if (c0==='LOGISTICS') return 'logistics';
+      return null;
+    }
+    for (const row of rows) {
+      const c0=(row[0]||'').trim(), c1=(row[1]||'').trim(), c7=(row[7]||'').trim(), c8=(row[8]||'').trim();
+      const sentinel=detectSentinel(row);
+      if (sentinel) { leftDomain=sentinel; rightDomain=sentinel; leftSubcat=null; rightSubcat=null; skipLeft=false; skipRight=false; continue; }
+      if (isBool(c0)) {
+        if (!skipLeft&&leftDomain&&leftSubcat&&c1) { const sc=getOrCreateSubcat(leftDomain,leftSubcat); if(sc) sc.items.push({done:isTrue(c0),text:c1}); }
+      } else if (isSubcatHeader(c0)) {
+        skipLeft=isOneTime(c0);
+        if (!skipLeft&&leftDomain) { leftSubcat=c0; getOrCreateSubcat(leftDomain,leftSubcat); }
+      }
+      if (!rightDomain&&leftDomain) rightDomain=leftDomain;
+      if (isBool(c7)) {
+        if (!skipRight&&rightDomain&&rightSubcat&&c8) { const sc=getOrCreateSubcat(rightDomain,rightSubcat); if(sc) sc.items.push({done:isTrue(c7),text:c8}); }
+      } else if (isSubcatHeader(c7)) {
+        skipRight=isOneTime(c7);
+        if (!skipRight&&rightDomain) { rightSubcat=c7; getOrCreateSubcat(rightDomain,rightSubcat); }
+      }
+    }
+    for (const dk of Object.keys(domains)) {
+      domains[dk].subcategories=domains[dk].subcategories.filter(sc=>sc.items.length>0);
+    }
+    return domains;
+  }
+
+  function buildSegmentedRing(svgEl, segments, cx, cy, r, strokeW, gapDeg) {
+    while (svgEl.firstChild) svgEl.removeChild(svgEl.firstChild);
+    const n=segments.length, totalGap=gapDeg*n, availDeg=360-totalGap, segDeg=availDeg/n;
+    const svgNS='http://www.w3.org/2000/svg';
+    const track=document.createElementNS(svgNS,'circle');
+    track.setAttribute('cx',cx); track.setAttribute('cy',cy); track.setAttribute('r',r);
+    track.setAttribute('fill','none'); track.setAttribute('stroke','rgba(255,255,255,0.05)'); track.setAttribute('stroke-width',strokeW);
+    svgEl.appendChild(track);
+    for (let i=0; i<n; i++) {
+      const startDeg=-90+i*(segDeg+gapDeg), endDeg=startDeg+segDeg;
+      const startRad=(startDeg*Math.PI)/180, endRad=(endDeg*Math.PI)/180;
+      const x1=cx+r*Math.cos(startRad), y1=cy+r*Math.sin(startRad);
+      const x2=cx+r*Math.cos(endRad),   y2=cy+r*Math.sin(endRad);
+      const largeArc=segDeg>180?1:0;
+      const path=document.createElementNS(svgNS,'path');
+      path.setAttribute('d',`M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`);
+      path.setAttribute('fill','none'); path.setAttribute('stroke-width',strokeW); path.setAttribute('stroke-linecap','butt');
+      const seg=segments[i]||{};
+      if (seg.empty)         path.setAttribute('stroke','rgba(232,226,208,0.10)');
+      else if (seg.complete) path.setAttribute('stroke','rgba(42,157,110,0.85)');
+      else                   path.setAttribute('stroke','rgba(201,161,74,0.75)');
+      if (seg.name) { const title=document.createElementNS(svgNS,'title'); title.textContent=seg.name+(seg.complete?' \u2713':' \u2014 Incomplete'); path.appendChild(title); }
+      svgEl.appendChild(path);
+    }
+  }
+
+  function getDomainSegments(domainData) {
+    return domainData.subcategories.map(sc => {
+      if (!sc.items.length) return { complete:false, empty:true, name:sc.name };
+      return { complete:sc.items.every(i=>i.done), empty:false, name:sc.name };
+    });
+  }
+
+  function renderDomainCard(cfg, domainData) {
+    const card=document.getElementById(cfg.cardId);
+    if (!card) return;
+    const segments=getDomainSegments(domainData);
+    const totalItems=domainData.subcategories.reduce((a,s)=>a+s.items.length,0);
+    const doneItems=domainData.subcategories.reduce((a,s)=>a+s.items.filter(i=>i.done).length,0);
+    const pct=totalItems>0?Math.round(doneItems/totalItems*100):0;
+    const isCheckin=isDomainCheckinDay(cfg);
+    const svgNS='http://www.w3.org/2000/svg';
+    card.innerHTML='';
+    const ringWrap=document.createElement('div'); ringWrap.className='domain-ring-wrap';
+    const svg=document.createElementNS(svgNS,'svg');
+    svg.setAttribute('viewBox','0 0 100 100'); svg.setAttribute('width','100'); svg.setAttribute('height','100'); svg.setAttribute('overflow','visible');
+    buildSegmentedRing(svg,segments,50,50,36,8,3);
+    ringWrap.appendChild(svg);
+    const inner=document.createElement('div'); inner.className='domain-ring-inner';
+    inner.innerHTML=`<span class="domain-ring-pct">${pct}%</span><span class="domain-ring-sub">complete</span>`;
+    ringWrap.appendChild(inner); card.appendChild(ringWrap);
+    const label=document.createElement('div'); label.className='domain-label'; label.textContent=cfg.label; card.appendChild(label);
+    const btns=document.createElement('div'); btns.className='domain-btns';
+    const reviewBtn=document.createElement('button'); reviewBtn.className='domain-btn'; reviewBtn.type='button'; reviewBtn.textContent='Review';
+    reviewBtn.addEventListener('click',()=>openDomainModal(cfg,domainData)); btns.appendChild(reviewBtn);
+    if (isCheckin) {
+      const ci=document.createElement('a'); ci.className='domain-btn checkin-active'; ci.href=DOMAINS_SHEET_URL; ci.target='_blank'; ci.rel='noopener'; ci.textContent='Check-In \u2197'; btns.appendChild(ci);
+    } else {
+      const ci=document.createElement('button'); ci.className='domain-btn checkin-disabled'; ci.type='button'; ci.textContent='Check-In'; ci.disabled=true; btns.appendChild(ci);
+    }
+    card.appendChild(btns);
+  }
+
+  function openDomainModal(cfg, domainData) {
+    const overlay=document.getElementById('domainModal');
+    const titleEl=document.getElementById('dmModalTitle');
+    const listCol=document.getElementById('dmListCol');
+    const bigSvg=document.getElementById('dmBigRingSvg');
+    const bigPct=document.getElementById('dmBigPct');
+    const segLegend=document.getElementById('dmSegLegend');
+    if (!overlay) return;
+    titleEl.textContent=cfg.label;
+    const segments=getDomainSegments(domainData);
+    const totalItems=domainData.subcategories.reduce((a,s)=>a+s.items.length,0);
+    const doneItems=domainData.subcategories.reduce((a,s)=>a+s.items.filter(i=>i.done).length,0);
+    const pct=totalItems>0?Math.round(doneItems/totalItems*100):0;
+    bigSvg.setAttribute('viewBox','0 0 160 160'); bigSvg.setAttribute('width','160'); bigSvg.setAttribute('height','160');
+    buildSegmentedRing(bigSvg,segments,80,80,62,10,2.5);
+    bigPct.textContent=pct+'%';
+    segLegend.innerHTML='<div class="dm-seg-legend-title">Subcategories</div>'+
+      segments.map(s=>`<div class="dm-seg-row"><div class="dm-seg-swatch ${s.complete?'complete':'incomplete'}"></div><span class="dm-seg-name">${s.name}</span></div>`).join('');
+    listCol.innerHTML=domainData.subcategories.map(sc=>{
+      const allDone=sc.items.length>0&&sc.items.every(i=>i.done);
+      const doneCount=sc.items.filter(i=>i.done).length;
+      return `<div class="dm-subcategory">
+        <div class="dm-subcat-head">
+          <span class="dm-subcat-name ${allDone?'complete':'incomplete'}">${sc.name}</span>
+          <span class="dm-subcat-count">${doneCount} / ${sc.items.length}</span>
+        </div>
+        ${sc.items.map(item=>{
+          const mi=item.text.indexOf('(');
+          const main=mi>-1?item.text.slice(0,mi).trim():item.text;
+          const meta=mi>-1?item.text.slice(mi):'';
+          return `<div class="dm-item"><div class="dm-item-dot ${item.done?'done':'todo'}"></div><span class="dm-item-text ${item.done?'done':'todo'}">${main}</span>${meta?`<span class="dm-item-meta">${meta}</span>`:''}</div>`;
+        }).join('')}
+      </div>`;
+    }).join('');
+    overlay.classList.add('open');
+    document.body.style.overflow='hidden';
+  }
+
+  function closeDomainModal() {
+    const o=document.getElementById('domainModal');
+    if (o) o.classList.remove('open');
+    document.body.style.overflow='';
+  }
+
+  document.getElementById('dmModalClose').addEventListener('click',closeDomainModal);
+  document.getElementById('domainModal').addEventListener('click',function(e){ if(e.target===this) closeDomainModal(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeDomainModal(); });
+
+  function loadDomainsCSV() {
+    fetch(DOMAINS_CSV_URL,{cache:'no-store'})
+      .then(r=>r.ok?r.text():Promise.reject(r.status))
+      .then(text=>{ _domainData=parseDomainsCSV(text); renderAllDomainRings(); })
+      .catch(err=>{
+        console.warn('[PhD Prep] Domains CSV fetch failed:',err);
+        ['dr-health','dr-finances','dr-home','dr-logistics'].forEach(id=>{
+          const c=document.getElementById(id);
+          if(c) c.innerHTML='<div style="font-family:var(--mono);font-size:8px;letter-spacing:0.3em;color:var(--text-faint);text-align:center;padding:20px 0">Unavailable</div>';
+        });
+      });
+  }
+
+  function renderAllDomainRings() {
+    if (!_domainData) return;
+    ['health','finances','home','logistics'].forEach(k=>{ renderDomainCard(DOMAIN_CONFIG[k],_domainData[k]); });
+  }
 
   // ============================================================
   // STEWARD COUNT
-  // Both apps share the same GitHub Pages origin (jacksonjstewart.github.io)
-  // so localStorage is readable cross-path.
   // ============================================================
   function loadStewardCount() {
     const el = document.getElementById('stewardCount');
@@ -3211,45 +3459,25 @@
       let count = null;
       const todayStr = (function() {
         const d = new Date();
-        return d.getFullYear() + '-' +
-          String(d.getMonth() + 1).padStart(2, '0') + '-' +
-          String(d.getDate()).padStart(2, '0');
+        return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
       })();
-
-      // 1. Dedicated key — most accurate. Add this one line to Steward wherever
-      //    today's pending list is computed:
-      //    localStorage.setItem('st_today_pending', String(pendingTasks.length));
       const direct = localStorage.getItem('st_today_pending');
-      if (direct !== null) {
-        const n = parseInt(direct, 10);
-        if (!isNaN(n) && n >= 0) count = n;
-      }
-
-      // 2. Derive from st_pro (Steward's proactive task engine).
-      //    A task is pending if its suppressUntil has expired and it wasn't done today.
-      //    NOTE: Steward may store dates as 'YYYY-M-D' (no zero-pad); normDate() handles both.
+      if (direct !== null) { const n = parseInt(direct, 10); if (!isNaN(n) && n >= 0) count = n; }
       if (count === null) {
         try {
-          function normDate(s) {
-            if (!s) return '';
-            var p = String(s).split('-');
-            if (p.length !== 3) return String(s);
-            return p[0] + '-' + String(p[1]).padStart(2,'0') + '-' + String(p[2]).padStart(2,'0');
-          }
+          function normDate(s) { if (!s) return ''; var p = String(s).split('-'); if (p.length !== 3) return String(s); return p[0] + '-' + String(p[1]).padStart(2,'0') + '-' + String(p[2]).padStart(2,'0'); }
           const stPro = JSON.parse(localStorage.getItem('st_pro') || 'null');
           if (stPro && typeof stPro === 'object' && !Array.isArray(stPro)) {
             let pending = 0;
             Object.values(stPro).forEach(function(v) {
               if (!v || !v.suppressUntil) return;
-              if (normDate(v.doneOn) === todayStr) return; // completed today — skip
-              if (normDate(v.suppressUntil) <= todayStr) pending++; // overdue/active and not done
+              if (normDate(v.doneOn) === todayStr) return;
+              if (normDate(v.suppressUntil) <= todayStr) pending++;
             });
-            count = pending; // 0 when all proactive tasks done
+            count = pending;
           }
         } catch (_) {}
       }
-
-      // 3. Render
       const btn = document.getElementById('stewardBtn');
       if (count !== null && count === 0) {
         el.textContent = 'No remaining actions for today';
@@ -3271,10 +3499,34 @@
       if (e2) e2.textContent = '\u2014 OPEN APP \u2192';
     }
   }
+
+  // ============================================================
+  // BOOT
+  // ============================================================
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  window.scrollTo({ top: 0, behavior: 'instant' });
+  tick();
+  setInterval(tick, 30 * 1000);
+  onScroll();
+  initRoutines();
+  restoreCheckState();
+  updateOfficeNotif();
+  initScrollReveal();
+  initStatsNotif();
+  refreshWeather();
+  setInterval(refreshWeather, 30 * 60 * 1000);
+  buildWeekGrid();
+  buildHeatmap12();
+  updateSheetBtn(null);
+  loadPhysiqueFromCSV();
+  loadCalendarEvents();
+  setInterval(loadCalendarEvents, 10 * 60 * 1000);
   loadStewardCount();
   renderCPWidgets();
   loadCPFromSheets();
-  setInterval(loadCPFromSheets, 5 * 60 * 1000); // re-poll every 5 min — keeps ring in sync cross-device
+  setInterval(loadCPFromSheets, 5 * 60 * 1000);
+  loadDomainsCSV();
+  setInterval(loadDomainsCSV, 15 * 60 * 1000);
 
 </script>
 </body>
