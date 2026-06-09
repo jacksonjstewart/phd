@@ -1898,6 +1898,430 @@
   .dm-seg-swatch.incomplete { background:rgba(201,161,74,0.75); }
   .dm-seg-name { font-family:var(--mono); font-size:7.5px; letter-spacing:0.08em; color:var(--text-dim); text-transform:uppercase; line-height:1.4; }
 
+  /* ============================================================
+     THE STACKS — hidden scholarly record
+     ============================================================ */
+
+  /* Footer entry link */
+  .stacks-entry {
+    display: block;
+    font-family: var(--mono);
+    font-size: 7.5px;
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    color: rgba(232,226,208,0.18);
+    text-decoration: none;
+    margin-top: 18px;
+    transition: color 400ms ease;
+  }
+  .stacks-entry:hover { color: rgba(201,161,74,0.55); }
+
+  /* Section — hidden by default, revealed by JS */
+  .stacks-section {
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    background: transparent;
+    position: relative;
+  }
+  .stacks-section.open {
+    height: auto;
+    overflow: visible;
+    visibility: visible;
+    opacity: 1;
+  }
+  /* Warmer background overlay for The Stacks */
+  .stacks-section::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    background: rgba(18, 10, 2, 0.55);
+    opacity: 0;
+    transition: opacity 1s ease;
+  }
+  .stacks-section.open::before { opacity: 1; }
+
+  .stacks-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 100px 40px 100px;
+  }
+  @media (max-width: 880px) { .stacks-inner { padding: 80px 22px 80px; } }
+
+  /* Header */
+  .stacks-header { text-align: center; margin-bottom: 80px; }
+  .stacks-rule {
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(201,161,74,0.35) 30%, rgba(201,161,74,0.55) 50%, rgba(201,161,74,0.35) 70%, transparent 100%);
+    margin-bottom: 36px;
+  }
+  .stacks-title-block { margin-bottom: 36px; }
+  .stacks-title {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(42px, 5vw, 64px);
+    color: var(--text);
+    margin: 0 0 10px 0;
+    line-height: 1.05;
+    letter-spacing: 0.01em;
+  }
+  .stacks-motto {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 18px;
+    color: var(--gold);
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+  }
+  .stacks-motto-src {
+    font-family: var(--mono);
+    font-size: 7.5px;
+    letter-spacing: 0.38em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  .stacks-preamble {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 16px;
+    color: var(--text-dim);
+    line-height: 1.8;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  /* Tracks */
+  .stacks-tracks {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .stacks-track {
+    border-top: 1px solid var(--border);
+    padding: 48px 0 40px;
+  }
+  .stacks-track:last-child { border-bottom: 1px solid var(--border); }
+
+  /* Track header — numeral + text + ring in one row */
+  .track-header {
+    display: grid;
+    grid-template-columns: 36px 1fr 140px;
+    gap: 28px;
+    align-items: start;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 720px) {
+    .track-header {
+      grid-template-columns: 28px 1fr;
+      grid-template-rows: auto auto;
+    }
+    .track-ring-wrap, .field-active-count {
+      grid-column: 1 / -1;
+      justify-self: start;
+    }
+  }
+  .track-numeral {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 32px;
+    color: var(--gold-dim);
+    line-height: 1;
+    padding-top: 4px;
+  }
+  .track-title-group { display: flex; flex-direction: column; gap: 10px; }
+  .track-name {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(26px, 3vw, 34px);
+    color: var(--text);
+    line-height: 1.1;
+  }
+  .track-bench {
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 0.18em;
+    color: rgba(201,161,74,0.6);
+    line-height: 1.9;
+    text-transform: uppercase;
+    border-left: 2px solid rgba(201,161,74,0.25);
+    padding-left: 12px;
+  }
+
+  /* Track ring */
+  .track-ring-wrap {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    flex-shrink: 0;
+  }
+  .track-ring-wrap svg { display: block; overflow: visible; }
+  .track-ring-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    pointer-events: none;
+  }
+  .track-ring-pct {
+    font-family: var(--mono);
+    font-size: 20px;
+    color: var(--text);
+    font-weight: 400;
+    line-height: 1;
+  }
+  .track-ring-unit {
+    font-family: var(--mono);
+    font-size: 7px;
+    letter-spacing: 0.2em;
+    color: var(--text-faint);
+    text-transform: uppercase;
+  }
+
+  /* Track items — compact list */
+  .track-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 6px;
+    margin-bottom: 20px;
+    padding-left: 64px;
+  }
+  @media (max-width: 720px) { .track-items { padding-left: 0; } }
+  .track-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    background: rgba(14,14,18,0.7);
+    border: 1px solid var(--border-soft);
+    backdrop-filter: blur(2px);
+  }
+  .track-item-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .track-item-dot.done { background: rgba(42,157,110,0.85); }
+  .track-item-dot.todo { background: rgba(201,161,74,0.5); }
+  .track-item-text {
+    font-family: var(--serif);
+    font-size: 13px;
+    color: var(--text-dim);
+    flex: 1;
+    line-height: 1.3;
+  }
+  .track-item-text.done {
+    color: var(--text-faint);
+    text-decoration: line-through;
+    text-decoration-color: rgba(42,157,110,0.3);
+  }
+  .track-item-group {
+    font-family: var(--mono);
+    font-size: 7px;
+    letter-spacing: 0.25em;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
+  /* Track groups (BCIDP) */
+  .track-groups {
+    padding-left: 64px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  @media (max-width: 720px) { .track-groups { padding-left: 0; } }
+  .track-group-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .track-group-name {
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 0.35em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+  .track-group-count {
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    color: var(--text-faint);
+  }
+
+  /* Field (Track V) */
+  .field-active-count {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 120px;
+    height: 120px;
+    border: 1px solid var(--border);
+    background: rgba(14,14,18,0.7);
+    backdrop-filter: blur(3px);
+  }
+  .field-count-num {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 48px;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .field-count-label {
+    font-family: var(--mono);
+    font-size: 7px;
+    letter-spacing: 0.3em;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .field-board {
+    padding-left: 64px;
+    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 8px;
+  }
+  @media (max-width: 720px) { .field-board { padding-left: 0; } }
+  .field-tile {
+    padding: 14px 16px;
+    background: rgba(14,14,18,0.7);
+    border: 1px solid var(--border-soft);
+    backdrop-filter: blur(2px);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .field-tile-status {
+    font-family: var(--mono);
+    font-size: 7px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .field-tile-status.active   { color: rgba(42,157,110,0.85); }
+  .field-tile-status.waiting  { color: rgba(201,161,74,0.65); }
+  .field-tile-status.complete { color: var(--text-faint); }
+  .field-tile-name {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .field-tile-desc {
+    font-family: var(--mono);
+    font-size: 7.5px;
+    letter-spacing: 0.12em;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    line-height: 1.6;
+  }
+
+  /* View button */
+  .track-view-btn {
+    margin-left: 64px;
+    font-family: var(--mono);
+    font-size: 7.5px;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    background: transparent;
+    border: 1px solid var(--border);
+    padding: 8px 18px;
+    cursor: pointer;
+    transition: color 200ms, border-color 200ms;
+  }
+  .track-view-btn:hover { color: var(--gold); border-color: var(--gold-dim); }
+  @media (max-width: 720px) { .track-view-btn { margin-left: 0; } }
+
+  /* Exit button */
+  .stacks-exit {
+    margin-top: 60px;
+    text-align: center;
+    padding-top: 40px;
+    border-top: 1px solid var(--border-soft);
+  }
+  .stacks-exit-btn {
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 10px 0;
+    transition: color 300ms;
+  }
+  .stacks-exit-btn:hover { color: var(--gold); }
+
+  /* Stacks detail modal */
+  .stacks-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.9);
+    z-index: 9997;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 20px;
+    overflow-y: auto;
+  }
+  .stacks-modal-overlay.open { display: flex; }
+  .stacks-modal-box {
+    background: rgba(10,7,4,0.99);
+    border: 1px solid rgba(201,161,74,0.25);
+    box-shadow: 0 0 100px rgba(201,161,74,0.06);
+    width: 100%;
+    max-width: 860px;
+    margin: auto;
+    animation: dmModalIn 0.38s ease forwards;
+  }
+  .stacks-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 28px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .stacks-modal-eyebrow {
+    font-family: var(--mono);
+    font-size: 7.5px;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 3px;
+  }
+  .stacks-modal-title {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 26px;
+    color: var(--text);
+    line-height: 1.1;
+  }
+  .stacks-modal-body {
+    padding: 28px 28px 36px;
+    max-height: 72vh;
+    overflow-y: auto;
+  }
+
   /* ── Tenure streak display ── */
   .tp-streak-display {
     display: none;
@@ -2420,9 +2844,152 @@
 </div>
 
 <footer class="footer">
-  <div class="crest"><span class="crest-gold">Dr.</span> Jackson J. Stewart, <span class="crest-gold">Ph.D. BCIDP.</span></div>
+  <div class="crest"><span class="crest-gold">Dr.</span> Jackson J. Stewart, <span class="crest-gold">Ph.D. BCIDP</span></div>
   <div class="tag">Clinician-Scientist &middot; Infectious Diseases &middot; Professor &middot; Researcher</div>
+  <a href="#stacks" class="stacks-entry" id="stacksEntry" onclick="enterStacks(event)">· The Stacks ·</a>
 </footer>
+
+<!-- ========== THE STACKS (hidden — accessible only via footer link) ========== -->
+<section id="stacks" class="stacks-section" aria-label="The Stacks">
+  <div class="stacks-inner">
+
+    <!-- Header -->
+    <div class="stacks-header">
+      <div class="stacks-rule"></div>
+      <div class="stacks-title-block">
+        <h2 class="stacks-title">The Stacks</h2>
+        <div class="stacks-motto">Hinc lucem et pocula sacra</div>
+        <div class="stacks-motto-src">University of Cambridge &middot; est. 1209 &middot; From this place, we gain enlightenment and precious knowledge</div>
+      </div>
+      <div class="stacks-rule"></div>
+      <p class="stacks-preamble">
+        This record holds you to the standard of the world's finest doctoral programmes in clinical medicine and biomedical science. The expectations documented here are drawn from Harvard BBS, Yale MD-PhD, Oxford DPhil, and Cambridge PhD requirements — not as a comparison, but as a floor. The work speaks for itself.
+      </p>
+    </div>
+
+    <!-- Five tracks -->
+    <div class="stacks-tracks">
+
+      <!-- Track I: The Canon -->
+      <div class="stacks-track reveal">
+        <div class="track-header">
+          <div class="track-numeral">I</div>
+          <div class="track-title-group">
+            <div class="track-name">The Canon</div>
+            <div class="track-bench">Harvard BBS requires BBS 230 — a full course in biological literature analysis and experimental design. Oxford DPhil mandates departmental journal club attendance throughout candidacy. Self-imposed standard: 50 landmark ID and antifungal trials read, annotated, and formally critiqued.</div>
+          </div>
+          <div class="track-ring-wrap">
+            <svg id="canonRingSvg" viewBox="0 0 120 120" width="120" height="120"></svg>
+            <div class="track-ring-inner">
+              <span class="track-ring-pct" id="canonPct">—</span>
+              <span class="track-ring-unit">of 50</span>
+            </div>
+          </div>
+        </div>
+        <div class="track-items" id="canonItems"></div>
+        <button class="track-view-btn" onclick="openStacksModal('canon')">View All Papers</button>
+      </div>
+
+      <!-- Track II: The Credential -->
+      <div class="stacks-track reveal" style="--reveal-delay:0.08s">
+        <div class="track-header">
+          <div class="track-numeral">II</div>
+          <div class="track-title-group">
+            <div class="track-name">The Credential</div>
+            <div class="track-bench">Yale MD-PhD requires submission of a first-author manuscript before graduation — 184 of 196 graduates between 2010 and 2024 achieved this. Board certification in Infectious Diseases Pharmacotherapy is held by fewer than 2,000 pharmacists worldwide. Examination target: 2026.</div>
+          </div>
+          <div class="track-ring-wrap">
+            <svg id="credRingSvg" viewBox="0 0 120 120" width="120" height="120"></svg>
+            <div class="track-ring-inner">
+              <span class="track-ring-pct" id="credPct">—</span>
+              <span class="track-ring-unit">complete</span>
+            </div>
+          </div>
+        </div>
+        <div class="track-groups" id="credGroups"></div>
+        <button class="track-view-btn" onclick="openStacksModal('cred')">View All Modules</button>
+      </div>
+
+      <!-- Track III: The Clinic -->
+      <div class="stacks-track reveal" style="--reveal-delay:0.12s">
+        <div class="track-header">
+          <div class="track-numeral">III</div>
+          <div class="track-title-group">
+            <div class="track-name">The Clinic</div>
+            <div class="track-bench">Oxford DPhil requires original research of a kind expected of a capable and diligent student after three to four years of full-time study. Cambridge PhD students produce reference tools with real-world clinical application. Self-imposed standard: five completed clinical reference tools deployed or published.</div>
+          </div>
+          <div class="track-ring-wrap">
+            <svg id="clinicRingSvg" viewBox="0 0 120 120" width="120" height="120"></svg>
+            <div class="track-ring-inner">
+              <span class="track-ring-pct" id="clinicPct">—</span>
+              <span class="track-ring-unit">complete</span>
+            </div>
+          </div>
+        </div>
+        <div class="track-items" id="clinicItems"></div>
+        <button class="track-view-btn" onclick="openStacksModal('clinic')">View All Tools</button>
+      </div>
+
+      <!-- Track IV: The Record -->
+      <div class="stacks-track reveal" style="--reveal-delay:0.16s">
+        <div class="track-header">
+          <div class="track-numeral">IV</div>
+          <div class="track-title-group">
+            <div class="track-name">The Record</div>
+            <div class="track-bench">Harvard BBS mandates one full semester of teaching fellowship. Yale MD-PhD requires a first-author manuscript submitted before resuming clinical training. Self-imposed standard: three manuscripts submitted, five FoPPS lectures delivered, two professional society memberships active by thesis defence.</div>
+          </div>
+          <div class="track-ring-wrap">
+            <svg id="recordRingSvg" viewBox="0 0 120 120" width="120" height="120"></svg>
+            <div class="track-ring-inner">
+              <span class="track-ring-pct" id="recordPct">—</span>
+              <span class="track-ring-unit">complete</span>
+            </div>
+          </div>
+        </div>
+        <div class="track-items" id="recordItems"></div>
+        <button class="track-view-btn" onclick="openStacksModal('record')">View All Outputs</button>
+      </div>
+
+      <!-- Track V: The Field -->
+      <div class="stacks-track reveal" style="--reveal-delay:0.20s">
+        <div class="track-header">
+          <div class="track-numeral">V</div>
+          <div class="track-title-group">
+            <div class="track-name">The Field</div>
+            <div class="track-bench">Harvard BBS students rotate through three independent laboratories in year one — building research breadth before committing to depth. Oxford DPhil Confirmation requires evidence of conference presentations and active scholarly contribution. Self-imposed standard: three concurrent active research fronts maintained throughout the PhD.</div>
+          </div>
+          <div class="field-active-count">
+            <span class="field-count-num" id="fieldActiveCount">—</span>
+            <span class="field-count-label">active fronts</span>
+          </div>
+        </div>
+        <div class="field-board" id="fieldBoard"></div>
+        <button class="track-view-btn" onclick="openStacksModal('field')">View All Projects</button>
+      </div>
+
+    </div>
+
+    <!-- Exit -->
+    <div class="stacks-exit">
+      <button class="stacks-exit-btn" onclick="exitStacks()">← Return to the Lab</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- STACKS DETAIL MODAL -->
+<div class="stacks-modal-overlay" id="stacksModal" role="dialog" aria-modal="true">
+  <div class="stacks-modal-box">
+    <div class="stacks-modal-header">
+      <div>
+        <div class="stacks-modal-eyebrow" id="smEyebrow">The Stacks</div>
+        <div class="stacks-modal-title" id="smTitle">—</div>
+      </div>
+      <button class="dm-close" id="stacksModalClose" type="button">Close</button>
+    </div>
+    <div class="stacks-modal-body" id="smBody"></div>
+  </div>
+</div>
 
 <script>
   // 1 · Time / date / greeting
@@ -3885,6 +4452,392 @@
   document.getElementById('tpModal').addEventListener('click', function(e) {
     if (e.target === this) this.classList.remove('open');
   });
+
+  // ============================================================
+  // THE STACKS — hidden scholarly record
+  // ============================================================
+
+  // CSV URLs — reuse existing pub URL with sheet-specific gids
+  // Journal Clubs tab — update gid if different in your sheet
+  const STACKS_JC_CSV    = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSm6d7HdIKw7iYXdo1B5-IUBc6e33FO3wxKp3FmnGGChnqk_MmPl1593rv5XJ3F4Sweg-HyBVwSQGgK/pub?gid=0&single=true&output=csv';
+  const STACKS_BCIDP_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSm6d7HdIKw7iYXdo1B5-IUBc6e33FO3wxKp3FmnGGChnqk_MmPl1593rv5XJ3F4Sweg-HyBVwSQGgK/pub?gid=1&single=true&output=csv';
+  const STACKS_OH_CSV    = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSm6d7HdIKw7iYXdo1B5-IUBc6e33FO3wxKp3FmnGGChnqk_MmPl1593rv5XJ3F4Sweg-HyBVwSQGgK/pub?gid=2&single=true&output=csv';
+
+  // Parsed stacks data
+  let _stacksData = { canon:[], bcidp:[], clinic:[], record:[], field:[] };
+  let _stacksLoaded = false;
+
+  // ── Section show/hide ──
+  function enterStacks(e) {
+    if (e) e.preventDefault();
+    const sec = document.getElementById('stacks');
+    if (!sec) return;
+    sec.classList.add('open');
+    sec.scrollIntoView({ behavior:'smooth', block:'start' });
+    if (!_stacksLoaded) loadStacksData();
+  }
+  function exitStacks() {
+    const sec = document.getElementById('stacks');
+    if (sec) sec.classList.remove('open');
+    window.scrollTo({ top: document.getElementById('statistics').offsetTop, behavior:'smooth' });
+  }
+  // Also open if hash is #stacks on load
+  if (window.location.hash === '#stacks') {
+    window.addEventListener('load', () => { enterStacks(null); });
+  }
+
+  // ── Build segmented ring (reuse shared function) ──
+  // buildSegmentedRing is already defined above — we reuse it here.
+
+  // ── Track I: The Canon — Journal Clubs ──
+  function parseCanon(text) {
+    const rows = parseCSV(text);
+    const items = [];
+    for (const row of rows) {
+      const done = (row[0]||'').trim().toUpperCase();
+      const name = (row[1]||'').trim();
+      const type = (row[2]||'').trim();
+      if (!name || name === 'Assigned Task' || name === 'Trial / Paper') continue;
+      if (done !== 'TRUE' && done !== 'FALSE') continue;
+      items.push({ done: done === 'TRUE', name, type });
+    }
+    return items;
+  }
+
+  function renderCanon(items) {
+    const total   = 50; // self-imposed target
+    const done    = items.filter(i=>i.done).length;
+    const pct     = Math.round(done/total*100);
+    const pctEl   = document.getElementById('canonPct');
+    if (pctEl) pctEl.textContent = done;
+
+    // Ring — 50 segments
+    const svg = document.getElementById('canonRingSvg');
+    if (svg) {
+      // Build segments: first N done, rest todo, rest empty up to 50
+      const segs = Array.from({length:50}, (_,i) => ({
+        complete: i < done,
+        empty: i >= items.length && i >= done,
+        name: items[i] ? items[i].name : ('Paper ' + (i+1))
+      }));
+      buildSegmentedRing(svg, segs, 60, 60, 46, 7, 2);
+    }
+
+    // Items list — show first 8 in main view
+    const el = document.getElementById('canonItems');
+    if (!el) return;
+    const preview = items.slice(0,8);
+    el.innerHTML = preview.map(it =>
+      `<div class="track-item">
+        <div class="track-item-dot ${it.done?'done':'todo'}"></div>
+        <span class="track-item-text ${it.done?'done':''}">${it.name}</span>
+        ${it.type ? `<span class="track-item-group">${it.type}</span>` : ''}
+      </div>`
+    ).join('') + (items.length > 8 ? `<div class="track-item"><div class="track-item-dot todo"></div><span class="track-item-text" style="color:var(--text-faint);font-style:italic">+ ${items.length - 8} more · ${50 - items.length} remaining to target</span></div>` : '');
+  }
+
+  // ── Track II: The Credential — BCIDP ──
+  function parseBCIDP(text) {
+    const rows = parseCSV(text);
+    const groups = {};
+    let currentGroup = 'General';
+    for (const row of rows) {
+      const c0 = (row[0]||'').trim().toUpperCase();
+      const c1 = (row[1]||'').trim();
+      const c2 = (row[2]||'').trim();
+      if (!c0 && !c1 && !c2) continue;
+      if (c0.startsWith('GROUP')) { currentGroup = c0; continue; }
+      if (c0 !== 'TRUE' && c0 !== 'FALSE') {
+        if (c1) currentGroup = c1;
+        continue;
+      }
+      if (!c2) continue;
+      if (!groups[currentGroup]) groups[currentGroup] = [];
+      groups[currentGroup].push({ done: c0 === 'TRUE', name: c2 });
+    }
+    return groups;
+  }
+
+  function renderBCIDP(groups) {
+    const allItems = Object.values(groups).flat();
+    const total    = allItems.length;
+    const done     = allItems.filter(i=>i.done).length;
+    const pct      = total > 0 ? Math.round(done/total*100) : 0;
+    const pctEl    = document.getElementById('credPct');
+    if (pctEl) pctEl.textContent = pct + '%';
+
+    // Ring — segment per top-level group
+    const svg = document.getElementById('credRingSvg');
+    if (svg) {
+      const segs = Object.entries(groups).map(([gname, items]) => ({
+        complete: items.every(i=>i.done),
+        empty: items.length === 0,
+        name: gname
+      }));
+      buildSegmentedRing(svg, segs, 60, 60, 46, segs.length > 6 ? 6 : 8, 3);
+    }
+
+    const el = document.getElementById('credGroups');
+    if (!el) return;
+    el.innerHTML = Object.entries(groups).map(([gname, items]) => {
+      const gDone = items.filter(i=>i.done).length;
+      return `<div>
+        <div class="track-group-head">
+          <span class="track-group-name">${gname}</span>
+          <span class="track-group-count">${gDone} / ${items.length}</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px">
+          ${items.map(it => `<div class="track-item" style="min-width:0;flex:0 0 auto">
+            <div class="track-item-dot ${it.done?'done':'todo'}"></div>
+            <span class="track-item-text ${it.done?'done':''}" style="font-size:12px">${it.name}</span>
+          </div>`).join('')}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // ── Tracks III & IV: Office Hours ──
+  // Parse Office Hours tab for Clinic (V, IVE, IVF) and Record (IVA, IVD, VI)
+  function parseOfficeHours(text) {
+    const rows = parseCSV(text);
+    const clinic = [], record = [], field = [];
+    let section = '';
+
+    // Section headers are roman-numeral rows where col0 is FALSE/TRUE and col1 is a section name
+    // OR where col0 is empty and col1 contains the section name
+    for (const row of rows) {
+      const c0 = (row[0]||'').trim().toUpperCase();
+      const c1 = (row[1]||'').trim();
+      const c2 = (row[2]||'').trim(); // type
+      const c3 = (row[3]||'').trim(); // deadline
+
+      // Section detection — rows where col0 is empty (not bool) and col1 looks like a header
+      if (!c0 || (c0 !== 'TRUE' && c0 !== 'FALSE')) {
+        if (c1) section = c1;
+        continue;
+      }
+
+      const done = c0 === 'TRUE';
+      if (!c1) continue;
+
+      const item = { done, name: c1, type: c2||'', deadline: c3||'' };
+
+      // Clinic: Section V (Clinical Tools), IVE (Basic Clinical Training), IVF (ID AHD)
+      if (/^V\b|^IVE\b|^IVF\b/.test(section) || section.includes('Clinical Tools') || section.includes('Basic Clinical') || section.includes('ID AHD')) {
+        clinic.push(item);
+      }
+      // Record: IVA (Precepting), IVD (FoPPS Lectures), IIIB (Scholarly), VI (Professional)
+      else if (/^IVA\b|^IVD\b|^IIIB\b|^VI\b/.test(section) || section.includes('Precepting') || section.includes('FoPPS') || section.includes('Scholarly') || section.includes('Professional')) {
+        record.push(item);
+      }
+      // Field: I (Allergy), II (ASP), III (PhD), IIIA (Wastewater)
+      else if (/^I\b|^II\b|^III\b/.test(section) || section.includes('Allergy') || section.includes('Stewardship') || section.includes('PhD') || section.includes('Wastewater') || section.includes('Scholarly Writing')) {
+        field.push(item);
+      }
+    }
+    return { clinic, record, field };
+  }
+
+  function renderClinic(items) {
+    const total = items.length;
+    const done  = items.filter(i=>i.done).length;
+    const pct   = total > 0 ? Math.round(done/total*100) : 0;
+    const pctEl = document.getElementById('clinicPct');
+    if (pctEl) pctEl.textContent = pct + '%';
+    const svg = document.getElementById('clinicRingSvg');
+    if (svg) {
+      const segs = items.map(it => ({ complete:it.done, empty:false, name:it.name }));
+      buildSegmentedRing(svg, segs, 60, 60, 46, Math.max(2, Math.min(4, 300/segs.length)), 2);
+    }
+    const el = document.getElementById('clinicItems');
+    if (!el) return;
+    el.innerHTML = items.slice(0,10).map(it =>
+      `<div class="track-item">
+        <div class="track-item-dot ${it.done?'done':'todo'}"></div>
+        <span class="track-item-text ${it.done?'done':''}">${it.name}</span>
+        ${it.deadline && it.deadline !== 'N/A' ? `<span class="track-item-group">${it.deadline}</span>` : ''}
+      </div>`
+    ).join('') + (items.length>10 ? `<div class="track-item"><div class="track-item-dot todo"></div><span class="track-item-text" style="color:var(--text-faint);font-style:italic">+ ${items.length-10} more items</span></div>` : '');
+  }
+
+  function renderRecord(items) {
+    const total = items.length;
+    const done  = items.filter(i=>i.done).length;
+    const pct   = total > 0 ? Math.round(done/total*100) : 0;
+    const pctEl = document.getElementById('recordPct');
+    if (pctEl) pctEl.textContent = pct + '%';
+    const svg = document.getElementById('recordRingSvg');
+    if (svg) {
+      const segs = items.map(it => ({ complete:it.done, empty:false, name:it.name }));
+      buildSegmentedRing(svg, segs, 60, 60, 46, Math.max(1.5, Math.min(4, 280/segs.length)), 1.5);
+    }
+    const el = document.getElementById('recordItems');
+    if (!el) return;
+    el.innerHTML = items.slice(0,10).map(it =>
+      `<div class="track-item">
+        <div class="track-item-dot ${it.done?'done':'todo'}"></div>
+        <span class="track-item-text ${it.done?'done':''}">${it.name}</span>
+        ${it.deadline && it.deadline !== 'N/A' ? `<span class="track-item-group">${it.deadline}</span>` : ''}
+      </div>`
+    ).join('') + (items.length>10 ? `<div class="track-item"><div class="track-item-dot todo"></div><span class="track-item-text" style="color:var(--text-faint);font-style:italic">+ ${items.length-10} more items</span></div>` : '');
+  }
+
+  function renderField(items) {
+    // Group by status
+    const active  = items.filter(i => !i.done && i.type !== 'Waiting');
+    const waiting = items.filter(i => !i.done && i.type === 'Waiting');
+    const complete = items.filter(i => i.done);
+    const activeCount = document.getElementById('fieldActiveCount');
+    if (activeCount) activeCount.textContent = active.length;
+    const el = document.getElementById('fieldBoard');
+    if (!el) return;
+
+    const tile = (it, status) => `
+      <div class="field-tile">
+        <div class="field-tile-status ${status}">${status}</div>
+        <div class="field-tile-name">${it.name}</div>
+        ${it.deadline && it.deadline !== 'N/A' ? `<div class="field-tile-desc">${it.deadline}</div>` : ''}
+      </div>`;
+
+    el.innerHTML = [
+      ...active.slice(0,6).map(i=>tile(i,'active')),
+      ...waiting.slice(0,4).map(i=>tile(i,'waiting')),
+      ...complete.slice(0,2).map(i=>tile(i,'complete'))
+    ].join('');
+  }
+
+  // ── Stacks modal ──
+  let _stacksModalTrack = null;
+  function openStacksModal(track) {
+    const overlay = document.getElementById('stacksModal');
+    const title   = document.getElementById('smTitle');
+    const body    = document.getElementById('smBody');
+    if (!overlay || !title || !body) return;
+    _stacksModalTrack = track;
+    const names = { canon:'The Canon', cred:'The Credential', clinic:'The Clinic', record:'The Record', field:'The Field' };
+    title.textContent = names[track] || track;
+
+    let html = '';
+    if (track === 'canon') {
+      const items = _stacksData.canon;
+      html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:6px">' +
+        items.map(it => `<div class="track-item">
+          <div class="track-item-dot ${it.done?'done':'todo'}"></div>
+          <span class="track-item-text ${it.done?'done':''}">${it.name}</span>
+          ${it.type ? `<span class="track-item-group">${it.type}</span>` : ''}
+        </div>`).join('') +
+        // Remaining slots to target of 50
+        Array.from({length: Math.max(0, 50-items.length)}, (_,i) =>
+          `<div class="track-item"><div class="track-item-dot" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1)"></div><span class="track-item-text" style="color:var(--text-faint);font-style:italic">Slot ${items.length+i+1} — to be added</span></div>`
+        ).join('') +
+        '</div>';
+    } else if (track === 'cred') {
+      const groups = _stacksData.bcidp;
+      html = Object.entries(groups).map(([gname, items]) => {
+        const gDone = items.filter(i=>i.done).length;
+        return `<div style="margin-bottom:24px">
+          <div class="track-group-head"><span class="track-group-name">${gname}</span><span class="track-group-count">${gDone} / ${items.length}</span></div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px">
+            ${items.map(it=>`<div class="track-item" style="flex:0 0 auto">
+              <div class="track-item-dot ${it.done?'done':'todo'}"></div>
+              <span class="track-item-text ${it.done?'done':''}">${it.name}</span>
+            </div>`).join('')}
+          </div>
+        </div>`;
+      }).join('');
+    } else if (track === 'clinic') {
+      html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px">' +
+        _stacksData.clinic.map(it=>`<div class="track-item">
+          <div class="track-item-dot ${it.done?'done':'todo'}"></div>
+          <span class="track-item-text ${it.done?'done':''}">${it.name}</span>
+          ${it.deadline && it.deadline!=='N/A' ? `<span class="track-item-group">${it.deadline}</span>` : ''}
+        </div>`).join('') + '</div>';
+    } else if (track === 'record') {
+      html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px">' +
+        _stacksData.record.map(it=>`<div class="track-item">
+          <div class="track-item-dot ${it.done?'done':'todo'}"></div>
+          <span class="track-item-text ${it.done?'done':''}">${it.name}</span>
+          ${it.deadline && it.deadline!=='N/A' ? `<span class="track-item-group">${it.deadline}</span>` : ''}
+        </div>`).join('') + '</div>';
+    } else if (track === 'field') {
+      const items = _stacksData.field;
+      const active  = items.filter(i=>!i.done && i.type!=='Waiting');
+      const waiting = items.filter(i=>!i.done && i.type==='Waiting');
+      const done    = items.filter(i=>i.done);
+      const section = (label, arr, status) => arr.length ? `
+        <div style="margin-bottom:24px">
+          <div class="track-group-head"><span class="track-group-name">${label}</span><span class="track-group-count">${arr.length}</span></div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            ${arr.map(it=>`<div class="field-tile">
+              <div class="field-tile-status ${status}">${status}</div>
+              <div class="field-tile-name">${it.name}</div>
+            </div>`).join('')}
+          </div>
+        </div>` : '';
+      html = section('Active', active, 'active') + section('Waiting', waiting, 'waiting') + section('Complete', done, 'complete');
+    }
+
+    body.innerHTML = html;
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeStacksModal() {
+    const o = document.getElementById('stacksModal');
+    if (o) o.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('stacksModalClose').addEventListener('click', closeStacksModal);
+  document.getElementById('stacksModal').addEventListener('click', function(e) {
+    if (e.target === this) closeStacksModal();
+  });
+
+  // ── Load all stacks data ──
+  function loadStacksData() {
+    // We need 3 CSVs — fetch in parallel
+    // NOTE: You must publish each tab separately in Google Sheets and update the gid values below
+    // File → Share → Publish to Web → select tab → CSV → Publish → copy URL
+    // Then replace the gid= values in STACKS_JC_CSV, STACKS_BCIDP_CSV, STACKS_OH_CSV above
+
+    Promise.all([
+      fetch(STACKS_JC_CSV,    {cache:'no-store'}).then(r=>r.ok?r.text():Promise.reject('JC')),
+      fetch(STACKS_BCIDP_CSV, {cache:'no-store'}).then(r=>r.ok?r.text():Promise.reject('BCIDP')),
+      fetch(STACKS_OH_CSV,    {cache:'no-store'}).then(r=>r.ok?r.text():Promise.reject('OH')),
+    ]).then(([jcText, bcidpText, ohText]) => {
+      _stacksData.canon  = parseCanon(jcText);
+      _stacksData.bcidp  = parseBCIDP(bcidpText);
+      const oh = parseOfficeHours(ohText);
+      _stacksData.clinic = oh.clinic;
+      _stacksData.record = oh.record;
+      _stacksData.field  = oh.field;
+      _stacksLoaded = true;
+      renderAllStacks();
+    }).catch(err => {
+      console.warn('[The Stacks] CSV fetch failed:', err);
+      // Render with empty data — show structure without numbers
+      renderAllStacks();
+    });
+  }
+
+  function renderAllStacks() {
+    renderCanon(_stacksData.canon);
+    renderBCIDP(_stacksData.bcidp);
+    renderClinic(_stacksData.clinic);
+    renderRecord(_stacksData.record);
+    renderField(_stacksData.field);
+    // Re-run scroll reveal for newly visible elements
+    document.querySelectorAll('#stacks .reveal:not(.visible)').forEach(el => {
+      el.classList.add('visible');
+    });
+  }
+
+  // Refresh every 15 min if open
+  setInterval(() => {
+    if (document.getElementById('stacks').classList.contains('open')) {
+      loadStacksData();
+    }
+  }, 15 * 60 * 1000);
 
 </script>
 </body>
