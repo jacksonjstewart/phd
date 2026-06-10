@@ -2053,6 +2053,74 @@
     padding-left: 12px;
   }
 
+  /* ── Benchmark comparison panel ── */
+  .track-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    padding-left: 64px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 900px) {
+    .track-body { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 720px) { .track-body { padding-left: 0; } }
+
+  .track-progress-col { display: flex; flex-direction: column; gap: 0; }
+  .track-bench-col {
+    border-left: 1px solid var(--border-soft);
+    padding-left: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  @media (max-width: 900px) {
+    .track-bench-col {
+      border-left: none;
+      border-top: 1px solid var(--border-soft);
+      padding-left: 0;
+      padding-top: 20px;
+    }
+  }
+  .bench-panel-title {
+    font-family: var(--mono);
+    font-size: 7px;
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 8px;
+  }
+  .bench-row {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 12px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border-soft);
+    align-items: start;
+  }
+  .bench-row:last-child { border-bottom: none; }
+  .bench-institution {
+    font-family: var(--mono);
+    font-size: 7px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(201,161,74,0.55);
+    line-height: 1.6;
+    padding-top: 1px;
+  }
+  .bench-institution.your-standard {
+    color: rgba(42,157,110,0.75);
+    font-weight: 500;
+  }
+  .bench-requirement {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.55;
+  }
+  .bench-requirement.your-standard { color: var(--text); }
+
   /* Track ring */
   .track-ring-wrap {
     position: relative;
@@ -2886,8 +2954,35 @@
             </div>
           </div>
         </div>
-        <div class="track-items" id="canonItems"></div>
-        <button class="track-view-btn" onclick="openStacksModal('canon')">View All Papers</button>
+        <div class="track-body">
+          <div class="track-progress-col">
+            <div class="track-items" id="canonItems" style="padding-left:0;margin-bottom:12px"></div>
+            <button class="track-view-btn" style="margin-left:0" onclick="openStacksModal('canon')">View All Papers</button>
+          </div>
+          <div class="track-bench-col">
+            <div class="bench-panel-title">Programme Expectations</div>
+            <div class="bench-row">
+              <span class="bench-institution">Harvard BBS</span>
+              <span class="bench-requirement">BBS 230 — full course in biological literature analysis and experimental design. 12 seminal papers per rotation, 3 rotations minimum.</span>
+            </div>
+            <div class="bench-row">
+              <span class="bench-institution">Oxford DPhil</span>
+              <span class="bench-requirement">Mandatory departmental journal club attendance throughout candidacy. No specified paper count — sustained engagement expected.</span>
+            </div>
+            <div class="bench-row">
+              <span class="bench-institution">Yale MD-PhD</span>
+              <span class="bench-requirement">Journal clubs embedded across pre-clinical years. Critical appraisal of primary literature is a core competency evaluated at qualifying exam.</span>
+            </div>
+            <div class="bench-row">
+              <span class="bench-institution">Cambridge PhD</span>
+              <span class="bench-requirement">Weekly departmental seminars and paper presentations required. Transfer of Status assessed on depth of literature engagement.</span>
+            </div>
+            <div class="bench-row">
+              <span class="bench-institution your-standard">Your Standard</span>
+              <span class="bench-requirement your-standard">50 landmark ID and antifungal trials — read, annotated, and formally critiqued. Written critique required per paper, not passive reading.</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Track II: The Credential -->
@@ -2906,8 +3001,35 @@
             </div>
           </div>
         </div>
-        <div class="track-groups" id="credGroups"></div>
-        <button class="track-view-btn" onclick="openStacksModal('cred')">View All Modules</button>
+        <div class="track-body">
+          <div class="track-progress-col">
+            <div class="track-groups" id="credGroups" style="padding-left:0;margin-bottom:12px"></div>
+            <button class="track-view-btn" style="margin-left:0" onclick="openStacksModal('cred')">View All Modules</button>
+          </div>
+          <div class="track-bench-col">
+            <div class="bench-panel-title">Programme Expectations</div>
+            <div class="bench-row">
+              <span class="bench-institution">Yale MD-PhD</span>
+              <span class="bench-requirement">First-author manuscript required before resuming clinical training. 184 of 196 graduates achieved this between 2010–2024.</span>
+            </div>
+            <div class="bench-row">
+              <span class="bench-institution">Harvard BBS</span>
+              <span class="bench-requirement">One semester mandatory teaching fellowship. Research proposal development course (BBS 330qc) required before qualifying exam.</span>
+            </div>
+            <div class="bench-row">
+              <span class="bench-institution">Oxford DPhil</span>
+              <span class="bench-requirement">Transfer of Status by term 4 requires demonstrated command of literature and preliminary results. Confirmation at term 9 includes publications review.</span>
+            </div>
+            <div class="bench-row">
+              <span class="bench-institution">Cambridge PhD</span>
+              <span class="bench-requirement">First-year registration requires evidence of scholarly progress. Board certification equivalent: DPhil/PhD degree plus clinical fellowship training.</span>
+            </div>
+            <div class="bench-row">
+              <span class="bench-institution your-standard">Your Standard</span>
+              <span class="bench-requirement your-standard">BCIDP board certification — 39 modules across Group 1 and 2. Fewer than 2,000 pharmacists certified globally. Examination target: 2026.</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Track III: The Clinic -->
@@ -2926,8 +3048,35 @@
             </div>
           </div>
         </div>
-        <div class="track-items" id="clinicItems"></div>
-        <button class="track-view-btn" onclick="openStacksModal('clinic')">View All Tools</button>
+        <div class="track-body">
+          <div class="track-progress-col">
+            <div class="track-items" id="clinicItems" style="padding-left:0;margin-bottom:12px"></div>
+            <button class="track-view-btn" style="margin-left:0" onclick="openStacksModal('clinic')">View All Tools</button>
+          </div>
+          <div class="track-bench-col">
+            <div class="bench-panel-title">Programme Expectations</div>
+            <div class="bench-row">
+              <span class="bench-institution">Oxford DPhil</span>
+              <span class="bench-requirement">Original research of a kind expected of a capable and diligent student after 3–4 years of full-time study. Clinical translation explicitly valued.</span>
+            </div>
+            <div class="bench-row">
+              <span class="bench-institution">Cambridge PhD</span>
+              <span class="bench-requirement">Thesis-by-publication model permitted. Students expected to produce reference tools and resources with real-world clinical application.</span>
+            </div>
+            <div class="bench-row">
+              <span class="bench-institution">Harvard BBS</span>
+              <span class="bench-requirement">Translational output valued. Rotations in clinical labs expose students to bedside-to-bench knowledge translation as a research competency.</span>
+            </div>
+            <div class="bench-row">
+              <span class="bench-institution">Yale MD-PhD</span>
+              <span class="bench-requirement">MD-PhD graduates expected to bridge clinical and laboratory science. Clinical tool development counts toward scholarly output portfolio.</span>
+            </div>
+            <div class="bench-row">
+              <span class="bench-institution your-standard">Your Standard</span>
+              <span class="bench-requirement your-standard">Five completed clinical reference tools deployed or published — Special Routes, TxPx, HPTP, Learn ID modules, AHD materials. Built from clinical need, not academic exercise.</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Track IV: The Record -->
@@ -2946,8 +3095,35 @@
             </div>
           </div>
         </div>
-        <div class="track-items" id="recordItems"></div>
-        <button class="track-view-btn" onclick="openStacksModal('record')">View All Outputs</button>
+        <div class="track-body">
+          <div class="track-progress-col">
+            <div class="track-items" id="recordItems" style="padding-left:0;margin-bottom:12px"></div>
+            <button class="track-view-btn" style="margin-left:0" onclick="openStacksModal('record')">View All Outputs</button>
+          </div>
+          <div class="track-bench-col">
+            <div class="bench-panel-title">Programme Expectations</div>
+            <div class="bench-row">
+              <span class="bench-institution">Harvard BBS</span>
+              <span class="bench-requirement">One full semester mandatory teaching fellowship. Pedagogy training required prior. Teaching viewed as a core scholarly competency, not optional.</span>
+            </div>
+            <div class="bench-row">
+              <span class="bench-institution">Yale MD-PhD</span>
+              <span class="bench-requirement">First-author manuscript submitted before graduation. Grant writing workshop series required before year 4. Annual NIH F30/F31 application encouraged.</span>
+            </div>
+            <div class="bench-row">
+              <span class="bench-institution">Oxford DPhil</span>
+              <span class="bench-requirement">Confirmation of Status at term 9 requires evidence of publications and conference presentations. Scholarly output assessed by two independent examiners.</span>
+            </div>
+            <div class="bench-row">
+              <span class="bench-institution">Cambridge PhD</span>
+              <span class="bench-requirement">Thesis 40,000–80,000 words. Viva voce with internal and external examiner. Published papers may be incorporated directly into thesis as connected argument.</span>
+            </div>
+            <div class="bench-row">
+              <span class="bench-institution your-standard">Your Standard</span>
+              <span class="bench-requirement your-standard">Three manuscripts submitted, five FoPPS lectures delivered, two professional society memberships active, one grant application per PhD year — by thesis defence.</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Track V: The Field -->
@@ -2963,8 +3139,35 @@
             <span class="field-count-label">active fronts</span>
           </div>
         </div>
-        <div class="field-board" id="fieldBoard"></div>
-        <button class="track-view-btn" onclick="openStacksModal('field')">View All Projects</button>
+        <div class="track-body">
+          <div class="track-progress-col">
+            <div class="field-board" id="fieldBoard" style="padding-left:0;margin-bottom:12px"></div>
+            <button class="track-view-btn" style="margin-left:0" onclick="openStacksModal('field')">View All Projects</button>
+          </div>
+          <div class="track-bench-col">
+            <div class="bench-panel-title">Programme Expectations</div>
+            <div class="bench-row">
+              <span class="bench-institution">Harvard BBS</span>
+              <span class="bench-requirement">Three independent lab rotations in year 1, minimum 8 weeks each. Breadth before depth — thesis advisor not selected until rotations complete.</span>
+            </div>
+            <div class="bench-row">
+              <span class="bench-institution">Oxford DPhil</span>
+              <span class="bench-requirement">Confirmation of Status at term 9 requires conference presentations and active scholarly contribution beyond the primary thesis project.</span>
+            </div>
+            <div class="bench-row">
+              <span class="bench-institution">Yale MD-PhD</span>
+              <span class="bench-requirement">Research committee meets twice annually. Students expected to maintain awareness of parallel literature and adjacent research fronts to their thesis.</span>
+            </div>
+            <div class="bench-row">
+              <span class="bench-institution">Cambridge PhD</span>
+              <span class="bench-requirement">Departmental seminars and wider academic community engagement required. Intellectual breadth expected beyond the narrow thesis question.</span>
+            </div>
+            <div class="bench-row">
+              <span class="bench-institution your-standard">Your Standard</span>
+              <span class="bench-requirement your-standard">Three concurrent active research fronts maintained throughout the PhD — Allergy/Delabel, ASP/Stewardship, and primary PhD program — with wastewater and scholarly writing as parallel threads.</span>
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -4473,14 +4676,36 @@
     const sec = document.getElementById('stacks');
     if (!sec) return;
     sec.classList.add('open');
-    sec.scrollIntoView({ behavior:'smooth', block:'start' });
+    // Lock scroll on main page — prevent scrolling back up into dashboard
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    // Scroll the stacks section into view
+    setTimeout(() => { sec.scrollIntoView({ behavior:'smooth', block:'start' }); }, 50);
     if (!_stacksLoaded) loadStacksData();
   }
+
   function exitStacks() {
     const sec = document.getElementById('stacks');
     if (sec) sec.classList.remove('open');
-    window.scrollTo({ top: document.getElementById('statistics').offsetTop, behavior:'smooth' });
+    // Restore scroll
+    document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
+    // Navigate back to statistics
+    const statsEl = document.getElementById('statistics');
+    if (statsEl) { statsEl.scrollIntoView({ behavior:'smooth', block:'start' }); }
   }
+
+  // Intercept nav links — if Stacks is open, exit first then navigate
+  document.querySelectorAll('.nav-links a[data-nav]').forEach(a => {
+    a.addEventListener('click', function(e) {
+      const sec = document.getElementById('stacks');
+      if (sec && sec.classList.contains('open')) {
+        e.stopImmediatePropagation();
+        exitStacks();
+      }
+    }, true); // capture phase so it fires before the existing smooth-scroll handler
+  });
+
   // Also open if hash is #stacks on load
   if (window.location.hash === '#stacks') {
     window.addEventListener('load', () => { enterStacks(null); });
@@ -4489,17 +4714,20 @@
   // ── Build segmented ring (reuse shared function) ──
   // buildSegmentedRing is already defined above — we reuse it here.
 
-  // ── Track I: The Canon — Journal Clubs ──
+  // ── Track I: The Canon — Labwork tab, col B (check) col C (citation) ──
+  // The Labwork tab has three side-by-side trackers. JC is cols 1-3 (B-D, 0-indexed).
+  // Row 0: header row. Rows 1+: data.
+  // Col 1 = Check (FALSE/TRUE), Col 2 = Article/Citation, Col 3 = Link
   function parseCanon(text) {
     const rows = parseCSV(text);
     const items = [];
-    for (const row of rows) {
-      const done = (row[0]||'').trim().toUpperCase();
-      const name = (row[1]||'').trim();
-      const type = (row[2]||'').trim();
-      if (!name || name === 'Assigned Task' || name === 'Trial / Paper') continue;
+    for (let i = 1; i < rows.length; i++) {
+      const row  = rows[i];
+      const done = (row[1]||'').trim().toUpperCase();
+      const name = (row[2]||'').trim();
+      if (!name || name === 'Article/Citation') continue;
       if (done !== 'TRUE' && done !== 'FALSE') continue;
-      items.push({ done: done === 'TRUE', name, type });
+      items.push({ done: done === 'TRUE', name, type: '' });
     }
     return items;
   }
@@ -4536,24 +4764,27 @@
     ).join('') + (items.length > 8 ? `<div class="track-item"><div class="track-item-dot todo"></div><span class="track-item-text" style="color:var(--text-faint);font-style:italic">+ ${items.length - 8} more · ${50 - items.length} remaining to target</span></div>` : '');
   }
 
-  // ── Track II: The Credential — BCIDP ──
+  // ── Track II: The Credential — BCIDP tab ──
+  // Col A = Group (e.g. "Group 1"), Col B = Section, Col C = Item, Col D = Complete (TRUE/FALSE)
   function parseBCIDP(text) {
     const rows = parseCSV(text);
-    const groups = {};
-    let currentGroup = 'General';
+    const groups = {}; // keyed by "Group 1" / "Group 2"
+    let currentGroup = 'Group 1';
     for (const row of rows) {
-      const c0 = (row[0]||'').trim().toUpperCase();
-      const c1 = (row[1]||'').trim();
-      const c2 = (row[2]||'').trim();
-      if (!c0 && !c1 && !c2) continue;
-      if (c0.startsWith('GROUP')) { currentGroup = c0; continue; }
-      if (c0 !== 'TRUE' && c0 !== 'FALSE') {
-        if (c1) currentGroup = c1;
-        continue;
-      }
-      if (!c2) continue;
-      if (!groups[currentGroup]) groups[currentGroup] = [];
-      groups[currentGroup].push({ done: c0 === 'TRUE', name: c2 });
+      const cA = (row[0]||'').trim();
+      const cB = (row[1]||'').trim();
+      const cC = (row[2]||'').trim();
+      const cD = (row[3]||'').trim().toUpperCase();
+      // Detect group header rows
+      if (cA.startsWith('Group')) { currentGroup = cA; continue; }
+      // Skip header/summary rows
+      if (!cC || cC === 'Item' || cC === 'Total Completed' || cC === 'Remaining' || cC === 'Total Modules') continue;
+      if (cD !== 'TRUE' && cD !== 'FALSE') continue;
+      const groupKey = currentGroup;
+      if (!groups[groupKey]) groups[groupKey] = [];
+      // Include section label in display when available
+      const displayName = cB ? cB + ' · ' + cC : cC;
+      groups[groupKey].push({ done: cD === 'TRUE', name: cC, section: cB });
     }
     return groups;
   }
@@ -4566,72 +4797,79 @@
     const pctEl    = document.getElementById('credPct');
     if (pctEl) pctEl.textContent = pct + '%';
 
-    // Ring — segment per top-level group
+    // Ring — one segment per group
     const svg = document.getElementById('credRingSvg');
     if (svg) {
       const segs = Object.entries(groups).map(([gname, items]) => ({
-        complete: items.every(i=>i.done),
+        complete: items.length > 0 && items.every(i=>i.done),
         empty: items.length === 0,
-        name: gname
+        name: gname + ' (' + items.filter(i=>i.done).length + '/' + items.length + ')'
       }));
-      buildSegmentedRing(svg, segs, 60, 60, 46, segs.length > 6 ? 6 : 8, 3);
+      buildSegmentedRing(svg, segs, 60, 60, 46, segs.length > 4 ? 5 : 8, 3);
     }
 
     const el = document.getElementById('credGroups');
     if (!el) return;
-    el.innerHTML = Object.entries(groups).map(([gname, items]) => {
-      const gDone = items.filter(i=>i.done).length;
-      return `<div>
-        <div class="track-group-head">
-          <span class="track-group-name">${gname}</span>
-          <span class="track-group-count">${gDone} / ${items.length}</span>
-        </div>
-        <div style="display:flex;flex-wrap:wrap;gap:5px">
-          ${items.map(it => `<div class="track-item" style="min-width:0;flex:0 0 auto">
-            <div class="track-item-dot ${it.done?'done':'todo'}"></div>
-            <span class="track-item-text ${it.done?'done':''}" style="font-size:12px">${it.name}</span>
-          </div>`).join('')}
-        </div>
-      </div>`;
-    }).join('');
+
+    // Show first 8 items across all groups as preview chips
+    const preview = allItems.slice(0,8);
+    el.innerHTML = preview.map(it =>
+      `<div class="track-item">
+        <div class="track-item-dot ${it.done?'done':'todo'}"></div>
+        <span class="track-item-text ${it.done?'done':''}" style="font-size:12px">${it.section ? '<span style="opacity:0.55;font-size:11px">' + it.section + ' · </span>' : ''}${it.name}</span>
+      </div>`
+    ).join('') + (allItems.length > 8 ? `<div class="track-item"><div class="track-item-dot todo"></div><span class="track-item-text" style="color:var(--text-faint);font-style:italic">+ ${allItems.length-8} more modules</span></div>` : '');
   }
 
-  // ── Tracks III & IV: Office Hours ──
-  // Parse Office Hours tab for Clinic (V, IVE, IVF) and Record (IVA, IVD, VI)
+  // ── Tracks III, IV, V: Office Hours tab ──
+  // Col A = TRUE/FALSE (item) or section name (header when not bool)
+  // Col B = task name, Col C = type, Col D = deadline
+  // Section headers are rows where col A is NOT TRUE/FALSE
   function parseOfficeHours(text) {
     const rows = parseCSV(text);
     const clinic = [], record = [], field = [];
     let section = '';
 
-    // Section headers are roman-numeral rows where col0 is FALSE/TRUE and col1 is a section name
-    // OR where col0 is empty and col1 contains the section name
-    for (const row of rows) {
-      const c0 = (row[0]||'').trim().toUpperCase();
-      const c1 = (row[1]||'').trim();
-      const c2 = (row[2]||'').trim(); // type
-      const c3 = (row[3]||'').trim(); // deadline
+    const isBoolRow = v => { const u=(v||'').trim().toUpperCase(); return u==='TRUE'||u==='FALSE'; };
 
-      // Section detection — rows where col0 is empty (not bool) and col1 looks like a header
-      if (!c0 || (c0 !== 'TRUE' && c0 !== 'FALSE')) {
-        if (c1) section = c1;
+    for (const row of rows) {
+      const cA = (row[0]||'').trim();
+      const cB = (row[1]||'').trim();
+      const cC = (row[2]||'').trim();
+      const cD = (row[3]||'').trim();
+
+      if (!isBoolRow(cA)) {
+        // Section header — use col A if it looks like a section name, else col B
+        const headerText = cA || cB;
+        if (headerText && headerText !== 'Dr. J.J. Stewart PhD\'s Office Hours' && headerText !== '✅') {
+          section = headerText;
+        }
         continue;
       }
 
-      const done = c0 === 'TRUE';
-      if (!c1) continue;
+      const done = cA.toUpperCase() === 'TRUE';
+      if (!cB) continue;
 
-      const item = { done, name: c1, type: c2||'', deadline: c3||'' };
+      const item = { done, name: cB, type: cC, deadline: cD };
 
-      // Clinic: Section V (Clinical Tools), IVE (Basic Clinical Training), IVF (ID AHD)
-      if (/^V\b|^IVE\b|^IVF\b/.test(section) || section.includes('Clinical Tools') || section.includes('Basic Clinical') || section.includes('ID AHD')) {
+      // Clinic: V (Clinical Tools), IVE (Basic Clinical), IVF (ID AHD)
+      if (/^V\b/.test(section) || /^IVE\b/.test(section) || /^IVF\b/.test(section) ||
+          section.includes('Clinical Tools') || section.includes('Basic Clinical') || section.includes('ID AHD')) {
         clinic.push(item);
       }
-      // Record: IVA (Precepting), IVD (FoPPS Lectures), IIIB (Scholarly), VI (Professional)
-      else if (/^IVA\b|^IVD\b|^IIIB\b|^VI\b/.test(section) || section.includes('Precepting') || section.includes('FoPPS') || section.includes('Scholarly') || section.includes('Professional')) {
+      // Record: IVA (Precepting), IVD (FoPPS), IIIB (Scholarly), VI (Professional/Memberships)
+      else if (/^IVA\b/.test(section) || /^IVD\b/.test(section) || /^IIIB\b/.test(section) ||
+               /^VI\b/.test(section) || /^VIA\b/.test(section) || /^VIB\b/.test(section) ||
+               /^VIC\b/.test(section) || /^VID\b/.test(section) || /^VIE\b/.test(section) || /^VIF\b/.test(section) ||
+               section.includes('Precepting') || section.includes('FoPPS') ||
+               section.includes('Scholarly') || section.includes('Professional') ||
+               section.includes('Membership') || section.includes('Licensure')) {
         record.push(item);
       }
-      // Field: I (Allergy), II (ASP), III (PhD), IIIA (Wastewater)
-      else if (/^I\b|^II\b|^III\b/.test(section) || section.includes('Allergy') || section.includes('Stewardship') || section.includes('PhD') || section.includes('Wastewater') || section.includes('Scholarly Writing')) {
+      // Field: I (Allergy), II (ASP/Stewardship), III (PhD/Research), IIIA (Wastewater)
+      else if (/^I\./.test(section) || /^II\./.test(section) || /^III\./.test(section) || /^IIIA\b/.test(section) ||
+               section.includes('Allergy') || section.includes('Stewardship') ||
+               section.includes('PhD') || section.includes('Research') || section.includes('Wastewater')) {
         field.push(item);
       }
     }
@@ -4735,14 +4973,28 @@
       const groups = _stacksData.bcidp;
       html = Object.entries(groups).map(([gname, items]) => {
         const gDone = items.filter(i=>i.done).length;
-        return `<div style="margin-bottom:24px">
-          <div class="track-group-head"><span class="track-group-name">${gname}</span><span class="track-group-count">${gDone} / ${items.length}</span></div>
-          <div style="display:flex;flex-wrap:wrap;gap:5px">
-            ${items.map(it=>`<div class="track-item" style="flex:0 0 auto">
-              <div class="track-item-dot ${it.done?'done':'todo'}"></div>
-              <span class="track-item-text ${it.done?'done':''}">${it.name}</span>
-            </div>`).join('')}
+        // Group by section within each group
+        const sections = {};
+        items.forEach(it => {
+          const s = it.section || 'General';
+          if (!sections[s]) sections[s] = [];
+          sections[s].push(it);
+        });
+        return `<div style="margin-bottom:28px">
+          <div class="track-group-head">
+            <span class="track-group-name">${gname}</span>
+            <span class="track-group-count">${gDone} / ${items.length}</span>
           </div>
+          ${Object.entries(sections).map(([sname, sitems]) => `
+            <div style="margin-bottom:14px">
+              <div style="font-family:var(--mono);font-size:7px;letter-spacing:0.28em;color:var(--text-faint);text-transform:uppercase;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border-soft)">${sname}</div>
+              <div style="display:flex;flex-direction:column;gap:4px">
+                ${sitems.map(it=>`<div class="track-item">
+                  <div class="track-item-dot ${it.done?'done':'todo'}"></div>
+                  <span class="track-item-text ${it.done?'done':''}">${it.name}</span>
+                </div>`).join('')}
+              </div>
+            </div>`).join('')}
         </div>`;
       }).join('');
     } else if (track === 'clinic') {
