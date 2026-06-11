@@ -1918,18 +1918,18 @@
 
   /* Section — hidden by default, revealed by JS */
   .stacks-section {
-    height: 0;
-    overflow: hidden;
-    visibility: hidden;
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: var(--bg);
     opacity: 0;
-    transition: opacity 0.8s ease;
-    background: transparent;
-    position: relative;
+    transition: opacity 0.6s ease;
   }
   .stacks-section.open {
-    height: auto;
-    overflow: visible;
-    visibility: visible;
+    display: block;
     opacity: 1;
   }
   /* Warmer background overlay for The Stacks */
@@ -1939,11 +1939,8 @@
     inset: 0;
     pointer-events: none;
     z-index: -1;
-    background: rgba(18, 10, 2, 0.55);
-    opacity: 0;
-    transition: opacity 1s ease;
+    background: rgba(18, 10, 2, 0.72);
   }
-  .stacks-section.open::before { opacity: 1; }
 
   .stacks-inner {
     max-width: 1200px;
@@ -4676,23 +4673,13 @@
     const sec = document.getElementById('stacks');
     if (!sec) return;
     sec.classList.add('open');
-    // Lock scroll on main page — prevent scrolling back up into dashboard
-    document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
-    // Scroll the stacks section into view
-    setTimeout(() => { sec.scrollIntoView({ behavior:'smooth', block:'start' }); }, 50);
+    sec.scrollTop = 0;
     if (!_stacksLoaded) loadStacksData();
   }
 
   function exitStacks() {
     const sec = document.getElementById('stacks');
     if (sec) sec.classList.remove('open');
-    // Restore scroll
-    document.body.style.overflow = '';
-    document.documentElement.style.overflow = '';
-    // Navigate back to statistics
-    const statsEl = document.getElementById('statistics');
-    if (statsEl) { statsEl.scrollIntoView({ behavior:'smooth', block:'start' }); }
   }
 
   // Intercept nav links — if Stacks is open, exit first then navigate
