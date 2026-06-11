@@ -1924,24 +1924,22 @@
     z-index: 500;
     overflow-y: auto;
     overflow-x: hidden;
-    background: var(--bg);
-    opacity: 0;
-    transition: opacity 0.6s ease;
+    background: transparent;
   }
   .stacks-section.open {
     display: block;
-    opacity: 1;
   }
-  /* Warmer background overlay for The Stacks */
-  .stacks-section::before {
-    content: '';
+  /* Warm tint layer — sits above bg-photo (z:-3), below stacks content (z:500) */
+  .stacks-tint {
+    display: none;
     position: fixed;
     inset: 0;
+    z-index: 499;
     pointer-events: none;
-    z-index: -1;
-    background: rgba(18, 10, 2, 0.72);
+    background: rgba(10, 6, 2, 0.80);
   }
-
+  .stacks-tint.open { display: block; }
+  /* Stacks inner content sits above the tint */
   .stacks-inner {
     max-width: 1200px;
     margin: 0 auto;
@@ -2915,6 +2913,7 @@
 </footer>
 
 <!-- ========== THE STACKS (hidden — accessible only via footer link) ========== -->
+<div class="stacks-tint" id="stacksTint"></div>
 <section id="stacks" class="stacks-section" aria-label="The Stacks">
   <div class="stacks-inner">
 
@@ -4250,6 +4249,34 @@
     }
   }
 
+  // Solid two-arc progress ring — for tracks with too many items to segment legibly
+  function buildProgressArc(svgEl, done, total, cx, cy, r, strokeW) {
+    while (svgEl.firstChild) svgEl.removeChild(svgEl.firstChild);
+    const svgNS = 'http://www.w3.org/2000/svg';
+    // Track circle
+    const track = document.createElementNS(svgNS, 'circle');
+    track.setAttribute('cx', cx); track.setAttribute('cy', cy); track.setAttribute('r', r);
+    track.setAttribute('fill', 'none');
+    track.setAttribute('stroke', 'rgba(255,255,255,0.07)');
+    track.setAttribute('stroke-width', strokeW);
+    svgEl.appendChild(track);
+    if (total <= 0) return;
+    const pct = done / total;
+    if (pct <= 0) return;
+    // Arc from top (-90°) clockwise
+    const circumference = 2 * Math.PI * r;
+    const dashLen = circumference * pct;
+    const arc = document.createElementNS(svgNS, 'circle');
+    arc.setAttribute('cx', cx); arc.setAttribute('cy', cy); arc.setAttribute('r', r);
+    arc.setAttribute('fill', 'none');
+    arc.setAttribute('stroke', 'rgba(42,157,110,0.85)');
+    arc.setAttribute('stroke-width', strokeW);
+    arc.setAttribute('stroke-linecap', 'round');
+    arc.setAttribute('stroke-dasharray', `${dashLen} ${circumference}`);
+    arc.setAttribute('stroke-dashoffset', circumference * 0.25); // start at top
+    svgEl.appendChild(arc);
+  }
+
   function getDomainSegments(domainData) {
     return domainData.subcategories.map(sc => {
       if (!sc.items.length) return { complete:false, empty:true, name:sc.name };
@@ -4670,16 +4697,20 @@
   // ── Section show/hide ──
   function enterStacks(e) {
     if (e) e.preventDefault();
-    const sec = document.getElementById('stacks');
+    const sec  = document.getElementById('stacks');
+    const tint = document.getElementById('stacksTint');
     if (!sec) return;
     sec.classList.add('open');
+    if (tint) tint.classList.add('open');
     sec.scrollTop = 0;
     if (!_stacksLoaded) loadStacksData();
   }
 
   function exitStacks() {
-    const sec = document.getElementById('stacks');
-    if (sec) sec.classList.remove('open');
+    const sec  = document.getElementById('stacks');
+    const tint = document.getElementById('stacksTint');
+    if (sec)  sec.classList.remove('open');
+    if (tint) tint.classList.remove('open');
   }
 
   // Intercept nav links — if Stacks is open, exit first then navigate
@@ -4726,15 +4757,13 @@
     const pctEl   = document.getElementById('canonPct');
     if (pctEl) pctEl.textContent = done;
 
-    // Ring — 50 segments
+    // Ring — 50 segments, preserving actual item order
     const svg = document.getElementById('canonRingSvg');
     if (svg) {
-      // Build segments: first N done, rest todo, rest empty up to 50
-      const segs = Array.from({length:50}, (_,i) => ({
-        complete: i < done,
-        empty: i >= items.length && i >= done,
-        name: items[i] ? items[i].name : ('Paper ' + (i+1))
-      }));
+      const segs = Array.from({length:50}, (_,i) => {
+        if (i < items.length) return { complete: items[i].done, empty: false, name: items[i].name };
+        return { complete: false, empty: true, name: 'Paper ' + (i+1) + ' — to be added' };
+      });
       buildSegmentedRing(svg, segs, 60, 60, 46, 7, 2);
     }
 
@@ -4784,15 +4813,16 @@
     const pctEl    = document.getElementById('credPct');
     if (pctEl) pctEl.textContent = pct + '%';
 
-    // Ring — one segment per group
+    // Ring — one segment per item (not per group) for accurate completion picture
     const svg = document.getElementById('credRingSvg');
     if (svg) {
-      const segs = Object.entries(groups).map(([gname, items]) => ({
-        complete: items.length > 0 && items.every(i=>i.done),
-        empty: items.length === 0,
-        name: gname + ' (' + items.filter(i=>i.done).length + '/' + items.length + ')'
+      const segs = allItems.map(it => ({
+        complete: it.done,
+        empty: false,
+        name: (it.section ? it.section + ' · ' : '') + it.name
       }));
-      buildSegmentedRing(svg, segs, 60, 60, 46, segs.length > 4 ? 5 : 8, 3);
+      const sw = segs.length > 30 ? 3 : segs.length > 15 ? 5 : 7;
+      buildSegmentedRing(svg, segs, 60, 60, 46, sw, segs.length > 20 ? 1.5 : 2.5);
     }
 
     const el = document.getElementById('credGroups');
@@ -4871,8 +4901,14 @@
     if (pctEl) pctEl.textContent = pct + '%';
     const svg = document.getElementById('clinicRingSvg');
     if (svg) {
-      const segs = items.map(it => ({ complete:it.done, empty:false, name:it.name }));
-      buildSegmentedRing(svg, segs, 60, 60, 46, Math.max(2, Math.min(4, 300/segs.length)), 2);
+      if (total <= 24) {
+        // Segmented ring for small sets
+        const segs = items.map(it => ({ complete:it.done, empty:false, name:it.name }));
+        buildSegmentedRing(svg, segs, 60, 60, 46, Math.max(4, Math.min(8, 280/segs.length)), 2.5);
+      } else {
+        // Solid progress arc for large sets
+        buildProgressArc(svg, done, total, 60, 60, 46, 7);
+      }
     }
     const el = document.getElementById('clinicItems');
     if (!el) return;
@@ -4893,8 +4929,12 @@
     if (pctEl) pctEl.textContent = pct + '%';
     const svg = document.getElementById('recordRingSvg');
     if (svg) {
-      const segs = items.map(it => ({ complete:it.done, empty:false, name:it.name }));
-      buildSegmentedRing(svg, segs, 60, 60, 46, Math.max(1.5, Math.min(4, 280/segs.length)), 1.5);
+      if (total <= 24) {
+        const segs = items.map(it => ({ complete:it.done, empty:false, name:it.name }));
+        buildSegmentedRing(svg, segs, 60, 60, 46, Math.max(4, Math.min(8, 280/segs.length)), 2.5);
+      } else {
+        buildProgressArc(svg, done, total, 60, 60, 46, 7);
+      }
     }
     const el = document.getElementById('recordItems');
     if (!el) return;
