@@ -3886,6 +3886,7 @@
       if (isSectionComplete(r.dataset.window)) markSectionDone(r);
     });
     document.querySelectorAll('.routine').forEach(r => checkSectionCompletion(r));
+    updateOfficeNotif(); // Ensure dot reflects restored state on page load
   }
 
   // ============================================================
@@ -3971,9 +3972,17 @@
     const offSec = document.getElementById('office');
     let hasUnchecked = false;
     if (offSec) {
-      const rows = Array.from(offSec.querySelectorAll('.routine .r-row:not(.placeholder)'))
-                        .filter(r => !r.hasAttribute('hidden'));
-      hasUnchecked = rows.some(r => !r.classList.contains('done'));
+      // A routine is considered done if it has section-complete OR all its
+      // visible rows are checked. This handles both the "button tapped" and
+      // "all rows done but button not yet tapped" cases on mobile.
+      const routines = Array.from(offSec.querySelectorAll('.routine'));
+      hasUnchecked = routines.some(routine => {
+        if (routine.classList.contains('section-complete')) return false; // done
+        const rows = Array.from(routine.querySelectorAll('.r-row:not(.placeholder)'))
+                          .filter(r => !r.hasAttribute('hidden'));
+        if (rows.length === 0) return false; // empty/fully hidden — not pending
+        return rows.some(r => !r.classList.contains('done')); // any unchecked row
+      });
     }
     const stewardBusy = _stewardActionCount !== null && _stewardActionCount > 0;
     if (hasUnchecked || stewardBusy) { dot.classList.add('visible'); }
@@ -4467,6 +4476,13 @@
   loadCalendarEvents();
   setInterval(loadCalendarEvents, 10 * 60 * 1000);
   loadStewardCount();
+  // Re-poll Steward every 30s so the button updates without opening the app.
+  // Also refresh on tab focus — catches the case where the user switches from
+  // STEWARD back to the Lab (visibilitychange fires on every tab switch).
+  setInterval(loadStewardCount, 30 * 1000);
+  document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'visible') loadStewardCount();
+  });
   renderCPWidgets();
   loadCPFromSheets();
   setInterval(loadCPFromSheets, 5 * 60 * 1000);
