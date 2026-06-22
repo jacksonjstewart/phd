@@ -640,11 +640,13 @@
     border-style: dashed;
   }
   .r-row.placeholder:hover { border-color: var(--border); transform: none; }
-  .r-row.cal-event {
+  .r-row.cal-event,
+  .r-row.static-event {
     background: rgba(9, 11, 25, 0.93) !important;
     border-color: rgba(201, 161, 74, 0.22) !important;
   }
-  .r-row.cal-event:hover { border-color: rgba(201, 161, 74, 0.45) !important; }
+  .r-row.cal-event:hover,
+  .r-row.static-event:hover { border-color: rgba(201, 161, 74, 0.45) !important; }
   .r-row .box {
     width: 14px; height: 14px;
     border: 1px solid var(--gold-dim);
@@ -2874,7 +2876,7 @@
         <span class="rh-toggle" aria-hidden="true">+</span>
       </button>
       <ul class="routine-list" id="dailyList">
-        <li class="r-row cal-event" data-cond="always" data-task="deliberate-nutrition" tabindex="0" role="checkbox" aria-checked="false">
+        <li class="r-row static-event" data-cond="always" data-task="deliberate-nutrition" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
             <div class="r-title">Deliberate Nutrition</div>
