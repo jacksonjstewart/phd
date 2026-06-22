@@ -1107,65 +1107,62 @@
 
   /* ── CP Monthly Heatmap ──────────────────────────────────── */
   .cp-month-heatmap {
-    margin-top: 18px;
-    opacity: 0.72;
+    margin-top: 14px;
+    opacity: 0.5;
     transition: opacity 300ms ease;
   }
-  .cp-month-heatmap:hover { opacity: 1; }
+  .cp-month-heatmap:hover { opacity: 0.9; }
   .cp-heatmap-header {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
   }
   .cp-heatmap-month {
     font-family: var(--mono);
-    font-size: 7px;
-    letter-spacing: 0.42em;
+    font-size: 6px;
+    letter-spacing: 0.38em;
     text-transform: uppercase;
     color: var(--text-faint);
   }
   .cp-heatmap-tally {
     font-family: var(--mono);
-    font-size: 7px;
-    letter-spacing: 0.22em;
+    font-size: 6px;
+    letter-spacing: 0.18em;
     color: var(--text-faint);
   }
   .cp-heatmap-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 3px;
+    gap: 2px;
   }
   .cp-heatmap-dow {
     font-family: var(--mono);
-    font-size: 6px;
-    letter-spacing: 0.18em;
+    font-size: 5px;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: rgba(232,226,208,0.18);
+    color: rgba(232,226,208,0.15);
     text-align: center;
-    padding-bottom: 3px;
+    padding-bottom: 2px;
   }
   .cp-heatmap-cell {
     aspect-ratio: 1;
-    border-radius: 2px;
-    background: rgba(255,255,255,0.04);
+    border-radius: 1px;
+    background: rgba(255,255,255,0.035);
     transition: background 300ms ease;
-    position: relative;
   }
   .cp-heatmap-cell.future {
     background: transparent;
   }
   .cp-heatmap-cell.earned {
-    background: rgba(201,161,74,0.55);
-    box-shadow: 0 0 4px rgba(201,161,74,0.18);
+    background: rgba(201,161,74,0.5);
   }
   .cp-heatmap-cell.today {
-    outline: 1px solid rgba(201,161,74,0.4);
+    outline: 1px solid rgba(201,161,74,0.35);
     outline-offset: -1px;
   }
   .cp-heatmap-cell.today.earned {
-    background: rgba(201,161,74,0.82);
-    box-shadow: 0 0 6px rgba(201,161,74,0.35);
+    background: rgba(201,161,74,0.75);
   }
 
   .routine.section-complete .routine-head {
@@ -2877,7 +2874,7 @@
         <span class="rh-toggle" aria-hidden="true">+</span>
       </button>
       <ul class="routine-list" id="dailyList">
-        <li class="r-row cal-event" data-cond="always" data-start="2026-06-22" data-task="deliberate-nutrition" tabindex="0" role="checkbox" aria-checked="false">
+        <li class="r-row cal-event" data-cond="always" data-task="deliberate-nutrition" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
             <div class="r-title">Deliberate Nutrition</div>
@@ -3495,7 +3492,6 @@
         case 'first-thu':  show = isFirstWeekdayOfMonth(now, 4); break;
         default: show = true;
       }
-      // data-start="YYYY-MM-DD" hides the row before that date
       if (show && el.dataset.start) {
         const startDate = new Date(el.dataset.start + 'T00:00:00');
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
