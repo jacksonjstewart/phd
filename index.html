@@ -4496,8 +4496,10 @@
       .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
       .then(function(remote) {
         if (typeof remote.totalCP === 'number') {
-          var local = loadCPData();
-          saveCPData({ totalCP: remote.totalCP, lastEarned: remote.lastEarned || local.lastEarned || null, log: local.log || [] });
+          // log comes from Sheets as authoritative source — overwrite local entirely
+          var remoteLog = Array.isArray(remote.log) ? remote.log
+                        : (remote.log ? remote.log.split(',').filter(Boolean) : []);
+          saveCPData({ totalCP: remote.totalCP, lastEarned: remote.lastEarned || null, log: remoteLog });
           renderCPWidgets();
         }
         _cpSheetsReady = true;
@@ -4531,6 +4533,9 @@
             var d = loadCPData();
             d.totalCP    = remote.totalCP;
             d.lastEarned = remote.lastEarned || today;
+            // Sync log from Sheets so heatmap is consistent across devices
+            if (Array.isArray(remote.log)) d.log = remote.log;
+            else if (remote.log) d.log = remote.log.split(',').filter(Boolean);
             saveCPData(d); renderCPWidgets(); showCPModal(d);
           }
         })
