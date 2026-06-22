@@ -1105,6 +1105,69 @@
   }
   .steward-link.no-actions .steward-sub { color: rgba(45, 100, 55, 0.4); }
 
+  /* ── CP Monthly Heatmap ──────────────────────────────────── */
+  .cp-month-heatmap {
+    margin-top: 18px;
+    opacity: 0.72;
+    transition: opacity 300ms ease;
+  }
+  .cp-month-heatmap:hover { opacity: 1; }
+  .cp-heatmap-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+  .cp-heatmap-month {
+    font-family: var(--mono);
+    font-size: 7px;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  .cp-heatmap-tally {
+    font-family: var(--mono);
+    font-size: 7px;
+    letter-spacing: 0.22em;
+    color: var(--text-faint);
+  }
+  .cp-heatmap-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+  }
+  .cp-heatmap-dow {
+    font-family: var(--mono);
+    font-size: 6px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(232,226,208,0.18);
+    text-align: center;
+    padding-bottom: 3px;
+  }
+  .cp-heatmap-cell {
+    aspect-ratio: 1;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.04);
+    transition: background 300ms ease;
+    position: relative;
+  }
+  .cp-heatmap-cell.future {
+    background: transparent;
+  }
+  .cp-heatmap-cell.earned {
+    background: rgba(201,161,74,0.55);
+    box-shadow: 0 0 4px rgba(201,161,74,0.18);
+  }
+  .cp-heatmap-cell.today {
+    outline: 1px solid rgba(201,161,74,0.4);
+    outline-offset: -1px;
+  }
+  .cp-heatmap-cell.today.earned {
+    background: rgba(201,161,74,0.82);
+    box-shadow: 0 0 6px rgba(201,161,74,0.35);
+  }
+
   .routine.section-complete .routine-head {
     color: rgba(42, 157, 110, 0.65);
     border-bottom-color: rgba(42, 157, 110, 0.15);
@@ -1916,30 +1979,22 @@
   }
   .stacks-entry:hover { color: rgba(201,161,74,0.55); }
 
-  /* Section — hidden by default, revealed by JS */
+  /* Section — out of normal flow by default (display:none), so it's
+     not reachable by scrolling. Becomes a normal block (in document
+     flow, after the footer) only when .open is added by JS, at which
+     point the page scrolls down into it. The fixed bg-photo / bg-tint
+     layers remain visible behind it via this layer's own translucent
+     background. */
   .stacks-section {
     display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 500;
-    overflow-y: auto;
-    overflow-x: hidden;
-    background: transparent;
+    position: relative;
+    min-height: 100vh;
+    background: rgba(10, 6, 2, 0.80);
   }
   .stacks-section.open {
     display: block;
   }
-  /* Warm tint layer — sits above bg-photo (z:-3), below stacks content (z:500) */
-  .stacks-tint {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 499;
-    pointer-events: none;
-    background: rgba(10, 6, 2, 0.80);
-  }
-  .stacks-tint.open { display: block; }
-  /* Stacks inner content sits above the tint */
+  /* Stacks inner content */
   .stacks-inner {
     max-width: 1200px;
     margin: 0 auto;
@@ -2077,6 +2132,163 @@
       padding-top: 20px;
     }
   }
+
+  /* ============================================================
+     PHD COMPLETION TIMELINE — hover-reveal strip (Statistics)
+     ============================================================ */
+  .phd-timeline-wrap {
+    margin: 0 0 36px;
+    position: relative;
+  }
+  .phd-timeline-strip {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 11px 2px;
+    border-top: 1px solid rgba(201,161,74,0.12);
+    border-bottom: 1px solid rgba(201,161,74,0.12);
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 300ms ease, border-color 300ms ease;
+  }
+  .phd-timeline-label {
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    transition: color 300ms ease;
+  }
+  .phd-timeline-meta {
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    transition: color 300ms ease;
+    white-space: nowrap;
+  }
+  .phd-timeline-wrap:hover .phd-timeline-strip,
+  .phd-timeline-wrap.open .phd-timeline-strip {
+    border-color: rgba(201,161,74,0.4);
+  }
+  .phd-timeline-wrap:hover .phd-timeline-label,
+  .phd-timeline-wrap.open .phd-timeline-label,
+  .phd-timeline-wrap:hover .phd-timeline-meta,
+  .phd-timeline-wrap.open .phd-timeline-meta {
+    color: var(--gold-dim);
+  }
+  .phd-timeline-body {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 520ms ease, opacity 420ms ease;
+  }
+  .phd-timeline-wrap:hover .phd-timeline-body,
+  .phd-timeline-wrap.open .phd-timeline-body {
+    max-height: 190px;
+    opacity: 1;
+  }
+  .phd-timeline-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 56px 4px 40px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .phd-timeline-track {
+    position: relative;
+    height: 2px;
+    min-width: 760px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    margin: 0 50px;
+  }
+  .phd-timeline-fill {
+    position: absolute;
+    top: 0; left: 0; height: 100%;
+    background: var(--gold-dim);
+    border-radius: 2px;
+    transition: width 600ms ease;
+  }
+  .phd-node {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: rgba(232,226,208,0.12);
+    border: 1px solid rgba(232,226,208,0.22);
+    cursor: pointer;
+    transition: background 300ms, border-color 300ms, box-shadow 300ms;
+    z-index: 2;
+  }
+  .phd-node.done {
+    background: var(--gold);
+    border-color: var(--gold);
+    box-shadow: 0 0 7px rgba(201,161,74,0.5);
+  }
+  .phd-node.endpoint {
+    width: 11px; height: 11px;
+    background: var(--text-dim);
+    border-color: var(--text-dim);
+  }
+  .phd-node.endpoint.done {
+    background: var(--gold-bright);
+    border-color: var(--gold-bright);
+  }
+  .phd-node-label {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--mono);
+    font-size: 7.5px;
+    letter-spacing: 0.12em;
+    line-height: 1.5;
+    color: var(--text-faint);
+    text-align: center;
+    width: 96px;
+    white-space: normal;
+    transition: color 300ms ease;
+    pointer-events: none;
+  }
+  .phd-node-label.above { bottom: 18px; }
+  .phd-node-label.below { top: 18px; }
+  .phd-node:hover ~ .phd-node-label,
+  .phd-node-tip:hover { color: var(--gold); }
+  .phd-node-date {
+    display: block;
+    font-size: 7px;
+    color: var(--text-faint);
+    margin-top: 2px;
+    letter-spacing: 0.18em;
+  }
+  .phd-today-marker {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 2px; height: 22px;
+    background: var(--gold-bright);
+    box-shadow: 0 0 6px rgba(217,178,90,0.7);
+    z-index: 3;
+  }
+  .phd-today-label {
+    position: absolute;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--mono);
+    font-size: 7px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold-bright);
+    white-space: nowrap;
+  }
+  @media (max-width: 720px) {
+    .phd-timeline-meta { font-size: 7px; letter-spacing: 0.18em; }
+  }
+
   .bench-panel-title {
     font-family: var(--mono);
     font-size: 7px;
@@ -2665,11 +2877,11 @@
         <span class="rh-toggle" aria-hidden="true">+</span>
       </button>
       <ul class="routine-list" id="dailyList">
-        <li class="r-row" data-cond="always" data-task="505020" tabindex="0" role="checkbox" aria-checked="false">
+        <li class="r-row cal-event" data-cond="always" data-start="2026-06-22" data-task="deliberate-nutrition" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
-            <div class="r-title">50 / 50 / 20</div>
-            <div class="r-note">50 push-ups, 50 sit-ups, 20 pull-ups. Every single day. No exceptions.</div>
+            <div class="r-title">Deliberate Nutrition</div>
+            <div class="r-note">Eat inside of a specific and deliberate calorie range, every single day.</div>
           </div>
         </li>
       </ul>
@@ -2687,6 +2899,10 @@
       </div>
       <div class="steward-sub">Household &middot; Finances &middot; Logistics</div>
     </a>
+
+    <!-- CP Monthly Heatmap -->
+    <div class="cp-month-heatmap" id="cpMonthHeatmap"></div>
+
   </div>
 </section>
 
@@ -2745,6 +2961,23 @@
 <section id="statistics" class="section" aria-labelledby="stats-title">
   <div class="section-inner">
     <p class="section-eyebrow">III &middot; Statistics</p>
+
+    <!-- PhD Completion Timeline — collapsed strip, expands on hover/tap -->
+    <div class="phd-timeline-wrap" id="phdTimelineWrap">
+      <div class="phd-timeline-strip" id="phdTimelineStrip" role="button" tabindex="0" aria-expanded="false">
+        <span class="phd-timeline-label">Doctoral Timeline</span>
+        <span class="phd-timeline-meta" id="phdTimelineMeta">—</span>
+      </div>
+      <div class="phd-timeline-body">
+        <div class="phd-timeline-scroll">
+          <div class="phd-timeline-track" id="phdTimelineTrack">
+            <div class="phd-timeline-fill" id="phdTimelineFill"></div>
+            <!-- nodes populated by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="stats-split">
 
       <!-- Left: Chemistry study tracker -->
@@ -2913,7 +3146,6 @@
 </footer>
 
 <!-- ========== THE STACKS (hidden — accessible only via footer link) ========== -->
-<div class="stacks-tint" id="stacksTint"></div>
 <section id="stacks" class="stacks-section" aria-label="The Stacks">
   <div class="stacks-inner">
 
@@ -3263,6 +3495,12 @@
         case 'first-thu':  show = isFirstWeekdayOfMonth(now, 4); break;
         default: show = true;
       }
+      // data-start="YYYY-MM-DD" hides the row before that date
+      if (show && el.dataset.start) {
+        const startDate = new Date(el.dataset.start + 'T00:00:00');
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        if (today < startDate) show = false;
+      }
       if (show) el.removeAttribute('hidden'); else el.setAttribute('hidden', '');
     });
   }
@@ -3367,6 +3605,109 @@
     }
     grid.innerHTML = html;
   }
+
+  // ============================================================
+  // PHD COMPLETION TIMELINE — Statistics, hover-reveal strip
+  // 3-year program: Sep 1, 2026 → Aug 31, 2029
+  // Edit PHD_MILESTONES below to adjust dates/labels as the plan firms up.
+  // ============================================================
+  const PHD_START = new Date(2026, 8, 1);   // Sep 1, 2026
+  const PHD_END   = new Date(2029, 7, 31);  // Aug 31, 2029
+
+  const PHD_MILESTONES = [
+    { date: '2026-09-01', label: 'Program Begins',                              endpoint: true },
+    { date: '2026-12-15', label: 'Systematic Review Protocol Registered' },
+    { date: '2027-03-01', label: 'Candidacy Examination' },
+    { date: '2027-06-01', label: 'Systematic Review Complete' },
+    { date: '2027-09-01', label: 'Retrospective Cohort — Ethics & Extraction' },
+    { date: '2028-01-15', label: 'Ex Vivo MCF Assay Development Begins' },
+    { date: '2028-03-01', label: 'Retrospective Cohort Analysis Complete' },
+    { date: '2028-06-01', label: 'Ex Vivo MCF Experiments Complete' },
+    { date: '2028-09-01', label: 'Prospective Cohort Enrollment Begins' },
+    { date: '2029-02-01', label: 'Prospective Cohort Enrollment Complete' },
+    { date: '2029-04-01', label: 'Dissertation Writing & Analysis' },
+    { date: '2029-06-15', label: 'Dissertation Defense' },
+    { date: '2029-08-31', label: 'Convocation',                                 endpoint: true }
+  ];
+
+  function renderPhDTimeline() {
+    const track = document.getElementById('phdTimelineTrack');
+    const fill  = document.getElementById('phdTimelineFill');
+    const meta  = document.getElementById('phdTimelineMeta');
+    if (!track || !fill || !meta) return;
+
+    const start = PHD_START.getTime();
+    const end   = PHD_END.getTime();
+    const total = end - start;
+    const now   = new Date();
+    const nowT  = now.getTime();
+    const pctElapsed = Math.max(0, Math.min(100, (nowT - start) / total * 100));
+
+    const dayMs = 86400000;
+    const totalDays    = Math.round(total / dayMs);
+    const elapsedDays  = Math.max(0, Math.round((nowT - start) / dayMs));
+    const remainingDays = Math.max(0, Math.round((end - nowT) / dayMs));
+
+    if (nowT < start) {
+      meta.textContent = 'Begins ' + PHD_START.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+    } else if (nowT > end) {
+      meta.textContent = 'Program Complete';
+    } else {
+      meta.textContent = pctElapsed.toFixed(1) + '% \u00B7 Day ' + elapsedDays + ' of ' + totalDays + ' \u00B7 ' + remainingDays + ' days remaining';
+    }
+
+    fill.style.width = pctElapsed + '%';
+
+    // Clear any previously-rendered nodes/labels (keep the fill bar)
+    track.querySelectorAll('.phd-node, .phd-node-label, .phd-today-marker, .phd-today-label').forEach(el => el.remove());
+
+    const dateFmt = { month: 'short', year: 'numeric' };
+    PHD_MILESTONES.forEach((m, i) => {
+      const d = new Date(m.date + 'T00:00:00');
+      const pct = Math.max(0, Math.min(100, (d.getTime() - start) / total * 100));
+      const done = d.getTime() <= nowT;
+
+      const node = document.createElement('div');
+      node.className = 'phd-node' + (done ? ' done' : '') + (m.endpoint ? ' endpoint' : '');
+      node.style.left = pct + '%';
+      track.appendChild(node);
+
+      const lbl = document.createElement('div');
+      lbl.className = 'phd-node-label ' + (i % 2 === 0 ? 'above' : 'below');
+      lbl.style.left = pct + '%';
+      lbl.innerHTML = m.label + '<span class="phd-node-date">' + d.toLocaleDateString('en-US', dateFmt) + '</span>';
+      track.appendChild(lbl);
+    });
+
+    // "Today" marker
+    if (nowT >= start && nowT <= end) {
+      const marker = document.createElement('div');
+      marker.className = 'phd-today-marker';
+      marker.style.left = pctElapsed + '%';
+      track.appendChild(marker);
+
+      const tlbl = document.createElement('div');
+      tlbl.className = 'phd-today-label';
+      tlbl.style.left = pctElapsed + '%';
+      tlbl.textContent = 'Today';
+      track.appendChild(tlbl);
+    }
+  }
+
+  // Tap-to-toggle for touch devices (hover handles desktop via CSS)
+  (function initPhDTimelineToggle() {
+    const wrap = document.getElementById('phdTimelineWrap');
+    const strip = document.getElementById('phdTimelineStrip');
+    if (!wrap || !strip) return;
+    function toggle() {
+      const open = wrap.classList.toggle('open');
+      strip.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    strip.addEventListener('click', toggle);
+    strip.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+    });
+  })();
 
   // 7 · Statistics — heatmap + Chart.js
   function buildHeatmap12(weekRows, allRows) {
@@ -3829,6 +4170,12 @@
       const target = document.getElementById(targetId);
       if (!target) return;
       e.preventDefault();
+      // If The Stacks is open, close it instantly (no scroll-up animation)
+      // so layout reflows before we scroll to the clicked nav target.
+      const stacksSec = document.getElementById('stacks');
+      if (stacksSec && stacksSec.classList.contains('open')) {
+        stacksSec.classList.remove('open');
+      }
       target.scrollIntoView({ behavior:'smooth', block:'start' });
     });
   });
@@ -4037,6 +4384,56 @@
     return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
   }
 
+  function renderCPMonthHeatmap() {
+    const wrap = document.getElementById('cpMonthHeatmap');
+    if (!wrap) return;
+    const data  = loadCPData();
+    const log   = new Set(data.log || []);
+    const now   = new Date();
+    const year  = now.getFullYear();
+    const month = now.getMonth();
+    const todayStr = todayISO();
+
+    const monthName = now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const firstDow = new Date(year, month, 1).getDay(); // 0=Sun
+    const earnedThisMonth = Array.from({length: daysInMonth}, (_, i) => {
+      const d = year + '-' + String(month+1).padStart(2,'0') + '-' + String(i+1).padStart(2,'0');
+      return log.has(d) ? 1 : 0;
+    }).reduce((a, b) => a + b, 0);
+
+    const dows = ['S','M','T','W','T','F','S'];
+    let html = `<div class="cp-heatmap-header">
+      <span class="cp-heatmap-month">${monthName}</span>
+      <span class="cp-heatmap-tally">${earnedThisMonth} / ${now.getDate()} days</span>
+    </div>
+    <div class="cp-heatmap-grid">`;
+
+    // Day-of-week headers
+    dows.forEach(d => { html += `<div class="cp-heatmap-dow">${d}</div>`; });
+
+    // Empty cells before the 1st
+    for (let i = 0; i < firstDow; i++) {
+      html += `<div class="cp-heatmap-cell future"></div>`;
+    }
+
+    // Day cells
+    for (let day = 1; day <= daysInMonth; day++) {
+      const iso = year + '-' + String(month+1).padStart(2,'0') + '-' + String(day).padStart(2,'0');
+      const isToday  = iso === todayStr;
+      const isFuture = iso > todayStr;
+      const isEarned = log.has(iso);
+      let cls = 'cp-heatmap-cell';
+      if (isFuture) cls += ' future';
+      if (isEarned) cls += ' earned';
+      if (isToday)  cls += ' today';
+      html += `<div class="${cls}" title="${iso}"></div>`;
+    }
+
+    html += `</div>`;
+    wrap.innerHTML = html;
+  }
+
   function renderCPWidgets() {
     const data = loadCPData();
     const total = data.totalCP || 0;
@@ -4070,6 +4467,7 @@
       const msgEl = document.getElementById('cpMsg' + sfx);
       if (msgEl) msgEl.textContent = cpMessage(lv);
     });
+    renderCPMonthHeatmap();
   }
 
   function showCPModal(data) {
@@ -4471,6 +4869,7 @@
   setInterval(refreshWeather, 30 * 60 * 1000);
   buildWeekGrid();
   buildHeatmap12();
+  renderPhDTimeline();
   updateSheetBtn(null);
   loadPhysiqueFromCSV();
   loadCalendarEvents();
@@ -4719,35 +5118,38 @@
   let _stacksData = { canon:[], bcidp:[], clinic:[], record:[], field:[] };
   let _stacksLoaded = false;
 
-  // ── Section show/hide ──
+  // ── Section show/hide (scroll-based) ──
+  // Entering: reveal the section (joins normal document flow at the
+  // bottom, below the footer) and smooth-scroll down into it.
   function enterStacks(e) {
     if (e) e.preventDefault();
-    const sec  = document.getElementById('stacks');
-    const tint = document.getElementById('stacksTint');
+    const sec = document.getElementById('stacks');
     if (!sec) return;
+    if (sec.classList.contains('open')) { exitStacks(); return; } // toggle: already in, go back
     sec.classList.add('open');
-    if (tint) tint.classList.add('open');
-    sec.scrollTop = 0;
     if (!_stacksLoaded) loadStacksData();
+    // Wait a frame so layout includes the now-visible section, then scroll
+    requestAnimationFrame(() => {
+      sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
   }
 
-  function exitStacks() {
-    const sec  = document.getElementById('stacks');
-    const tint = document.getElementById('stacksTint');
-    if (sec)  sec.classList.remove('open');
-    if (tint) tint.classList.remove('open');
+  // Exiting: smooth-scroll back up to the top of the Lab, then remove
+  // the section from the flow once the scroll settles so it's no
+  // longer reachable.
+  function exitStacks(immediate) {
+    const sec = document.getElementById('stacks');
+    if (!sec || !sec.classList.contains('open')) return;
+    if (immediate) {
+      sec.classList.remove('open');
+      return;
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => { sec.classList.remove('open'); }, 650);
   }
 
-  // Intercept nav links — if Stacks is open, exit first then navigate
-  document.querySelectorAll('.nav-links a[data-nav]').forEach(a => {
-    a.addEventListener('click', function(e) {
-      const sec = document.getElementById('stacks');
-      if (sec && sec.classList.contains('open')) {
-        e.stopImmediatePropagation();
-        exitStacks();
-      }
-    }, true); // capture phase so it fires before the existing smooth-scroll handler
-  });
+  // (Nav-link close-on-click logic is integrated directly into the
+  // smooth-scroll handler above — see links.forEach near SCROLL section.)
 
   // Also open if hash is #stacks on load
   if (window.location.hash === '#stacks') {
