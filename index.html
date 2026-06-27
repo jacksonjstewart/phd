@@ -4631,10 +4631,9 @@
   loadStewardCount();
   renderCPWidgets();
   loadCPFromSheets();
-  setInterval(loadCPFromSheets, 5 * 60 * 1000);
+  setInterval(loadCPFromSheets, 60 * 1000);
   renderTPWidgets();
-  loadTPFromSheets();
-  setInterval(loadTPFromSheets, 5 * 60 * 1000);
+  // TP is hydrated inside loadCPFromSheets via the combined getCP response — no separate poll needed
   loadDomainsCSV();
   setInterval(loadDomainsCSV, 15 * 60 * 1000);
 
