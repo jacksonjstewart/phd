@@ -2376,13 +2376,13 @@
   }
   .splash-ring-track {
     fill: none;
-    stroke: rgba(255,255,255,0.05);
+    stroke: rgba(255,255,255,0.15);
   }
   .splash-ring-fill {
     fill: none;
     stroke: #2dbe7a;
     stroke-linecap: round;
-    transition: stroke-dashoffset 1.6s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: stroke-dashoffset 2.0s cubic-bezier(0.4, 0, 0.2, 1);
   }
   @keyframes splashPulse {
     0%   { filter: drop-shadow(0 0 4px rgba(45,190,122,0.4)); }
@@ -2577,8 +2577,8 @@
 <div id="dailySplash" role="dialog" aria-modal="true" aria-label="Daily Progress">
   <div class="splash-ring-wrap">
     <svg class="splash-svg" id="splashSvg" viewBox="0 0 200 200">
-      <circle class="splash-ring-track" cx="100" cy="100" r="88" stroke-width="6"/>
-      <circle class="splash-ring-fill" id="splashRingFill" cx="100" cy="100" r="88" stroke-width="6"/>
+      <circle class="splash-ring-track" cx="100" cy="100" r="88" stroke-width="8"/>
+      <circle class="splash-ring-fill" id="splashRingFill" cx="100" cy="100" r="88" stroke-width="8"/>
     </svg>
     <div class="splash-center">
       <div class="splash-day" id="dspDay">—</div>
@@ -3768,12 +3768,13 @@
       if (!isNaN(d) && d.getFullYear() > 2020 && d.getFullYear() < 2100) return d;
       return null;
     }
-    const PROG_START = (allRows && allRows[1] ? parseSheetDate(allRows[1][1]) : null) || new Date(2026, 4, 29);
-    const PROG_END   = (allRows && allRows[16] ? parseSheetDate(allRows[16][13]) : null) || new Date(2026, 7, 20);
+    const PROG_START = (allRows && allRows[1] ? parseSheetDate(allRows[1][1]) : null) || new Date(2026, 5, 21);
+    // Program is exactly 12 weeks (84 days) — compute end directly, don't rely on sheet cell
+    const PROG_END   = new Date(PROG_START.getTime() + 84 * 24 * 3600 * 1000);
     const startW     = (allRows && allRows[1] ? parseFloat(allRows[1][2]) : NaN);
     const dayNum   = Math.max(1, Math.floor((now - PROG_START) / MS_DAY) + 1);
     const weekNum  = Math.ceil(dayNum / 7);
-    const daysLeft = Math.max(0, Math.ceil((PROG_END - now) / MS_DAY));
+    const daysLeft = Math.max(0, 84 - (dayNum - 1));
     _checkinDOW = PROG_START.getDay();
     const DOW_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
     const dow        = now.getDay();
@@ -3782,7 +3783,7 @@
     const nextCheckin = new Date(now); nextCheckin.setDate(now.getDate() + daysToNext);
     const wedLabel   = DOW_NAMES[_checkinDOW] + ' ' + MONTHS[nextCheckin.getMonth()].slice(0,3) + ' ' + nextCheckin.getDate();
     const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-    const totalDays = Math.ceil((PROG_END - PROG_START) / MS_DAY);
+    const totalDays = 84;
     const elapsed   = Math.max(0, Math.min(totalDays, dayNum - 1));
     const pct       = Math.round(elapsed / totalDays * 100);
     const fill   = document.getElementById('ppBarFill');
@@ -4646,7 +4647,7 @@
       void fill.getBoundingClientRect();
       fill.style.strokeDashoffset = 0;
       // Pulse once ring has closed (matches 1.6s transition)
-      setTimeout(() => { if (svg) svg.classList.add('pulsing'); }, 1700);
+      setTimeout(() => { if (svg) svg.classList.add('pulsing'); }, 2100);
     }
 
     function showSplash() {
