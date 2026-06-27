@@ -2344,7 +2344,9 @@
     position: fixed;
     inset: 0;
     z-index: 9999;
-    background: #000;
+    background: rgba(0, 0, 0, 0.91);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     align-items: center;
     justify-content: center;
     flex-direction: column;
@@ -2363,8 +2365,8 @@
   }
   .splash-ring-wrap {
     position: relative;
-    width: min(82vw, 82vh);
-    height: min(82vw, 82vh);
+    width: min(68vw, 68vh);
+    height: min(68vw, 68vh);
     flex-shrink: 0;
   }
   .splash-svg {
@@ -2382,6 +2384,14 @@
     stroke-linecap: round;
     transition: stroke-dashoffset 1.6s cubic-bezier(0.22, 1, 0.36, 1);
   }
+  @keyframes splashPulse {
+    0%   { filter: drop-shadow(0 0 4px rgba(45,190,122,0.4)); }
+    50%  { filter: drop-shadow(0 0 18px rgba(45,190,122,0.9)); }
+    100% { filter: drop-shadow(0 0 4px rgba(45,190,122,0.4)); }
+  }
+  .splash-svg.pulsing {
+    animation: splashPulse 1.8s ease-in-out infinite;
+  }
   .splash-center {
     position: absolute;
     inset: 0;
@@ -2389,33 +2399,28 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 0;
     padding: 12%;
     text-align: center;
   }
   .splash-day {
     font-family: var(--serif);
-    font-size: clamp(52px, 14vw, 110px);
+    font-size: clamp(46px, 12vw, 96px);
     font-weight: 300;
     color: #fff;
     line-height: 1;
     letter-spacing: -0.01em;
   }
   .splash-day-label {
-    font-family: var(--mono);
-    font-size: clamp(8px, 2vw, 12px);
-    letter-spacing: 0.45em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.35);
-    margin-top: 2px;
+    display: none;
   }
   .splash-week {
     font-family: var(--mono);
-    font-size: clamp(9px, 2.2vw, 13px);
+    font-size: clamp(8px, 1.9vw, 11px);
     letter-spacing: 0.32em;
     text-transform: uppercase;
     color: rgba(201,161,74,0.75);
-    margin-top: 8px;
+    margin-top: 18px;
   }
   .splash-meta {
     margin-top: 28px;
@@ -2425,25 +2430,29 @@
     gap: 9px;
   }
   .splash-inner-meta {
-    margin-top: 14px;
+    margin-top: 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 7px;
+    gap: 8px;
   }
   .splash-meta-line {
     font-family: var(--mono);
-    font-size: clamp(8px, 1.9vw, 11px);
+    font-size: clamp(7px, 1.7vw, 10px);
     letter-spacing: 0.28em;
     text-transform: uppercase;
-    color: rgba(232,226,208,0.42);
+    color: rgba(232,226,208,0.38);
     text-align: center;
   }
   .splash-meta-line span {
-    color: rgba(232,226,208,0.75);
+    color: rgba(232,226,208,0.72);
+  }
+  .splash-meta-line .cyan {
+    color: rgba(80,220,220,0.9);
+    letter-spacing: 0.32em;
   }
   .splash-ack {
-    margin-top: 44px;
+    margin-top: 36px;
     background: none;
     border: 1px solid rgba(201,161,74,0.3);
     color: rgba(201,161,74,0.7);
@@ -3782,7 +3791,7 @@
     if (marker) marker.style.left = pct + '%';
     set('phDayWeek',   'DAY ' + dayNum + ' · WEEK ' + weekNum + ' of 12');
     // Cache for daily splash
-    window._splashData = { dayNum, weekNum, daysLeft, nextCheckin, daysToNext };
+    window._splashData = { dayNum, weekNum, daysLeft, nextCheckin, daysToNext, loaded: true };
     const _dm = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     const _fmt = d => _dm[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
     set('ppDateStart', _fmt(PROG_START));
@@ -4602,27 +4611,24 @@
 
     function populateSplash() {
       const d = window._splashData;
-      if (!d) return false;
+      if (!d || !d.loaded) return false;
 
-      // Day number
       const dayEl = document.getElementById('dspDay');
       if (dayEl) dayEl.textContent = 'Day ' + d.dayNum;
 
-      // Week X of 12
       const weekEl = document.getElementById('dspWeek');
       if (weekEl) weekEl.textContent = 'Week ' + d.weekNum + ' of 12';
 
-      // Next check-in
       const ciEl = document.getElementById('dspCheckin');
       if (ciEl) {
         const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
         const nc = d.nextCheckin;
         const label = MONTHS[nc.getMonth()] + ' ' + nc.getDate();
         const days  = d.daysToNext;
-        ciEl.innerHTML = 'Next Check-In &nbsp;<span>' + label + ' · ' + days + ' day' + (days !== 1 ? 's' : '') + '</span>';
+        ciEl.innerHTML = 'Next Check-In &nbsp;<span>' + label + '</span>'
+          + ' &nbsp;<span class="cyan">' + days + ' Day' + (days !== 1 ? 's' : '') + '</span>';
       }
 
-      // Days remaining
       const remEl = document.getElementById('dspRemaining');
       if (remEl) remEl.innerHTML = 'Days Remaining &nbsp;<span>' + d.daysLeft + '</span>';
 
@@ -4631,15 +4637,16 @@
 
     function animateRing() {
       const fill = document.getElementById('splashRingFill');
+      const svg  = document.getElementById('splashSvg');
       if (!fill) return;
-      const r = 88;
+      const r    = 88;
       const circ = 2 * Math.PI * r;
-      // Start fully empty (offset = circumference), animate to fully closed (offset = 0)
       fill.style.strokeDasharray  = circ;
       fill.style.strokeDashoffset = circ;
-      // Force reflow so the starting state registers before transition fires
       void fill.getBoundingClientRect();
       fill.style.strokeDashoffset = 0;
+      // Pulse once ring has closed (matches 1.6s transition)
+      setTimeout(() => { if (svg) svg.classList.add('pulsing'); }, 1700);
     }
 
     function showSplash() {
