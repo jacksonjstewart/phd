@@ -640,11 +640,13 @@
     border-style: dashed;
   }
   .r-row.placeholder:hover { border-color: var(--border); transform: none; }
-  .r-row.cal-event {
+  .r-row.cal-event,
+  .r-row.static-event {
     background: rgba(9, 11, 25, 0.93) !important;
     border-color: rgba(201, 161, 74, 0.22) !important;
   }
-  .r-row.cal-event:hover { border-color: rgba(201, 161, 74, 0.45) !important; }
+  .r-row.cal-event:hover,
+  .r-row.static-event:hover { border-color: rgba(201, 161, 74, 0.45) !important; }
   .r-row .box {
     width: 14px; height: 14px;
     border: 1px solid var(--gold-dim);
@@ -1919,27 +1921,12 @@
   /* Section — hidden by default, revealed by JS */
   .stacks-section {
     display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 500;
-    overflow-y: auto;
-    overflow-x: hidden;
-    background: var(--bg);
-    opacity: 0;
-    transition: opacity 0.6s ease;
+    position: relative;
+    min-height: 100vh;
+    background: rgba(10, 6, 2, 0.80);
   }
   .stacks-section.open {
     display: block;
-    opacity: 1;
-  }
-  /* Warmer background overlay for The Stacks */
-  .stacks-section::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: -1;
-    background: rgba(18, 10, 2, 0.72);
   }
 
   .stacks-inner {
@@ -2822,11 +2809,11 @@
         <span class="rh-toggle" aria-hidden="true">+</span>
       </button>
       <ul class="routine-list" id="dailyList">
-        <li class="r-row" data-cond="always" data-task="505020" tabindex="0" role="checkbox" aria-checked="false">
+        <li class="r-row static-event" data-cond="always" data-task="deliberate-nutrition" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
-            <div class="r-title">50 / 50 / 20</div>
-            <div class="r-note">50 push-ups, 50 sit-ups, 20 pull-ups. Every single day. No exceptions.</div>
+            <div class="r-title">Deliberate Nutrition</div>
+            <div class="r-note">Eat inside of a specific and deliberate calorie range, every single day.</div>
           </div>
         </li>
       </ul>
@@ -3988,6 +3975,11 @@
       const target = document.getElementById(targetId);
       if (!target) return;
       e.preventDefault();
+      // Close stacks instantly if open so layout reflows before scroll
+      const stacksSec = document.getElementById('stacks');
+      if (stacksSec && stacksSec.classList.contains('open')) {
+        stacksSec.classList.remove('open');
+      }
       target.scrollIntoView({ behavior:'smooth', block:'start' });
     });
   });
@@ -4406,6 +4398,30 @@
       if (seg.name) { const title=document.createElementNS(svgNS,'title'); title.textContent=seg.name+(seg.complete?' \u2713':' \u2014 Incomplete'); path.appendChild(title); }
       svgEl.appendChild(path);
     }
+  }
+
+  // Solid progress arc for high-density tracks (too many segments to see individually)
+  function buildProgressArc(svgEl, done, total, cx, cy, r, strokeW) {
+    while (svgEl.firstChild) svgEl.removeChild(svgEl.firstChild);
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const track = document.createElementNS(svgNS, 'circle');
+    track.setAttribute('cx', cx); track.setAttribute('cy', cy); track.setAttribute('r', r);
+    track.setAttribute('fill', 'none');
+    track.setAttribute('stroke', 'rgba(255,255,255,0.07)');
+    track.setAttribute('stroke-width', strokeW);
+    svgEl.appendChild(track);
+    if (total <= 0 || done <= 0) return;
+    const pct = Math.min(done / total, 1);
+    const circumference = 2 * Math.PI * r;
+    const arc = document.createElementNS(svgNS, 'circle');
+    arc.setAttribute('cx', cx); arc.setAttribute('cy', cy); arc.setAttribute('r', r);
+    arc.setAttribute('fill', 'none');
+    arc.setAttribute('stroke', 'rgba(42,157,110,0.85)');
+    arc.setAttribute('stroke-width', strokeW);
+    arc.setAttribute('stroke-linecap', 'round');
+    arc.setAttribute('stroke-dasharray', `${circumference * pct} ${circumference}`);
+    arc.setAttribute('stroke-dashoffset', circumference * 0.25);
+    svgEl.appendChild(arc);
   }
 
   function getDomainSegments(domainData) {
@@ -4947,26 +4963,21 @@
     if (e) e.preventDefault();
     const sec = document.getElementById('stacks');
     if (!sec) return;
+    if (sec.classList.contains('open')) { exitStacks(); return; }
     sec.classList.add('open');
-    sec.scrollTop = 0;
     if (!_stacksLoaded) loadStacksData();
+    requestAnimationFrame(() => {
+      sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
   }
 
-  function exitStacks() {
+  function exitStacks(immediate) {
     const sec = document.getElementById('stacks');
-    if (sec) sec.classList.remove('open');
+    if (!sec || !sec.classList.contains('open')) return;
+    if (immediate) { sec.classList.remove('open'); return; }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => { sec.classList.remove('open'); }, 650);
   }
-
-  // Intercept nav links — if Stacks is open, exit first then navigate
-  document.querySelectorAll('.nav-links a[data-nav]').forEach(a => {
-    a.addEventListener('click', function(e) {
-      const sec = document.getElementById('stacks');
-      if (sec && sec.classList.contains('open')) {
-        e.stopImmediatePropagation();
-        exitStacks();
-      }
-    }, true); // capture phase so it fires before the existing smooth-scroll handler
-  });
 
   // Also open if hash is #stacks on load
   if (window.location.hash === '#stacks') {
@@ -5001,15 +5012,13 @@
     const pctEl   = document.getElementById('canonPct');
     if (pctEl) pctEl.textContent = done;
 
-    // Ring — 50 segments
+    // Ring — 50 segments preserving actual item order
     const svg = document.getElementById('canonRingSvg');
     if (svg) {
-      // Build segments: first N done, rest todo, rest empty up to 50
-      const segs = Array.from({length:50}, (_,i) => ({
-        complete: i < done,
-        empty: i >= items.length && i >= done,
-        name: items[i] ? items[i].name : ('Paper ' + (i+1))
-      }));
+      const segs = Array.from({length:50}, (_,i) => {
+        if (i < items.length) return { complete: items[i].done, empty: false, name: items[i].name };
+        return { complete: false, empty: true, name: 'Paper ' + (i+1) + ' — to be added' };
+      });
       buildSegmentedRing(svg, segs, 60, 60, 46, 7, 2);
     }
 
@@ -5059,15 +5068,15 @@
     const pctEl    = document.getElementById('credPct');
     if (pctEl) pctEl.textContent = pct + '%';
 
-    // Ring — one segment per group
+    // Ring — one segment per item for accurate completion picture
     const svg = document.getElementById('credRingSvg');
     if (svg) {
-      const segs = Object.entries(groups).map(([gname, items]) => ({
-        complete: items.length > 0 && items.every(i=>i.done),
-        empty: items.length === 0,
-        name: gname + ' (' + items.filter(i=>i.done).length + '/' + items.length + ')'
+      const segs = allItems.map(it => ({
+        complete: it.done, empty: false,
+        name: (it.section ? it.section + ' · ' : '') + it.name
       }));
-      buildSegmentedRing(svg, segs, 60, 60, 46, segs.length > 4 ? 5 : 8, 3);
+      const sw = segs.length > 30 ? 3 : segs.length > 15 ? 5 : 7;
+      buildSegmentedRing(svg, segs, 60, 60, 46, sw, segs.length > 20 ? 1.5 : 2.5);
     }
 
     const el = document.getElementById('credGroups');
@@ -5146,8 +5155,12 @@
     if (pctEl) pctEl.textContent = pct + '%';
     const svg = document.getElementById('clinicRingSvg');
     if (svg) {
-      const segs = items.map(it => ({ complete:it.done, empty:false, name:it.name }));
-      buildSegmentedRing(svg, segs, 60, 60, 46, Math.max(2, Math.min(4, 300/segs.length)), 2);
+      if (total <= 24) {
+        const segs = items.map(it => ({ complete:it.done, empty:false, name:it.name }));
+        buildSegmentedRing(svg, segs, 60, 60, 46, Math.max(4, Math.min(8, 280/segs.length)), 2.5);
+      } else {
+        buildProgressArc(svg, done, total, 60, 60, 46, 7);
+      }
     }
     const el = document.getElementById('clinicItems');
     if (!el) return;
@@ -5168,8 +5181,12 @@
     if (pctEl) pctEl.textContent = pct + '%';
     const svg = document.getElementById('recordRingSvg');
     if (svg) {
-      const segs = items.map(it => ({ complete:it.done, empty:false, name:it.name }));
-      buildSegmentedRing(svg, segs, 60, 60, 46, Math.max(1.5, Math.min(4, 280/segs.length)), 1.5);
+      if (total <= 24) {
+        const segs = items.map(it => ({ complete:it.done, empty:false, name:it.name }));
+        buildSegmentedRing(svg, segs, 60, 60, 46, Math.max(4, Math.min(8, 280/segs.length)), 2.5);
+      } else {
+        buildProgressArc(svg, done, total, 60, 60, 46, 7);
+      }
     }
     const el = document.getElementById('recordItems');
     if (!el) return;
