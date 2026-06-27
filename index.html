@@ -3762,6 +3762,8 @@
     const weekNum  = Math.ceil(dayNum / 7);
     const daysLeft = Math.max(0, 84 - (dayNum - 1));
     _checkinDOW = PROG_START.getDay();
+    // Re-evaluate stats dot now that we have the real check-in day
+    if (typeof initStatsNotif === 'function') initStatsNotif();
     const DOW_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
     const dow        = now.getDay();
     const diff       = (_checkinDOW - dow + 7) % 7;
@@ -4037,6 +4039,7 @@
       if (isSectionComplete(r.dataset.window)) markSectionDone(r);
     });
     document.querySelectorAll('.routine').forEach(r => checkSectionCompletion(r));
+    updateOfficeNotif(); // ensure dot reflects restored state immediately on load
   }
 
   // ============================================================
@@ -4099,16 +4102,32 @@
     const dot  = document.getElementById('statsNotif');
     const link = document.getElementById('statsNavLink');
     if (!dot || !link) return;
-    const now = new Date();
-    const isCheckinDay = now.getDay() === _checkinDOW;
-    if (!isCheckinDay) return;
-    const p2 = n => String(n).padStart(2, '0');
-    const wedKey = 'stewlab-checkin-notif-' + now.getFullYear() + '-' + p2(now.getMonth()+1) + '-' + p2(now.getDate());
-    if (!localStorage.getItem(wedKey)) { dot.classList.add('visible'); }
-    link.addEventListener('click', () => {
-      dot.classList.remove('visible');
-      try { localStorage.setItem(wedKey, '1'); } catch(e) {}
-    }, { once: true });
+
+    function evaluate() {
+      const now = new Date();
+      // _checkinDOW is set by loadPhysiqueFromCSV — default 6 (Sat) matches your program
+      const isCheckinDay = now.getDay() === _checkinDOW;
+      if (!isCheckinDay) {
+        dot.classList.remove('visible');
+        return;
+      }
+      const p2 = n => String(n).padStart(2, '0');
+      const key = 'stewlab-checkin-notif-' + now.getFullYear() + '-' + p2(now.getMonth()+1) + '-' + p2(now.getDate());
+      if (!localStorage.getItem(key)) {
+        dot.classList.add('visible');
+      } else {
+        dot.classList.remove('visible');
+      }
+      link.addEventListener('click', () => {
+        dot.classList.remove('visible');
+        try { localStorage.setItem(key, '1'); } catch(e) {}
+      }, { once: true });
+    }
+
+    // Evaluate immediately (uses default _checkinDOW if CSV not yet loaded)
+    evaluate();
+    // Re-evaluate after CSV load settles to pick up correct _checkinDOW
+    setTimeout(evaluate, 3000);
   }
 
   // ============================================================
@@ -4122,9 +4141,16 @@
     const offSec = document.getElementById('office');
     let hasUnchecked = false;
     if (offSec) {
-      const rows = Array.from(offSec.querySelectorAll('.routine .r-row:not(.placeholder)'))
-                        .filter(r => !r.hasAttribute('hidden'));
-      hasUnchecked = rows.some(r => !r.classList.contains('done'));
+      const routines = Array.from(offSec.querySelectorAll('.routine'));
+      hasUnchecked = routines.some(routine => {
+        // section-complete is the authoritative done state — trust it fully
+        if (routine.classList.contains('section-complete')) return false;
+        // Otherwise check visible rows individually
+        const rows = Array.from(routine.querySelectorAll('.r-row:not(.placeholder)'))
+                          .filter(r => !r.hasAttribute('hidden'));
+        if (rows.length === 0) return false; // no visible rows = not pending
+        return rows.some(r => !r.classList.contains('done'));
+      });
     }
     const stewardBusy = _stewardActionCount !== null && _stewardActionCount > 0;
     if (hasUnchecked || stewardBusy) { dot.classList.add('visible'); }
