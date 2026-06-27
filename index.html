@@ -2382,7 +2382,6 @@
     fill: none;
     stroke: #2dbe7a;
     stroke-linecap: round;
-    transition: stroke-dashoffset 2.0s cubic-bezier(0.4, 0, 0.2, 1);
   }
   @keyframes splashPulse {
     0%   { filter: drop-shadow(0 0 4px rgba(45,190,122,0.4)); }
@@ -2577,8 +2576,8 @@
 <div id="dailySplash" role="dialog" aria-modal="true" aria-label="Daily Progress">
   <div class="splash-ring-wrap">
     <svg class="splash-svg" id="splashSvg" viewBox="0 0 200 200">
-      <circle class="splash-ring-track" cx="100" cy="100" r="88" stroke-width="8"/>
-      <circle class="splash-ring-fill" id="splashRingFill" cx="100" cy="100" r="88" stroke-width="8"/>
+      <circle class="splash-ring-track" cx="100" cy="100" r="88" stroke-width="6"/>
+      <circle class="splash-ring-fill" id="splashRingFill" cx="100" cy="100" r="88" stroke-width="6"/>
     </svg>
     <div class="splash-center">
       <div class="splash-day" id="dspDay">—</div>
@@ -4640,14 +4639,36 @@
       const fill = document.getElementById('splashRingFill');
       const svg  = document.getElementById('splashSvg');
       if (!fill) return;
-      const r    = 88;
-      const circ = 2 * Math.PI * r;
+      const r       = 88;
+      const circ    = 2 * Math.PI * r;
+      const dur     = 1800; // ms for full sweep
+      let   start   = null;
+
+      // Easing: ease-in-out cubic
+      function ease(t) {
+        return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+      }
+
+      // Set starting state — fully empty — before first paint
       fill.style.strokeDasharray  = circ;
       fill.style.strokeDashoffset = circ;
-      void fill.getBoundingClientRect();
-      fill.style.strokeDashoffset = 0;
-      // Pulse once ring has closed (matches 1.6s transition)
-      setTimeout(() => { if (svg) svg.classList.add('pulsing'); }, 2100);
+
+      function step(ts) {
+        if (!start) start = ts;
+        const elapsed = ts - start;
+        const t       = Math.min(elapsed / dur, 1);
+        fill.style.strokeDashoffset = circ * (1 - ease(t));
+        if (t < 1) {
+          requestAnimationFrame(step);
+        } else {
+          // Fully closed — start pulse
+          fill.style.strokeDashoffset = 0;
+          if (svg) svg.classList.add('pulsing');
+        }
+      }
+
+      // One rAF to paint the empty state, then start animating on the next
+      requestAnimationFrame(() => requestAnimationFrame(step));
     }
 
     function showSplash() {
