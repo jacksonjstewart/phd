@@ -25,7 +25,7 @@
 
 <style>
   /* ============================================================
-     PhD PREP DASHBOARD · v0.1
+     PhD PREP DASHBOARD · v0.8
      Dark academic library aesthetic
      ============================================================ */
 
@@ -2612,7 +2612,7 @@
 <div class="sync-bar" role="status" aria-live="polite">
   <span class="sync-dot" id="syncDot" aria-hidden="true"></span>
   <span class="sync-label" id="syncLabel">—</span>
-  <span class="sync-version">v0.1 · PhD Prep</span>
+  <span class="sync-version">v0.8 · PhD Prep</span>
 </div>
 
 <section id="splash" class="splash">
@@ -3789,7 +3789,8 @@
     const daysToNext = diff === 0 ? 7 : diff;
     const nextCheckin = new Date(now); nextCheckin.setDate(now.getDate() + daysToNext);
     const wedLabel   = DOW_NAMES[_checkinDOW] + ' ' + MONTHS[nextCheckin.getMonth()].slice(0,3) + ' ' + nextCheckin.getDate();
-    const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    const set  = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    const setH = (id, v) => { const el = document.getElementById(id); if (el) el.innerHTML   = v; };
     const totalDays = 84;
     const elapsed   = Math.max(0, Math.min(totalDays, dayNum - 1));
     const pct       = Math.round(elapsed / totalDays * 100);
@@ -3805,7 +3806,7 @@
     set('ppDateStart', _fmt(PROG_START));
     set('ppDateEnd',   _fmt(PROG_END));
     set('phRemaining', daysLeft + ' DAYS REMAINING');
-    set('psNextCheckin', wedLabel + '  (' + daysToNext + ' day' + (daysToNext !== 1 ? 's' : '') + ')');
+    setH('psNextCheckin', '<span style="color:var(--text)">' + wedLabel + '</span>  <span style="color:var(--gold)">(' + daysToNext + 'd)</span>');
     let lastIdx = -1, lastVal = null;
     for (let i = weekRows.length - 1; i >= 0; i--) {
       const v = num(weekRows[i][5]);
@@ -3843,10 +3844,10 @@
         else                      { pill.textContent = 'Behind ●';   pill.classList.add('behind'); }
       } else { pill.textContent = 'Loading…'; }
     }
-    set('psTotalLost',   f1(totalLost) + ' lb  (' + fpc(totalLostPct) + ')');
-    set('psAvgWeek',     f1(avgPerWeek) + ' lb/wk  (' + fpc(avgPctWk) + ')');
-    set('psAvgDay',      '−' + f3(Math.abs(avgPerDay)) + ' lb/day');
-    set('psNextCheckin', wedLabel + '  (' + daysToNext + 'd)');
+    setH('psTotalLost',   '<span style="color:var(--gold)">' + f1(totalLost) + ' lb</span>  <span style="color:var(--text)">(' + fpc(totalLostPct) + ')</span>');
+    setH('psAvgWeek',     '<span style="color:var(--gold)">' + f1(avgPerWeek) + ' lb/wk</span>  <span style="color:var(--text)">(' + fpc(avgPctWk) + ')</span>');
+    setH('psAvgDay',      '<span style="color:var(--gold)">−' + f3(Math.abs(avgPerDay)) + ' lb/day</span>');
+    setH('psNextCheckin', '<span style="color:var(--text)">' + wedLabel + '</span>  <span style="color:var(--gold)">(' + daysToNext + 'd)</span>');
     set('psProjected',   projected.toFixed(1) + ' lb');
     // 10% body weight loss target date at current velocity
     const target10pct = startW_val * 0.90;
@@ -3864,7 +3865,7 @@
         sub10El.textContent = '—';
       }
     }
-    set('psLastCheckin', lastVal.toFixed(1) + ' lb  ·  ' + ciLabel);
+    setH('psLastCheckin', '<span style="color:var(--gold)">' + lastVal.toFixed(1) + ' lb</span>  <span style="color:var(--text)">·  ' + ciLabel + '</span>');
   }
 
   // ============================================================
