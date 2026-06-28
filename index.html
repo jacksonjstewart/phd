@@ -2400,6 +2400,17 @@
   .splash-day-label {
     display: none;
   }
+  .splash-day-num {
+    color: #2dbe7a;
+  }
+  @keyframes splashNumPulse {
+    0%   { text-shadow: 0 0 8px rgba(45,190,122,0.3); }
+    50%  { text-shadow: 0 0 28px rgba(45,190,122,0.9), 0 0 8px rgba(45,190,122,0.5); }
+    100% { text-shadow: 0 0 8px rgba(45,190,122,0.3); }
+  }
+  .splash-day-num.pulsing {
+    animation: splashNumPulse 1.8s ease-in-out infinite;
+  }
   .splash-week {
     font-family: var(--mono);
     font-size: clamp(8px, 1.9vw, 11px);
@@ -4259,54 +4270,73 @@
     document.getElementById('cpModalClose').focus();
   }
 
-  function syncCPToSheets(data) {
-    if (!APPS_SCRIPT_URL) return;
-    var url = APPS_SCRIPT_URL + '?action=setCP&totalCP=' + (data.totalCP || 0) + '&lastEarned=' + encodeURIComponent(data.lastEarned || '');
-    fetch(url).catch(function() {});
-  }
-
+  // Sheets = single source of truth. Always overwrite local from Sheets on load.
+  // Earn = server-side atomic addCP. No local-wins branch, no setCP.
   let _cpSheetsReady = false;
   let _cpCheckQueued = false;
 
   function loadCPFromSheets() {
-    if (!APPS_SCRIPT_URL) return;
+    if (!APPS_SCRIPT_URL) { _cpSheetsReady = true; return; }
     fetch(APPS_SCRIPT_URL + '?action=getCP', { cache: 'no-store' })
       .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
       .then(function(remote) {
-        if (typeof remote.totalCP !== 'number') return;
-        var local = loadCPData();
-        var localCP = local.totalCP || 0;
-        if (remote.totalCP > localCP) {
-          var merged = { totalCP: remote.totalCP, lastEarned: remote.lastEarned || null, log: local.log || [] };
-          saveCPData(merged); renderCPWidgets();
-        } else if (localCP > remote.totalCP) {
-          syncCPToSheets(local);
+        // CP — always overwrite local from Sheets unconditionally
+        if (typeof remote.totalCP === 'number') {
+          var remoteLog = Array.isArray(remote.log) ? remote.log
+                        : (remote.log ? String(remote.log).split(',').filter(Boolean) : []);
+          saveCPData({ totalCP: remote.totalCP, lastEarned: remote.lastEarned || null, log: remoteLog });
+          renderCPWidgets();
+        }
+        // TP — same response hydrates TP too
+        if (typeof remote.totalTP === 'number') {
+          saveTPData({ totalTP: remote.totalTP, streak: remote.streak || 0, lastComplete: remote.lastComplete || null });
+          renderTPWidgets();
+          _tpSheetsReady = true;
+          if (_tpCheckQueued) { _tpCheckQueued = false; checkForTP(); }
         }
         _cpSheetsReady = true;
         if (_cpCheckQueued) { _cpCheckQueued = false; checkForCP(); }
       })
       .catch(function() {
         _cpSheetsReady = true;
+        _tpSheetsReady = true;
         if (_cpCheckQueued) { _cpCheckQueued = false; checkForCP(); }
+        if (_tpCheckQueued) { _tpCheckQueued = false; checkForTP(); }
       });
   }
 
   function checkForCP() {
-    const routines = document.querySelectorAll('.routine[data-window]');
-    const allDone  = routines.length > 0 && Array.from(routines).every(r => r.classList.contains('section-complete'));
+    const routines  = document.querySelectorAll('.routine[data-window]');
+    const allDone   = routines.length > 0 && Array.from(routines).every(r => r.classList.contains('section-complete'));
     const stewardOk = _stewardActionCount !== null && _stewardActionCount === 0;
     if (!allDone || !stewardOk) return;
     if (!_cpSheetsReady) { _cpCheckQueued = true; return; }
     const data  = loadCPData();
     const today = todayISO();
     if (data.lastEarned === today) return;
-    data.totalCP   = (data.totalCP || 0) + 1;
+    // Mark locally first to block duplicate fires
     data.lastEarned = today;
-    data.log        = [...(data.log || []), today].slice(-3650);
+    data.log = [...(data.log || []), today].slice(-3650);
     saveCPData(data);
-    syncCPToSheets(data);
-    renderCPWidgets();
-    showCPModal(data);
+    if (APPS_SCRIPT_URL) {
+      fetch(APPS_SCRIPT_URL + '?action=addCP&date=' + encodeURIComponent(today), { cache: 'no-store' })
+        .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
+        .then(function(remote) {
+          if (typeof remote.totalCP === 'number') {
+            var remoteLog = Array.isArray(remote.log) ? remote.log
+                          : (remote.log ? String(remote.log).split(',').filter(Boolean) : []);
+            saveCPData({ totalCP: remote.totalCP, lastEarned: remote.lastEarned || today, log: remoteLog });
+            renderCPWidgets(); showCPModal(loadCPData());
+          }
+        })
+        .catch(function() {
+          var d = loadCPData(); d.totalCP = (d.totalCP || 0) + 1;
+          saveCPData(d); renderCPWidgets(); showCPModal(d);
+        });
+    } else {
+      data.totalCP = (data.totalCP || 0) + 1;
+      saveCPData(data); renderCPWidgets(); showCPModal(data);
+    }
   }
 
   document.getElementById('cpModalClose').addEventListener('click', () => {
@@ -4655,7 +4685,10 @@
       if (!d || !d.loaded) return false;
 
       const dayEl = document.getElementById('dspDay');
-      if (dayEl) dayEl.textContent = 'Day ' + d.dayNum;
+      if (dayEl) {
+        // "Day" in white, the number in pulsing green
+        dayEl.innerHTML = 'Day <span class="splash-day-num" id="splashDayNum">' + d.dayNum + '</span>';
+      }
 
       const weekEl = document.getElementById('dspWeek');
       if (weekEl) weekEl.textContent = 'Week ' + d.weekNum + ' of 12';
@@ -4702,9 +4735,10 @@
         if (t < 1) {
           requestAnimationFrame(step);
         } else {
-          // Fully closed — start pulse
           fill.style.strokeDashoffset = 0;
           if (svg) svg.classList.add('pulsing');
+          var num = document.getElementById('splashDayNum');
+          if (num) num.classList.add('pulsing');
         }
       }
 
@@ -4887,79 +4921,56 @@
     document.getElementById('tpModalClose').focus();
   }
 
-  function syncTPToSheets(data) {
-    if (!APPS_SCRIPT_URL) return;
-    fetch(APPS_SCRIPT_URL + '?action=setTP&totalTP=' + (data.totalTP||0) +
-      '&streak=' + (data.streak||0) +
-      '&lastComplete=' + encodeURIComponent(data.lastComplete||''))
-      .catch(function(){});
-  }
-
+  // TP is hydrated by loadCPFromSheets (combined getCP response).
+  // _tpSheetsReady is set there too. loadTPFromSheets is a no-op stub.
   let _tpSheetsReady = false;
   let _tpCheckQueued = false;
 
   function loadTPFromSheets() {
-    if (!APPS_SCRIPT_URL) { _tpSheetsReady = true; return; }
-    fetch(APPS_SCRIPT_URL + '?action=getTP', { cache:'no-store' })
-      .then(r => r.ok ? r.json() : Promise.reject())
-      .then(remote => {
-        if (typeof remote.totalTP !== 'number') return;
-        const local    = loadTPData();
-        const localTP  = local.totalTP || 0;
-        const localStr = local.streak  || 0;
-        // Take whichever has higher TP; tie-break on streak
-        if (remote.totalTP > localTP || (remote.totalTP === localTP && (remote.streak||0) > localStr)) {
-          const merged = { totalTP: remote.totalTP, streak: remote.streak||0, lastComplete: remote.lastComplete||null };
-          saveTPData(merged);
-          renderTPWidgets();
-        } else if (localTP > remote.totalTP || localStr > (remote.streak||0)) {
-          syncTPToSheets(local);
-        }
-        _tpSheetsReady = true;
-        if (_tpCheckQueued) { _tpCheckQueued = false; checkForTP(); }
-      })
-      .catch(() => {
-        _tpSheetsReady = true;
-        if (_tpCheckQueued) { _tpCheckQueued = false; checkForTP(); }
-      });
+    // TP comes from loadCPFromSheets — nothing to do here
   }
 
-  // Called from checkForCP / markSectionDone path — same gate
   function checkForTP() {
     const routines  = document.querySelectorAll('.routine[data-window]');
     const allDone   = routines.length > 0 && Array.from(routines).every(r => r.classList.contains('section-complete'));
     const stewardOk = _stewardActionCount !== null && _stewardActionCount === 0;
     if (!allDone || !stewardOk) return;
     if (!_tpSheetsReady) { _tpCheckQueued = true; return; }
-
-    const data    = loadTPData();
-    const today   = todayISO();
-
-    // Already recorded today
+    const data  = loadTPData();
+    const today = todayISO();
     if (data.lastComplete === today) return;
-
-    // Determine if streak continues (lastComplete was yesterday) or resets
+    // Optimistic local streak for immediate UI
     const yesterday = (function() {
       const d = new Date(); d.setDate(d.getDate() - 1);
       return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
     })();
-
     const prevStreak = data.lastComplete === yesterday ? (data.streak || 0) : 0;
     const newStreak  = prevStreak + 1;
-    const prevTP     = data.totalTP || 0;
-
-    // Award TP if new streak hits a multiple of 5
-    const awardTP = (newStreak % 5 === 0);
-    const newTP   = awardTP ? prevTP + 1 : prevTP;
-
-    data.streak      = newStreak;
-    data.totalTP     = newTP;
-    data.lastComplete = today;
-    saveTPData(data);
-    syncTPToSheets(data);
-    renderTPWidgets();
-
-    if (awardTP) showTPModal(data);
+    const awardTP    = (newStreak % 5 === 0);
+    data.streak = newStreak; data.lastComplete = today;
+    if (awardTP) data.totalTP = (data.totalTP || 0) + 1;
+    saveTPData(data); renderTPWidgets();
+    if (APPS_SCRIPT_URL) {
+      fetch(APPS_SCRIPT_URL + '?action=addTP&date=' + encodeURIComponent(today), { cache:'no-store' })
+        .then(r => r.ok ? r.json() : Promise.reject())
+        .then(remote => {
+          if (typeof remote.totalTP === 'number') {
+            saveTPData({ totalTP: remote.totalTP, streak: remote.streak || newStreak, lastComplete: remote.lastComplete || today });
+            renderTPWidgets();
+            if (remote.awardedTP) showTPModal(loadTPData());
+          }
+          // Sync CP too if returned
+          if (typeof remote.totalCP === 'number') {
+            var remoteLog = Array.isArray(remote.log) ? remote.log
+                          : (remote.log ? String(remote.log).split(',').filter(Boolean) : []);
+            saveCPData({ totalCP: remote.totalCP, lastEarned: remote.lastEarned || null, log: remoteLog });
+            renderCPWidgets();
+          }
+        })
+        .catch(() => { if (awardTP) showTPModal(loadTPData()); });
+    } else {
+      if (awardTP) showTPModal(data);
+    }
   }
 
   document.getElementById('tpModalClose').addEventListener('click', () => {
