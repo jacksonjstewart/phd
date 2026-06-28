@@ -4683,27 +4683,6 @@
   loadCalendarEvents();
   setInterval(loadCalendarEvents, 10 * 60 * 1000);
   loadStewardCount();
-  // Wipe local CP/TP so Sheets is always authoritative — no stale local values can win
-  (function() {
-    var cpRaw = localStorage.getItem('stewlab-competence');
-    if (cpRaw) {
-      try {
-        var cp = JSON.parse(cpRaw);
-        // Reset totalCP to 0 locally so the Sheets value always overwrites on next fetch
-        // lastEarned and log are kept so we don't double-earn today
-        cp.totalCP = 0;
-        localStorage.setItem('stewlab-competence', JSON.stringify(cp));
-      } catch(e) {}
-    }
-    var tpRaw = localStorage.getItem('stewlab-tenure');
-    if (tpRaw) {
-      try {
-        var tp = JSON.parse(tpRaw);
-        tp.totalTP = 0; tp.streak = 0;
-        localStorage.setItem('stewlab-tenure', JSON.stringify(tp));
-      } catch(e) {}
-    }
-  })();
   renderCPWidgets();
   loadCPFromSheets();
   setInterval(loadCPFromSheets, 60 * 1000);
