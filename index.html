@@ -1520,6 +1520,14 @@
     color: var(--text-faint);
     text-transform: uppercase;
   }
+  .pp-tile-sub {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: rgba(201,161,74,0.65);
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+    margin-top: -3px;
+  }
 
   /* ── Week grid all-day event chips ── */
   .wd-allday {
@@ -2974,7 +2982,7 @@
           <div class="pp-tile"><div class="pp-tile-val" id="psAvgWeek">&mdash;</div><div class="pp-tile-label">Avg / Week</div></div>
           <div class="pp-tile"><div class="pp-tile-val" id="psNextCheckin">&mdash;</div><div class="pp-tile-label">Next Check-in</div></div>
           <div class="pp-tile"><div class="pp-tile-val" id="psAvgDay">&mdash;</div><div class="pp-tile-label">Avg / Day</div></div>
-          <div class="pp-tile"><div class="pp-tile-val" id="psProjected">&mdash;</div><div class="pp-tile-label">Projected Final</div></div>
+          <div class="pp-tile"><div class="pp-tile-val" id="psProjected">&mdash;</div><div class="pp-tile-sub" id="psProjectedDate">&mdash;</div><div class="pp-tile-label">Projected Final</div></div>
           <div class="pp-tile"><div class="pp-tile-val" id="psLastCheckin">&mdash;</div><div class="pp-tile-label">Last Check-in</div></div>
         </div>
         <div class="chart-section-title">
@@ -3840,6 +3848,22 @@
     set('psAvgDay',      '−' + f3(Math.abs(avgPerDay)) + ' lb/day');
     set('psNextCheckin', wedLabel + '  (' + daysToNext + 'd)');
     set('psProjected',   projected.toFixed(1) + ' lb');
+    // 10% body weight loss target date at current velocity
+    const target10pct = startW_val * 0.90;
+    const daysTo10pct = avgPerDay > 0 ? (lastVal - target10pct) / avgPerDay : null;
+    const sub10El = document.getElementById('psProjectedDate');
+    if (sub10El) {
+      if (daysTo10pct !== null && daysTo10pct > 0) {
+        const d10 = new Date();
+        d10.setDate(d10.getDate() + Math.round(daysTo10pct));
+        const MO = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        sub10El.textContent = '10% BW → ' + MO[d10.getMonth()] + ' ' + d10.getDate();
+      } else if (daysTo10pct !== null && daysTo10pct <= 0) {
+        sub10El.textContent = '10% BW ✓ achieved';
+      } else {
+        sub10El.textContent = '—';
+      }
+    }
     set('psLastCheckin', lastVal.toFixed(1) + ' lb  ·  ' + ciLabel);
   }
 
@@ -4659,6 +4683,27 @@
   loadCalendarEvents();
   setInterval(loadCalendarEvents, 10 * 60 * 1000);
   loadStewardCount();
+  // Wipe local CP/TP so Sheets is always authoritative — no stale local values can win
+  (function() {
+    var cpRaw = localStorage.getItem('stewlab-competence');
+    if (cpRaw) {
+      try {
+        var cp = JSON.parse(cpRaw);
+        // Reset totalCP to 0 locally so the Sheets value always overwrites on next fetch
+        // lastEarned and log are kept so we don't double-earn today
+        cp.totalCP = 0;
+        localStorage.setItem('stewlab-competence', JSON.stringify(cp));
+      } catch(e) {}
+    }
+    var tpRaw = localStorage.getItem('stewlab-tenure');
+    if (tpRaw) {
+      try {
+        var tp = JSON.parse(tpRaw);
+        tp.totalTP = 0; tp.streak = 0;
+        localStorage.setItem('stewlab-tenure', JSON.stringify(tp));
+      } catch(e) {}
+    }
+  })();
   renderCPWidgets();
   loadCPFromSheets();
   setInterval(loadCPFromSheets, 60 * 1000);
