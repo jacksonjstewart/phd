@@ -1118,24 +1118,24 @@
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    margin-bottom: 4px;
+    margin-bottom: 5px;
   }
   .cp-heatmap-month {
     font-family: var(--mono);
-    font-size: 5px;
+    font-size: 7px;
     letter-spacing: 0.32em;
     text-transform: uppercase;
     color: var(--text-faint);
   }
   .cp-heatmap-tally {
     font-family: var(--mono);
-    font-size: 5px;
+    font-size: 7px;
     letter-spacing: 0.14em;
     color: var(--text-faint);
   }
   .cp-heatmap-grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, 10px);
     gap: 1px;
   }
   .cp-heatmap-dow {
@@ -1146,9 +1146,13 @@
     color: rgba(232,226,208,0.15);
     text-align: center;
     padding-bottom: 1px;
+    width: 10px;
+    height: 10px;
+    line-height: 10px;
   }
   .cp-heatmap-cell {
-    aspect-ratio: 1;
+    width: 10px;
+    height: 10px;
     border-radius: 1px;
     background: rgba(255,255,255,0.035);
   }
