@@ -4301,7 +4301,8 @@
 
   function loadCPFromSheets() {
     if (!APPS_SCRIPT_URL) { _cpSheetsReady = true; return; }
-    fetch(APPS_SCRIPT_URL + '?action=getCP', { cache: 'no-store' })
+    var bust = '&_=' + Date.now();
+    fetch(APPS_SCRIPT_URL + '?action=getCP' + bust, { cache: 'no-store', redirect: 'follow' })
       .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
       .then(function(remote) {
         // CP — always overwrite local from Sheets unconditionally
@@ -4343,7 +4344,7 @@
     data.log = [...(data.log || []), today].slice(-3650);
     saveCPData(data);
     if (APPS_SCRIPT_URL) {
-      fetch(APPS_SCRIPT_URL + '?action=addCP&date=' + encodeURIComponent(today), { cache: 'no-store' })
+      fetch(APPS_SCRIPT_URL + '?action=addCP&date=' + encodeURIComponent(today) + '&_=' + Date.now(), { cache: 'no-store', redirect: 'follow' })
         .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
         .then(function(remote) {
           if (typeof remote.totalCP === 'number') {
@@ -4975,7 +4976,7 @@
     if (awardTP) data.totalTP = (data.totalTP || 0) + 1;
     saveTPData(data); renderTPWidgets();
     if (APPS_SCRIPT_URL) {
-      fetch(APPS_SCRIPT_URL + '?action=addTP&date=' + encodeURIComponent(today), { cache:'no-store' })
+      fetch(APPS_SCRIPT_URL + '?action=addTP&date=' + encodeURIComponent(today) + '&_=' + Date.now(), { cache: 'no-store', redirect: 'follow' })
         .then(r => r.ok ? r.json() : Promise.reject())
         .then(remote => {
           if (typeof remote.totalTP === 'number') {
