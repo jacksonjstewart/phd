@@ -536,35 +536,172 @@
     text-transform: uppercase; margin-top: 10px;
   }
 
-  .review-banner {
-    margin-top: 28px; padding: 16px 20px;
+  /* Review tile — replaces old review-banner */
+  .review-tile {
+    margin-top: 28px;
+    padding: 14px 20px;
     border: 1px solid var(--gold);
     background: linear-gradient(135deg, rgba(201,161,74,0.18) 0%, rgba(201,161,74,0.08) 100%);
-    display: flex; align-items: center; gap: 16px;
-    position: relative;
-    box-shadow: 0 0 0 0 rgba(201, 161, 74, 0.45);
+    cursor: pointer;
+    display: flex; flex-direction: column; gap: 4px;
+    box-shadow: 0 0 0 0 rgba(201,161,74,0.45);
     animation: pulse-gold 2.6s ease-in-out infinite;
+    transition: background 300ms, border-color 300ms;
+    -webkit-tap-highlight-color: transparent;
   }
-  @keyframes pulse-gold {
-    0%, 100% {
-      box-shadow: 0 0 0 0 rgba(201, 161, 74, 0.32);
-      border-color: var(--gold);
-    }
-    50% {
-      box-shadow: 0 0 22px 2px rgba(201, 161, 74, 0.18);
-      border-color: var(--gold-bright);
-    }
+  .review-tile:hover {
+    background: linear-gradient(135deg, rgba(201,161,74,0.28) 0%, rgba(201,161,74,0.14) 100%);
   }
-  .review-banner .icon {
+  .review-tile.completed {
+    border-color: rgba(45,190,122,0.7);
+    background: linear-gradient(135deg, rgba(45,190,122,0.12) 0%, rgba(45,190,122,0.05) 100%);
+    animation: none;
+    box-shadow: 0 0 10px rgba(45,190,122,0.15);
+  }
+  .review-tile-title {
     font-family: var(--mono); font-size: 9px;
     letter-spacing: 0.4em; color: var(--gold-bright);
-    text-transform: uppercase; flex: 0 0 auto;
+    text-transform: uppercase;
   }
-  .review-banner .text {
+  .review-tile.completed .review-tile-title { color: rgba(45,190,122,0.9); }
+  .review-tile-sub {
+    font-family: var(--mono); font-size: 7.5px;
+    letter-spacing: 0.32em; text-transform: uppercase;
+    color: rgba(161,121,34,0.85);
+  }
+  .review-tile.completed .review-tile-sub {
+    color: rgba(45,190,122,0.6);
+    letter-spacing: 0.28em;
+  }
+  #reviewTileWrap { display: flex; flex-direction: column; gap: 8px; }
+  .review-banner.hidden { display: none; }
+  @keyframes pulse-gold {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(201,161,74,0.32); border-color: var(--gold); }
+    50%       { box-shadow: 0 0 22px 2px rgba(201,161,74,0.18); border-color: var(--gold-bright); }
+  }
+
+  /* PROGRESSING indicator below finances domain ring */
+  .domain-progressing {
+    font-family: var(--mono);
+    font-size: 7px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(45,190,122,0.8);
+    text-align: center;
+    margin-top: 4px;
+    display: none;
+  }
+  .domain-progressing.visible { display: block; }
+
+  /* Finances Review Modal */
+  #finReviewModal,
+  #healthReviewModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 8000;
+    background: rgba(0,0,0,0.88);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    align-items: flex-start;
+    justify-content: center;
+    overflow-y: auto;
+    padding: 40px 20px 60px;
+  }
+  #finReviewModal.open,
+  #healthReviewModal.open { display: flex; }
+  .fin-modal-inner {
+    width: 100%;
+    max-width: 560px;
+    background: rgba(18,14,10,0.97);
+    border: 1px solid rgba(201,161,74,0.3);
+    padding: 36px 32px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    position: relative;
+  }
+  .fin-modal-close {
+    position: absolute;
+    top: 16px; right: 20px;
+    background: none; border: none;
+    color: var(--text-faint);
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    cursor: pointer; padding: 4px 8px;
+    transition: color 200ms;
+  }
+  .fin-modal-close:hover { color: var(--gold); }
+  .fin-modal-title {
+    font-family: var(--mono); font-size: 9px;
+    letter-spacing: 0.5em; text-transform: uppercase;
+    color: var(--gold-dim); margin-bottom: -12px;
+  }
+  .fin-section {
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .fin-instruction {
     font-family: var(--serif); font-style: italic;
-    font-size: 17px; color: var(--text);
+    font-size: 16px; color: var(--text-dim);
+    line-height: 1.55;
   }
-  .review-banner.hidden { display: none; animation: none; }
+  .fin-done-btn {
+    display: flex; align-items: center; gap: 12px;
+    background: none; border: 1px solid rgba(255,255,255,0.12);
+    padding: 10px 16px; cursor: pointer; width: 100%;
+    color: var(--text-dim); font-family: var(--mono);
+    font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase;
+    transition: border-color 200ms, color 200ms, background 200ms;
+    text-align: left;
+  }
+  .fin-done-btn:hover { border-color: rgba(45,190,122,0.5); color: var(--text); }
+  .fin-done-btn.done {
+    border-color: rgba(45,190,122,0.7);
+    background: rgba(45,190,122,0.08);
+    color: rgba(45,190,122,0.9);
+  }
+  .fin-done-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    background: rgba(255,255,255,0.15);
+    transition: background 200ms;
+  }
+  .fin-done-btn.done .fin-done-dot { background: rgba(45,190,122,0.9); }
+  .fin-btn-row {
+    display: flex; gap: 10px;
+  }
+  .fin-btn-row .fin-done-btn { flex: 1; }
+  .fin-entry-wrap {
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .fin-entry-label {
+    font-family: var(--mono); font-size: 8px;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  .fin-entry-input {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: var(--text);
+    font-family: var(--mono); font-size: 15px;
+    padding: 10px 14px; width: 100%;
+    outline: none;
+    transition: border-color 200ms;
+  }
+  .fin-entry-input:focus { border-color: rgba(201,161,74,0.5); }
+  .fin-submit-btn {
+    background: linear-gradient(135deg, rgba(201,161,74,0.22), rgba(201,161,74,0.1));
+    border: 1px solid var(--gold);
+    color: var(--gold-bright);
+    font-family: var(--mono); font-size: 9px;
+    letter-spacing: 0.5em; text-transform: uppercase;
+    padding: 14px 28px; cursor: pointer; width: 100%;
+    transition: background 200ms, box-shadow 200ms;
+    margin-top: 4px;
+  }
+  .fin-submit-btn:hover {
+    background: linear-gradient(135deg, rgba(201,161,74,0.35), rgba(201,161,74,0.18));
+    box-shadow: 0 0 18px rgba(201,161,74,0.2);
+  }
 
   /* ============================================================
      ROUTINE BLOCKS
@@ -2768,9 +2905,111 @@
       </div>
     </header>
 
-    <div class="review-banner hidden" id="reviewBanner">
-      <span class="icon" id="reviewIcon">REVIEW</span>
-      <span class="text" id="reviewText">&mdash;</span>
+    <!-- Review tile — injected by updateReviewBanner -->
+    <div id="reviewTileWrap"></div>
+
+    <!-- Finances Review Modal -->
+    <div id="finReviewModal" role="dialog" aria-modal="true" aria-label="Finances Review">
+      <div class="fin-modal-inner">
+        <button class="fin-modal-close" id="finModalClose">Close ×</button>
+        <div class="fin-modal-title">Finances Review</div>
+
+        <div class="fin-section">
+          <p class="fin-instruction">Open your online banking account and observe your current bank balances.</p>
+          <button class="fin-done-btn" id="finBtn1" type="button">
+            <span class="fin-done-dot"></span>Balances Reviewed
+          </button>
+        </div>
+
+        <div class="fin-section">
+          <div class="fin-entry-wrap">
+            <label class="fin-entry-label" for="finFundsLeftover">Funds Leftover After Distribution ($)</label>
+            <input class="fin-entry-input" id="finFundsLeftover" type="number" min="0" step="0.01" placeholder="0.00">
+          </div>
+        </div>
+
+        <div class="fin-section">
+          <p class="fin-instruction">Audit the auto-pulls from your main chequing account as well as the last two weeks of VISA charges. Record into the Master I/O Sheet.</p>
+          <button class="fin-done-btn" id="finBtn2" type="button">
+            <span class="fin-done-dot"></span>Accounts Audited &middot; Spending Recorded
+          </button>
+        </div>
+
+        <div class="fin-section">
+          <div class="fin-btn-row">
+            <button class="fin-done-btn" id="finBtn3a" type="button">
+              <span class="fin-done-dot"></span>Spending Inside Budget
+            </button>
+            <button class="fin-done-btn" id="finBtn3b" type="button">
+              <span class="fin-done-dot"></span>Budget Limits Reviewed
+            </button>
+          </div>
+        </div>
+
+        <div class="fin-section">
+          <p class="fin-instruction">Review your ongoing subscriptions and check next date of ABC submission.</p>
+          <div class="fin-btn-row">
+            <button class="fin-done-btn" id="finBtn4a" type="button">
+              <span class="fin-done-dot"></span>Subscriptions Reviewed
+            </button>
+            <button class="fin-done-btn" id="finBtn4b" type="button">
+              <span class="fin-done-dot"></span>ABC Receipts Requested
+            </button>
+          </div>
+        </div>
+
+        <button class="fin-submit-btn" id="finSubmitBtn" type="button">Submit Review</button>
+      </div>
+    </div>
+
+    <!-- Health & Fitness Review Modal -->
+    <div id="healthReviewModal" role="dialog" aria-modal="true" aria-label="Health &amp; Fitness Review">
+      <div class="fin-modal-inner">
+        <button class="fin-modal-close" id="healthModalClose">Close ×</button>
+        <div class="fin-modal-title">Health &amp; Fitness Review</div>
+
+        <div class="fin-section">
+          <p class="fin-instruction">Access MyFitnessPal, navigate to Progress &rsaquo; Weekly View and record your daily averages.</p>
+          <div class="fin-btn-row">
+            <div class="fin-entry-wrap" style="flex:1">
+              <label class="fin-entry-label" for="healthCalories">Daily Calories (avg)</label>
+              <input class="fin-entry-input" id="healthCalories" type="number" min="0" step="1" placeholder="0">
+            </div>
+            <div class="fin-entry-wrap" style="flex:1">
+              <label class="fin-entry-label" for="healthProtein">Daily Protein g (avg)</label>
+              <input class="fin-entry-input" id="healthProtein" type="number" min="0" step="1" placeholder="0">
+            </div>
+          </div>
+          <button class="fin-done-btn" id="healthBtn1" type="button">
+            <span class="fin-done-dot"></span>Calorie &amp; Protein Goal Being Honestly Met?
+          </button>
+        </div>
+
+        <div class="fin-section">
+          <p class="fin-instruction">Access Strava, navigate to You &rsaquo; Progress and click on the Streak Heat Map.</p>
+          <button class="fin-done-btn" id="healthBtn2" type="button">
+            <span class="fin-done-dot"></span>Five Days / Week Training?
+          </button>
+          <div class="fin-btn-row">
+            <div class="fin-entry-wrap" style="flex:1">
+              <label class="fin-entry-label" for="healthHoursTrained">Hours Trained This Week</label>
+              <input class="fin-entry-input" id="healthHoursTrained" type="number" min="0" step="0.5" placeholder="0">
+            </div>
+            <div class="fin-entry-wrap" style="flex:1">
+              <label class="fin-entry-label" for="healthSaunaMin">Sauna Minutes This Week</label>
+              <input class="fin-entry-input" id="healthSaunaMin" type="number" min="0" step="1" placeholder="0">
+            </div>
+          </div>
+        </div>
+
+        <div class="fin-section">
+          <button class="fin-done-btn" id="healthBtn3" type="button">
+            <span class="fin-done-dot"></span>Taking Supplements Routinely?
+          </button>
+        </div>
+
+        <button class="fin-submit-btn" id="healthSubmitBtn" type="button">Submit Review</button>
+      </div>
     </div>
 
     <!-- I. MORNING ROUTINE -->
@@ -3515,26 +3754,336 @@
     }
   }
 
-  // 5 · Review banner
-  function updateReviewBanner(now) {
-    const banner = document.getElementById('reviewBanner');
-    const icon   = document.getElementById('reviewIcon');
-    const text   = document.getElementById('reviewText');
-    if (!banner) return;
-    banner.classList.add('hidden');
-    if (now.getDay() === 0) {
-      icon.textContent = 'SUNDAY';
-      text.textContent = 'PhD / Professional review — deep focus, papers, one win, one improvement. Home office.';
-      banner.classList.remove('hidden');
-    } else if (isBiweeklyFrom(now, new Date(2026, 4, 27), 3)) {
-      icon.textContent = 'WEDNESDAY';
-      text.textContent = 'Biweekly Finance Review — savings direction, unplanned expenses, intentions. Archetype.';
-      banner.classList.remove('hidden');
-    } else if (isBiweeklyFrom(now, new Date(2026, 4, 23), 6)) {
-      icon.textContent = 'SATURDAY';
-      text.textContent = 'Biweekly Home & Health Review — one home item, performance marker, sleep. Archetype.';
-      banner.classList.remove('hidden');
+  // 5 · Review tile
+  const REVIEW_BONUS_KEY = 'stewlab-review-bonus';
+
+  function reviewBonusEarnedToday(reviewId) {
+    try {
+      var d = JSON.parse(localStorage.getItem(REVIEW_BONUS_KEY) || '{}');
+      return d[reviewId] === todayISO();
+    } catch(e) { return false; }
+  }
+
+  function markReviewBonusEarned(reviewId) {
+    try {
+      var d = JSON.parse(localStorage.getItem(REVIEW_BONUS_KEY) || '{}');
+      d[reviewId] = todayISO();
+      localStorage.setItem(REVIEW_BONUS_KEY, JSON.stringify(d));
+    } catch(e) {}
+  }
+
+  function awardReviewBonus(reviewId) {
+    // Bonus CP: fire addCP only if not already earned for this review today
+    if (reviewBonusEarnedToday(reviewId)) return;
+    markReviewBonusEarned(reviewId);
+    const today = todayISO();
+    // addCP — GAS is idempotent per day for normal CP, but review bonus is extra
+    // Use a dedicated bonus action key to avoid conflating with daily CP
+    // For now: fire addCP directly (GAS idempotency on lastEarned === today blocks double)
+    // so we manually bump local and sync
+    if (APPS_SCRIPT_URL) {
+      fetch(APPS_SCRIPT_URL + '?action=addReviewBonus&reviewId=' + encodeURIComponent(reviewId) + '&date=' + encodeURIComponent(today) + '&_=' + Date.now(), { cache:'no-store', redirect:'follow' })
+        .then(r => r.ok ? r.json() : Promise.reject())
+        .then(remote => {
+          if (typeof remote.totalCP === 'number') {
+            var remoteLog = Array.isArray(remote.log) ? remote.log : (remote.log ? String(remote.log).split(',').filter(Boolean) : []);
+            saveCPData({ totalCP: remote.totalCP, lastEarned: remote.lastEarned || today, log: remoteLog });
+            renderCPWidgets();
+          }
+          if (typeof remote.totalTP === 'number') {
+            saveTPData({ totalTP: remote.totalTP, streak: remote.streak || 0, lastComplete: remote.lastComplete || null });
+            renderTPWidgets();
+          }
+        })
+        .catch(() => {
+          // Offline fallback: bump locally
+          var cp = loadCPData(); cp.totalCP = (cp.totalCP||0)+1; saveCPData(cp); renderCPWidgets();
+          var tp = loadTPData(); tp.totalTP = (tp.totalTP||0)+1; saveTPData(tp); renderTPWidgets();
+        });
     }
+  }
+
+  function makeTile(reviewId, title, clickFn) {
+    const done = reviewBonusEarnedToday(reviewId);
+    const tile = document.createElement('div');
+    tile.className = 'review-tile' + (done ? ' completed' : '');
+    tile.id = 'reviewTile-' + reviewId;
+    tile.innerHTML =
+      '<div class="review-tile-title">' + title + '</div>' +
+      '<div class="review-tile-sub">' + (done ? '\u2713 Completed' : 'Click to Review') + '</div>';
+    tile.addEventListener('click', function() { if (clickFn) clickFn(); });
+    return tile;
+  }
+
+  function updateReviewBanner(now) {
+    const wrap = document.getElementById('reviewTileWrap');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    if (now.getDay() === 0) {
+      wrap.appendChild(makeTile('phd', 'PhD & Professional Review', function() {
+        // PhD modal coming soon
+      }));
+    } else if (isBiweeklyFrom(now, new Date(2026, 4, 27), 3)) {
+      wrap.appendChild(makeTile('finances', 'Finances Review', openFinReview));
+    } else if (isBiweeklyFrom(now, new Date(2026, 4, 23), 6)) {
+      // Two tiles on biweekly Saturday
+      wrap.appendChild(makeTile('health', 'Health & Fitness Review', openHealthReview));
+      wrap.appendChild(makeTile('homevehicle', 'Home & Vehicle Review', function() {
+        // Home & Vehicle modal coming soon
+      }));
+    } else if (now.getDay() === 2) {
+      wrap.appendChild(makeTile('activity', 'Activity Planning', function() {
+        // Activity planning modal coming soon
+      }));
+    } else if (isFirstWeekdayOfMonth(now, 4)) {
+      wrap.appendChild(makeTile('travel', 'Travel Planning', function() {
+        // Travel planning modal coming soon
+      }));
+    }
+  }
+
+  // ── Finances Review Modal ─────────────────────────────────
+  const FIN_DRAFT_KEY = 'stewlab-fin-review-draft';
+
+  function loadFinDraft() {
+    try { return JSON.parse(localStorage.getItem(FIN_DRAFT_KEY) || '{}'); } catch(e) { return {}; }
+  }
+  function saveFinDraft(d) {
+    try { localStorage.setItem(FIN_DRAFT_KEY, JSON.stringify(d)); } catch(e) {}
+  }
+
+  function openFinReview() {
+    const modal = document.getElementById('finReviewModal');
+    if (!modal) return;
+    const draft = loadFinDraft();
+    // Restore draft state
+    ['finBtn1','finBtn2','finBtn3a','finBtn3b','finBtn4a','finBtn4b'].forEach(id => {
+      if (draft[id]) {
+        const btn = document.getElementById(id);
+        if (btn) btn.classList.add('done');
+      }
+    });
+    const input = document.getElementById('finFundsLeftover');
+    if (input && draft.fundsLeftover !== undefined) input.value = draft.fundsLeftover;
+    modal.classList.add('open');
+  }
+
+  function closeFinReview() {
+    const modal = document.getElementById('finReviewModal');
+    if (modal) modal.classList.remove('open');
+  }
+
+  function updateFinProgressingIndicator() {
+    const el = document.getElementById('finProgressingIndicator');
+    if (!el) return;
+    try {
+      var d = JSON.parse(localStorage.getItem('stewlab-fin-progressing') || '{}');
+      var now = new Date();
+      // Show if set and not yet expired (next biweekly Wed)
+      if (d.setDate && d.expiry) {
+        var expiry = new Date(d.expiry);
+        if (now < expiry) { el.classList.add('visible'); return; }
+        // Expired — remove
+        localStorage.removeItem('stewlab-fin-progressing');
+      }
+    } catch(e) {}
+    el.classList.remove('visible');
+  }
+
+  function initFinReviewModal() {
+    const modal = document.getElementById('finReviewModal');
+    if (!modal) return;
+
+    // Close button
+    var closeBtn = document.getElementById('finModalClose');
+    if (closeBtn) closeBtn.addEventListener('click', function() {
+      // Save draft before closing
+      saveDraftFromModal();
+      closeFinReview();
+    });
+
+    // Toggle done buttons
+    ['finBtn1','finBtn2','finBtn3a','finBtn3b','finBtn4a','finBtn4b'].forEach(id => {
+      const btn = document.getElementById(id);
+      if (!btn) return;
+      btn.addEventListener('click', function() {
+        // For pair buttons (3a/3b), either satisfies — both can be toggled
+        btn.classList.toggle('done');
+        saveDraftFromModal();
+      });
+    });
+
+    // Save funds input on change
+    var input = document.getElementById('finFundsLeftover');
+    if (input) input.addEventListener('input', saveDraftFromModal);
+
+    // Submit
+    var submitBtn = document.getElementById('finSubmitBtn');
+    if (submitBtn) submitBtn.addEventListener('click', function() {
+      saveDraftFromModal();
+      var draft = loadFinDraft();
+      var fundsLeftover = parseFloat(draft.fundsLeftover) || 0;
+
+      // Set PROGRESSING indicator if funds leftover > 0
+      if (fundsLeftover > 0) {
+        var now = new Date();
+        // Expiry = next biweekly Wed occurrence
+        var expiry = new Date(now);
+        expiry.setDate(expiry.getDate() + 14);
+        try {
+          localStorage.setItem('stewlab-fin-progressing', JSON.stringify({
+            setDate: todayISO(),
+            amount: fundsLeftover,
+            expiry: expiry.toISOString()
+          }));
+        } catch(e) {}
+        updateFinProgressingIndicator();
+      }
+
+      // Award bonus CP + TP
+      awardReviewBonus('finances');
+
+      // Mark tile as completed
+      var tile = document.getElementById('reviewTile');
+      if (tile) {
+        tile.classList.add('completed');
+        tile.querySelector('.review-tile-title') && null;
+        var sub = tile.querySelector('.review-tile-sub');
+        if (sub) sub.textContent = '✓ Completed';
+      }
+
+      // Clear draft
+      localStorage.removeItem(FIN_DRAFT_KEY);
+
+      closeFinReview();
+    });
+
+    // Close on backdrop click
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) { saveDraftFromModal(); closeFinReview(); }
+    });
+  }
+
+  function saveDraftFromModal() {
+    var draft = loadFinDraft();
+    ['finBtn1','finBtn2','finBtn3a','finBtn3b','finBtn4a','finBtn4b'].forEach(id => {
+      var btn = document.getElementById(id);
+      draft[id] = btn ? btn.classList.contains('done') : false;
+    });
+    var input = document.getElementById('finFundsLeftover');
+    draft.fundsLeftover = input ? input.value : '';
+    saveFinDraft(draft);
+  }
+
+  // ── Health & Fitness Review Modal ────────────────────────────
+  const HEALTH_DRAFT_KEY = 'stewlab-health-review-draft';
+
+  function loadHealthDraft() {
+    try { return JSON.parse(localStorage.getItem(HEALTH_DRAFT_KEY) || '{}'); } catch(e) { return {}; }
+  }
+  function saveHealthDraft(d) {
+    try { localStorage.setItem(HEALTH_DRAFT_KEY, JSON.stringify(d)); } catch(e) {}
+  }
+
+  function openHealthReview() {
+    const modal = document.getElementById('healthReviewModal');
+    if (!modal) return;
+    const draft = loadHealthDraft();
+    ['healthBtn1','healthBtn2','healthBtn3'].forEach(id => {
+      if (draft[id]) { var b = document.getElementById(id); if (b) b.classList.add('done'); }
+    });
+    var fields = {healthCalories:'calories', healthProtein:'protein', healthHoursTrained:'hoursTrained', healthSaunaMin:'saunaMin'};
+    Object.keys(fields).forEach(function(elId) {
+      var el = document.getElementById(elId);
+      var key = fields[elId];
+      if (el && draft[key] !== undefined) el.value = draft[key];
+    });
+    modal.classList.add('open');
+  }
+
+  function closeHealthReview() {
+    var modal = document.getElementById('healthReviewModal');
+    if (modal) modal.classList.remove('open');
+  }
+
+  function saveHealthDraftFromModal() {
+    var draft = loadHealthDraft();
+    ['healthBtn1','healthBtn2','healthBtn3'].forEach(id => {
+      var b = document.getElementById(id);
+      draft[id] = b ? b.classList.contains('done') : false;
+    });
+    draft.calories    = (document.getElementById('healthCalories')    || {}).value || '';
+    draft.protein     = (document.getElementById('healthProtein')     || {}).value || '';
+    draft.hoursTrained= (document.getElementById('healthHoursTrained')|| {}).value || '';
+    draft.saunaMin    = (document.getElementById('healthSaunaMin')    || {}).value || '';
+    saveHealthDraft(draft);
+  }
+
+  function updateHealthProgressingIndicator() {
+    // PROGRESSING shows under Health & Fitness ring if both key buttons pressed on submit
+    var el = document.getElementById('healthProgressingIndicator');
+    if (!el) return;
+    try {
+      var d = JSON.parse(localStorage.getItem('stewlab-health-progressing') || '{}');
+      if (d.expiry && new Date() < new Date(d.expiry)) { el.classList.add('visible'); return; }
+      if (d.expiry) localStorage.removeItem('stewlab-health-progressing');
+    } catch(e) {}
+    el.classList.remove('visible');
+  }
+
+  function initHealthReviewModal() {
+    var modal = document.getElementById('healthReviewModal');
+    if (!modal) return;
+
+    var closeBtn = document.getElementById('healthModalClose');
+    if (closeBtn) closeBtn.addEventListener('click', function() {
+      saveHealthDraftFromModal(); closeHealthReview();
+    });
+
+    ['healthBtn1','healthBtn2','healthBtn3'].forEach(id => {
+      var btn = document.getElementById(id);
+      if (btn) btn.addEventListener('click', function() {
+        btn.classList.toggle('done'); saveHealthDraftFromModal();
+      });
+    });
+
+    ['healthCalories','healthProtein','healthHoursTrained','healthSaunaMin'].forEach(id => {
+      var el = document.getElementById(id);
+      if (el) el.addEventListener('input', saveHealthDraftFromModal);
+    });
+
+    var submitBtn = document.getElementById('healthSubmitBtn');
+    if (submitBtn) submitBtn.addEventListener('click', function() {
+      saveHealthDraftFromModal();
+      var draft = loadHealthDraft();
+
+      // PROGRESSING: only if BOTH key buttons pressed
+      var btn1Done = draft['healthBtn1'] === true;
+      var btn2Done = draft['healthBtn2'] === true;
+      if (btn1Done && btn2Done) {
+        var expiry = new Date(); expiry.setDate(expiry.getDate() + 14);
+        try { localStorage.setItem('stewlab-health-progressing', JSON.stringify({ setDate: todayISO(), expiry: expiry.toISOString() })); } catch(e) {}
+        updateHealthProgressingIndicator();
+      }
+
+      // Award bonus
+      awardReviewBonus('health');
+
+      // Turn tile green
+      var tile = document.getElementById('reviewTile-health');
+      if (tile) {
+        tile.classList.add('completed');
+        var sub = tile.querySelector('.review-tile-sub');
+        if (sub) sub.textContent = '\u2713 Completed';
+      }
+
+      localStorage.removeItem(HEALTH_DRAFT_KEY);
+      closeHealthReview();
+    });
+
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) { saveHealthDraftFromModal(); closeHealthReview(); }
+    });
   }
 
   // 6 · Weekly grid
@@ -4648,6 +5197,24 @@
       const ci=document.createElement('button'); ci.className='domain-btn checkin-disabled'; ci.type='button'; ci.textContent='Check-In'; ci.disabled=true; btns.appendChild(ci);
     }
     card.appendChild(btns);
+    // PROGRESSING indicator for finances domain
+    if (cfg.id === 'finances') {
+      const prog = document.createElement('div');
+      prog.className = 'domain-progressing';
+      prog.id = 'finProgressingIndicator';
+      prog.textContent = '▲ Progressing';
+      card.appendChild(prog);
+      updateFinProgressingIndicator();
+    }
+    // PROGRESSING indicator for health domain
+    if (cfg.id === 'health') {
+      const prog = document.createElement('div');
+      prog.className = 'domain-progressing';
+      prog.id = 'healthProgressingIndicator';
+      prog.textContent = '▲ Progressing';
+      card.appendChild(prog);
+      updateHealthProgressingIndicator();
+    }
   }
 
   function openDomainModal(cfg, domainData) {
@@ -4799,6 +5366,8 @@
   // TP is hydrated inside loadCPFromSheets via the combined getCP response — no separate poll needed
   loadDomainsCSV();
   setInterval(loadDomainsCSV, 15 * 60 * 1000);
+  initFinReviewModal();
+  initHealthReviewModal();
 
   // ============================================================
   // DAILY SPLASH — first open each day
