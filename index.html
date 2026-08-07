@@ -1433,41 +1433,66 @@
   }
 
   /* ── Competence System ── */
-  .cp-widget{display:none;flex-direction:column;align-items:center;gap:5px;position:relative;cursor:default;}
-  .cp-widget.earned{display:flex;}
-  /* Office cluster — both widgets stacked vertically, right-anchored */
-  .cp-widgets-office{position:absolute;top:140px;right:40px;display:flex;flex-direction:column;align-items:center;gap:18px;}
-  @media(max-width:900px){.cp-widgets-office{top:90px;right:18px;}}
-  @media(max-width:600px){.cp-widgets-office{position:static;margin:0 0 20px auto;flex-direction:row;gap:24px;justify-content:flex-end;}}
-  /* Stats wrap — side by side */
-  .cp-widget-stats-wrap{display:flex;justify-content:center;gap:56px;margin-top:56px;padding-top:40px;border-top:1px solid var(--border-soft);}
-  @media(max-width:600px){.cp-widget-stats-wrap{gap:32px;}}
-  .cp-widget-label{font-family:var(--mono);font-size:7px;letter-spacing:0.35em;text-transform:uppercase;color:var(--text-faint);}
-  .cp-ring-wrap{position:relative;width:80px;height:80px;}
-  .cp-ring-wrap svg{display:block;}
-  .cp-ring-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
-  .cp-ring-level{font-family:var(--serif);font-style:italic;font-size:22px;color:var(--gold);line-height:1;}
-  .cp-widget-sub{font-family:var(--mono);font-size:7px;letter-spacing:0.12em;color:var(--text-faint);text-align:center;}
-  .cp-ring-title{font-family:var(--mono);font-size:7px;letter-spacing:0.35em;text-transform:uppercase;color:rgba(201,161,74,0.75);text-align:center;margin-top:1px;}
-  .cp-tooltip{position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);width:224px;background:rgba(10,8,6,0.97);border:1px solid rgba(201,161,74,0.28);padding:14px 16px;pointer-events:none;opacity:0;transition:opacity 200ms;z-index:200;}
-  /* Office tooltips anchor left so they don't clip the right edge */
-  .cp-widgets-office .cp-tooltip{bottom:auto;top:50%;left:auto;right:calc(100% + 14px);transform:translateY(-50%);}
-  .cp-widget:hover .cp-tooltip{opacity:1;}
-  .cp-tooltip-title{font-family:var(--mono);font-size:8px;letter-spacing:0.4em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
-  .cp-tooltip-row{font-family:var(--mono);font-size:8px;letter-spacing:0.08em;color:var(--text-dim);margin-bottom:3px;}
-  .cp-tooltip-msg{font-family:var(--serif);font-style:italic;font-size:12px;color:var(--text);line-height:1.5;margin-top:10px;padding-top:10px;border-top:1px solid var(--border-soft);}
-  .cp-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.87);z-index:9999;align-items:center;justify-content:center;}
-  .cp-modal-overlay.open{display:flex;}
-  .cp-modal-box{background:rgba(12,10,7,0.98);border:1px solid rgba(201,161,74,0.35);box-shadow:0 0 60px rgba(201,161,74,0.1);padding:48px 44px;max-width:440px;width:90%;text-align:center;animation:cpModalIn 0.45s ease forwards;}
-  @keyframes cpModalIn{from{opacity:0;transform:translateY(14px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
-  .cp-modal-icon{font-size:26px;color:var(--gold);margin-bottom:18px;opacity:0.7;}
-  .cp-modal-heading{font-family:var(--mono);font-size:8px;letter-spacing:0.55em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
-  .cp-modal-points{font-family:var(--serif);font-style:italic;font-size:28px;color:var(--text);line-height:1;margin-bottom:22px;}
-  .cp-modal-body{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--text-dim);line-height:1.65;margin-bottom:24px;}
-  .cp-modal-stats{font-family:var(--mono);font-size:8.5px;letter-spacing:0.18em;color:var(--text-faint);text-transform:uppercase;line-height:2.2;margin-bottom:30px;border-top:1px solid var(--border-soft);border-bottom:1px solid var(--border-soft);padding:14px 0;}
-  .cp-modal-stats span{color:var(--gold);}
-  .cp-modal-btn{font-family:var(--mono);font-size:8px;letter-spacing:0.45em;text-transform:uppercase;color:var(--gold);background:transparent;border:1px solid rgba(201,161,74,0.3);padding:10px 28px;cursor:pointer;transition:border-color 200ms,background 200ms;}
-  .cp-modal-btn:hover{border-color:var(--gold);background:rgba(201,161,74,0.07);}
+  /* ── First Things First · completion modal ── */
+  .fc-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);z-index:9999;align-items:center;justify-content:center;padding:32px 18px;overflow-y:auto;}
+  .fc-overlay.open{display:flex;}
+  .fc-box{background:rgba(12,10,7,0.985);border:1px solid rgba(201,161,74,0.3);box-shadow:0 0 90px rgba(201,161,74,0.08),inset 0 0 60px rgba(0,0,0,0.5);max-width:520px;width:100%;margin:auto;padding:52px 44px 30px;text-align:center;position:relative;animation:fcBoxIn 0.7s cubic-bezier(0.16,1,0.3,1) forwards;}
+  @media(max-width:600px){.fc-box{padding:40px 22px 24px;}}
+  @keyframes fcBoxIn{from{opacity:0;transform:translateY(18px) scale(0.985)}to{opacity:1;transform:none}}
+  .fc-beat{opacity:0;transform:translateY(12px);transition:opacity 0.9s ease,transform 0.9s cubic-bezier(0.16,1,0.3,1);}
+  .fc-overlay.reveal-notice .fc-notice-beat{opacity:1;transform:none;}
+  .fc-overlay.reveal-analytics .fc-analytics-beat{opacity:1;transform:none;}
+  .fc-overlay.reveal-unlock .fc-unlock-beat{opacity:1;transform:none;}
+  .fc-eyebrow{font-family:var(--mono);font-size:8px;letter-spacing:0.6em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:14px;}
+  .fc-heading{font-family:var(--serif);font-style:italic;font-weight:300;font-size:34px;color:var(--text);line-height:1.05;margin-bottom:10px;}
+  .fc-sub{font-family:var(--mono);font-size:7.5px;letter-spacing:0.28em;text-transform:uppercase;color:var(--text-faint);}
+  .fc-analytics-beat{margin-top:30px;padding-top:26px;border-top:1px solid var(--border);}
+  .fc-heatmap-wrap{display:flex;justify-content:center;margin-bottom:24px;}
+  .fc-heatmap-wrap>div{opacity:1;}
+  .fc-figs{display:flex;justify-content:center;gap:34px;margin-bottom:26px;}
+  .fc-fig{display:flex;flex-direction:column;gap:6px;}
+  .fc-fig-num{font-family:var(--serif);font-style:italic;font-size:33px;color:var(--gold);line-height:1;}
+  .fc-fig-lab{font-family:var(--mono);font-size:6.5px;letter-spacing:0.26em;text-transform:uppercase;color:var(--text-faint);}
+  .fc-bars{display:flex;flex-direction:column;gap:14px;margin-bottom:22px;}
+  .fc-bar-head{display:flex;justify-content:space-between;font-family:var(--mono);font-size:7.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;}
+  .fc-bar-head span:last-child{color:var(--gold);}
+  .fc-bar-track{height:4px;background:rgba(255,255,255,0.05);border-radius:2px;overflow:hidden;}
+  .fc-bar-fill{height:100%;width:0;background:linear-gradient(90deg,rgba(201,161,74,0.5),var(--gold-bright));border-radius:2px;transition:width 1.4s cubic-bezier(0.16,1,0.3,1);box-shadow:0 0 8px rgba(201,161,74,0.4);}
+  .fc-cons-title{font-family:var(--mono);font-size:8px;letter-spacing:0.42em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+  .fc-message{font-family:var(--serif);font-style:italic;font-size:14.5px;color:var(--text-dim);line-height:1.62;max-width:400px;margin:0 auto;}
+  .fc-unlock-beat{margin-top:30px;padding-top:26px;border-top:1px solid var(--border);}
+  .fc-lock{color:var(--gold-dim);margin-bottom:12px;transition:color 0.8s ease,filter 0.8s ease;}
+  .fc-lock .fc-shackle{transform-origin:44px 26px;transition:transform 0.85s cubic-bezier(0.34,1.56,0.64,1);}
+  .fc-lock .fc-lock-hole{fill:rgba(12,10,7,0.985);}
+  .fc-lock.unlocked{color:var(--gold-bright);filter:drop-shadow(0 0 14px rgba(201,161,74,0.6));}
+  .fc-lock.unlocked .fc-shackle{transform:translate(9px,-7px) rotate(32deg);}
+  .fc-unlock-label{font-family:var(--mono);font-size:7px;letter-spacing:0.5em;text-transform:uppercase;color:var(--text-faint);margin-bottom:6px;opacity:0;transition:opacity 0.7s ease;}
+  .fc-unlock-name{font-family:var(--serif);font-style:italic;font-size:19px;color:var(--text);opacity:0;transition:opacity 0.7s ease 0.15s;}
+  .fc-lock.unlocked~.fc-unlock-label,.fc-lock.unlocked~.fc-unlock-name{opacity:1;}
+  .fc-ack{margin-top:34px;font-family:var(--mono);font-size:8px;letter-spacing:0.45em;text-transform:uppercase;color:var(--text-faint);background:transparent;border:1px solid var(--border);padding:14px 30px;cursor:not-allowed;transition:color .5s ease,border-color .5s ease,opacity .5s ease,background .3s ease;opacity:0.45;}
+  .fc-overlay.ready .fc-ack{color:var(--gold);border-color:rgba(201,161,74,0.4);cursor:pointer;opacity:1;animation:fcAckGlow 2.4s ease-in-out infinite;}
+  .fc-overlay.ready .fc-ack:hover{background:rgba(201,161,74,0.08);border-color:var(--gold);}
+  @keyframes fcAckGlow{0%,100%{box-shadow:0 0 0 rgba(201,161,74,0)}50%{box-shadow:0 0 16px rgba(201,161,74,0.22)}}
+
+  /* ── Office · in-place completion overlay (replaces task lists) ── */
+  .oc-panel{display:none;animation:fcBoxIn 0.7s cubic-bezier(0.16,1,0.3,1) forwards;}
+  .oc-panel.shown{display:block;}
+  .oc-eyebrow{font-family:var(--mono);font-size:8px;letter-spacing:0.55em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:10px;}
+  .oc-title{font-family:var(--serif);font-style:italic;font-weight:300;font-size:27px;color:var(--text);margin-bottom:28px;}
+  .oc-grid{display:flex;gap:44px;align-items:center;flex-wrap:wrap;margin-bottom:26px;}
+  .oc-figs{display:grid;grid-template-columns:1fr 1fr;gap:20px 34px;}
+  .oc-fig{display:flex;flex-direction:column;gap:6px;}
+  .oc-num{font-family:var(--serif);font-style:italic;font-size:31px;color:var(--gold);line-height:1;}
+  .oc-lab{font-family:var(--mono);font-size:6.5px;letter-spacing:0.24em;text-transform:uppercase;color:var(--text-faint);}
+  .oc-bars{display:flex;flex-direction:column;gap:14px;max-width:430px;margin-bottom:22px;}
+  .oc-bar-head{display:flex;justify-content:space-between;font-family:var(--mono);font-size:7.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;}
+  .oc-bar-head span:last-child{color:var(--gold);}
+  .oc-bar-track{height:4px;background:rgba(255,255,255,0.05);border-radius:2px;overflow:hidden;}
+  .oc-bar-fill{height:100%;width:0;background:linear-gradient(90deg,rgba(201,161,74,0.5),var(--gold-bright));border-radius:2px;transition:width 1.2s cubic-bezier(0.16,1,0.3,1);}
+  .oc-next{font-family:var(--mono);font-size:7.5px;letter-spacing:0.32em;text-transform:uppercase;color:var(--gold-dim);padding-top:18px;border-top:1px solid var(--border);}
+  .oc-next-lock{color:var(--gold);}
+  @media(prefers-reduced-motion:reduce){.fc-beat,.fc-lock .fc-shackle,.fc-lock,.fc-bar-fill,.oc-bar-fill,.fc-unlock-label,.fc-unlock-name{transition:none!important;}.fc-box,.oc-panel{animation:none!important;}}
+
 
   .stats-split {
     display: grid;
@@ -2255,46 +2280,6 @@
   }
 
   /* ── Tenure streak display ── */
-  .tp-streak-display {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    margin-top: 2px;
-  }
-  .tp-streak-display.visible { display: flex; }
-  .tp-streak-bar { display: flex; gap: 3px; align-items: center; }
-  .tp-streak-pip {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: rgba(201,161,74,0.18);
-    border: 1px solid rgba(201,161,74,0.22);
-    transition: background 400ms ease, border-color 400ms ease, box-shadow 400ms ease;
-  }
-  .tp-streak-pip.lit {
-    background: rgba(201,161,74,0.85);
-    border-color: var(--gold);
-    box-shadow: 0 0 5px rgba(201,161,74,0.5);
-  }
-  .tp-streak-label {
-    font-family: var(--mono);
-    font-size: 7px;
-    letter-spacing: 0.3em;
-    color: var(--text-faint);
-    text-transform: uppercase;
-    text-align: center;
-  }
-  .tp-streak-count {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.2em;
-    color: var(--gold-dim);
-    text-align: center;
-  }
-  .tp-streak-count.streak-alive {
-    color: var(--gold);
-    text-shadow: 0 0 8px rgba(201,161,74,0.35);
-  }
 </style>
 </head>
 <body>
@@ -2359,64 +2344,6 @@
 
 <!-- ========== OFFICE ========== -->
 <section id="office" class="section" aria-labelledby="office-title">
-  <!-- Office widget cluster: Competence stacked above Tenure -->
-  <div class="cp-widgets-office">
-    <div class="cp-widget" id="cpWidgetOffice">
-      <div class="cp-widget-label">Competence</div>
-      <div class="cp-ring-wrap">
-        <svg viewBox="0 0 80 80" width="80" height="80">
-          <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3.5"/>
-          <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(201,161,74,0.8)" stroke-width="3.5"
-            stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="188.5"
-            transform="rotate(-90 40 40)" id="cpArcOffice"/>
-        </svg>
-        <div class="cp-ring-inner"><span class="cp-ring-level" id="cpLevelOffice">0</span></div>
-      </div>
-      <div class="cp-ring-title" id="cpRingTitleOffice"></div>
-      <div class="cp-widget-sub" id="cpSubOffice">0 / 10</div>
-      <div class="cp-tooltip">
-        <div class="cp-tooltip-title" id="cpTitleOffice">—</div>
-        <div class="cp-tooltip-row" id="cpRow1Office">Level 0</div>
-        <div class="cp-tooltip-row" id="cpRow2Office">0 CP Total</div>
-        <div class="cp-tooltip-row" id="cpRow3Office">0 / 10 to Level 1</div>
-        <div class="cp-tooltip-msg" id="cpMsgOffice">Begin your discipline.</div>
-      </div>
-    </div>
-    <div class="cp-widget" id="tpWidgetOffice">
-      <div class="cp-widget-label">Tenure</div>
-      <div class="cp-ring-wrap">
-        <svg viewBox="0 0 80 80" width="80" height="80">
-          <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3.5"/>
-          <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(201,161,74,0.8)" stroke-width="3.5"
-            stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="188.5"
-            transform="rotate(-90 40 40)" id="tpArcOffice"/>
-        </svg>
-        <div class="cp-ring-inner"><span class="cp-ring-level" id="tpLevelOffice">0</span></div>
-      </div>
-      <div class="cp-ring-title" id="tpRingTitleOffice"></div>
-      <div class="cp-widget-sub" id="tpSubOffice">0 streak</div>
-      <div class="cp-tooltip">
-        <div class="cp-tooltip-title" id="tpTitleOffice">—</div>
-        <div class="cp-tooltip-row" id="tpRow1Office">Level 0</div>
-        <div class="cp-tooltip-row" id="tpRow2Office">0 TP Total</div>
-        <div class="cp-tooltip-row" id="tpRow3Office">0 streak · next at 5</div>
-        <div class="cp-tooltip-msg" id="tpMsgOffice">Begin your streak.</div>
-      </div>
-    </div>
-    <!-- Streak pip display: 5 pips cycling, lit = days into current 5-day segment -->
-    <div class="tp-streak-display" id="tpStreakDisplay">
-      <div class="tp-streak-bar">
-        <div class="tp-streak-pip" id="tpPip0"></div>
-        <div class="tp-streak-pip" id="tpPip1"></div>
-        <div class="tp-streak-pip" id="tpPip2"></div>
-        <div class="tp-streak-pip" id="tpPip3"></div>
-        <div class="tp-streak-pip" id="tpPip4"></div>
-      </div>
-      <div class="tp-streak-count" id="tpStreakCount">0 day streak</div>
-      <div class="tp-streak-label" id="tpStreakNext">next point at 5</div>
-    </div>
-  </div>
-
   <div class="section-inner">
     <p class="section-eyebrow">OFFICE</p>
     <header class="today-module">
@@ -2669,8 +2596,25 @@
       <div class="steward-sub">Household &middot; Finances &middot; Logistics</div>
     </a>
 
-    <!-- CP Monthly Heatmap -->
-    <div class="cp-month-heatmap" id="cpMonthHeatmap"></div>
+    <!-- In-place completion overlay: replaces task lists once the day is set -->
+    <div class="oc-panel" id="officeCompletePanel" aria-live="polite">
+      <div class="oc-eyebrow">First Things First &middot; Complete</div>
+      <div class="oc-title">The day&rsquo;s foundation is set.</div>
+      <div class="oc-grid">
+        <div class="oc-figs">
+          <div class="oc-fig"><span class="oc-num" id="ocTotal">0</span><span class="oc-lab">Days Complete</span></div>
+          <div class="oc-fig"><span class="oc-num" id="ocStreak">0</span><span class="oc-lab">Current Streak</span></div>
+          <div class="oc-fig"><span class="oc-num" id="ocLongest">0</span><span class="oc-lab">Longest Streak</span></div>
+          <div class="oc-fig"><span class="oc-num" id="ocRate">0%</span><span class="oc-lab">Lifetime Rate</span></div>
+        </div>
+        <div class="oc-heatmap-wrap"><div id="ocHeatmap"></div></div>
+      </div>
+      <div class="oc-bars">
+        <div class="oc-bar-row"><div class="oc-bar-head"><span id="ocCycleLab">Cycle &middot; Week 1 of 12</span><span id="ocCyclePct">0%</span></div><div class="oc-bar-track"><div class="oc-bar-fill" id="ocCycleFill"></div></div></div>
+        <div class="oc-bar-row"><div class="oc-bar-head"><span id="ocConsLab">Consistency &middot; Level 0</span><span id="ocConsPct">0%</span></div><div class="oc-bar-track"><div class="oc-bar-fill" id="ocConsFill"></div></div></div>
+      </div>
+      <div class="oc-next"><span class="oc-next-lock">&#10003;</span> Emotional Intentionality unlocked</div>
+    </div>
 
   </div>
 </section>
@@ -2820,75 +2764,46 @@
       </div>
 
     </div>
-
-    <div class="cp-widget-stats-wrap">
-      <div class="cp-widget" id="cpWidgetStats">
-        <div class="cp-widget-label">Competence</div>
-        <div class="cp-ring-wrap">
-          <svg viewBox="0 0 80 80" width="80" height="80">
-            <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3.5"/>
-            <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(201,161,74,0.8)" stroke-width="3.5"
-              stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="188.5"
-              transform="rotate(-90 40 40)" id="cpArcStats"/>
-          </svg>
-          <div class="cp-ring-inner"><span class="cp-ring-level" id="cpLevelStats">0</span></div>
-        </div>
-        <div class="cp-ring-title" id="cpRingTitleStats"></div>
-        <div class="cp-widget-sub" id="cpSubStats">0 / 10</div>
-        <div class="cp-tooltip">
-          <div class="cp-tooltip-title" id="cpTitleStats">—</div>
-          <div class="cp-tooltip-row" id="cpRow1Stats">Level 0</div>
-          <div class="cp-tooltip-row" id="cpRow2Stats">0 CP Total</div>
-          <div class="cp-tooltip-row" id="cpRow3Stats">0 / 10 to Level 1</div>
-          <div class="cp-tooltip-msg" id="cpMsgStats">Begin your discipline.</div>
-        </div>
-      </div>
-      <div class="cp-widget" id="tpWidgetStats">
-        <div class="cp-widget-label">Tenure</div>
-        <div class="cp-ring-wrap">
-          <svg viewBox="0 0 80 80" width="80" height="80">
-            <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3.5"/>
-            <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(201,161,74,0.8)" stroke-width="3.5"
-              stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="188.5"
-              transform="rotate(-90 40 40)" id="tpArcStats"/>
-          </svg>
-          <div class="cp-ring-inner"><span class="cp-ring-level" id="tpLevelStats">0</span></div>
-        </div>
-        <div class="cp-ring-title" id="tpRingTitleStats"></div>
-        <div class="cp-widget-sub" id="tpSubStats">0 streak</div>
-        <div class="cp-tooltip">
-          <div class="cp-tooltip-title" id="tpTitleStats">—</div>
-          <div class="cp-tooltip-row" id="tpRow1Stats">Level 0</div>
-          <div class="cp-tooltip-row" id="tpRow2Stats">0 TP Total</div>
-          <div class="cp-tooltip-row" id="tpRow3Stats">0 streak · next at 5</div>
-          <div class="cp-tooltip-msg" id="tpMsgStats">Begin your streak.</div>
-        </div>
-      </div>
-    </div>
   </div>
 </section>
 
-<!-- COMPETENCE MODAL -->
-<div class="cp-modal-overlay" id="cpModal" role="dialog" aria-modal="true">
-  <div class="cp-modal-box">
-    <div class="cp-modal-icon">✦</div>
-    <div class="cp-modal-heading">Competence Point Earned</div>
-    <div class="cp-modal-points">+1 Competence Point</div>
-    <div class="cp-modal-body" id="cpModalBody">Daily completion of all difficult tasks and routine habits builds competence as a man over time. You are demonstrating to your son what it looks like to be a man who follows through with his plans.</div>
-    <div class="cp-modal-stats" id="cpModalStats"></div>
-    <button class="cp-modal-btn" id="cpModalClose">Acknowledged</button>
-  </div>
-</div>
+<!-- FIRST THINGS FIRST · COMPLETION -->
+<div class="fc-overlay" id="completionModal" role="dialog" aria-modal="true" aria-label="First Things First complete">
+  <div class="fc-box">
 
-<!-- TENURE MODAL -->
-<div class="cp-modal-overlay" id="tpModal" role="dialog" aria-modal="true">
-  <div class="cp-modal-box">
-    <div class="cp-modal-icon">◈</div>
-    <div class="cp-modal-heading">Tenure Point Earned</div>
-    <div class="cp-modal-points" id="tpModalPoints">+1 Tenure Point</div>
-    <div class="cp-modal-body" id="tpModalBody">Sustained consistency over time is the rarest quality in academic life. Every streak you build is evidence of the character that will define your career — and the example your son will inherit.</div>
-    <div class="cp-modal-stats" id="tpModalStats"></div>
-    <button class="cp-modal-btn" id="tpModalClose">Acknowledged</button>
+    <div class="fc-beat fc-notice-beat">
+      <div class="fc-eyebrow">First Things First</div>
+      <div class="fc-heading">The Foundation Is Set</div>
+      <div class="fc-sub" id="fcDate">&mdash;</div>
+    </div>
+
+    <div class="fc-beat fc-analytics-beat" id="fcAnalytics">
+      <div class="fc-heatmap-wrap"><div id="fcHeatmap"></div></div>
+      <div class="fc-figs">
+        <div class="fc-fig"><span class="fc-fig-num" id="fcTotal">0</span><span class="fc-fig-lab">Days Complete</span></div>
+        <div class="fc-fig"><span class="fc-fig-num" id="fcStreak">0</span><span class="fc-fig-lab">Current Streak</span></div>
+        <div class="fc-fig"><span class="fc-fig-num" id="fcLongest">0</span><span class="fc-fig-lab">Longest Streak</span></div>
+      </div>
+      <div class="fc-bars">
+        <div class="fc-bar-row"><div class="fc-bar-head"><span id="fcCycleLab">Cycle &middot; Week 1 of 12</span><span id="fcCyclePct">0%</span></div><div class="fc-bar-track"><div class="fc-bar-fill" id="fcCycleFill"></div></div></div>
+        <div class="fc-bar-row"><div class="fc-bar-head"><span id="fcConsLab">Consistency &middot; Level 0</span><span id="fcConsPct">0 / 10</span></div><div class="fc-bar-track"><div class="fc-bar-fill" id="fcConsFill"></div></div></div>
+      </div>
+      <div class="fc-cons-title" id="fcConsTitle"></div>
+      <div class="fc-message" id="fcMessage"></div>
+    </div>
+
+    <div class="fc-beat fc-unlock-beat" id="fcUnlock">
+      <svg class="fc-lock" id="fcLock" viewBox="0 0 64 80" width="52" height="65" aria-hidden="true">
+        <g class="fc-shackle"><path d="M18 34 V22 a14 14 0 0 1 28 0 V34" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></g>
+        <rect class="fc-lock-body" x="12" y="34" width="40" height="34" rx="6" fill="currentColor"/>
+        <circle class="fc-lock-hole" cx="32" cy="49" r="4"/>
+        <rect class="fc-lock-hole" x="30.5" y="49" width="3" height="9" rx="1.5"/>
+      </svg>
+      <div class="fc-unlock-label">Next Unlocked</div>
+      <div class="fc-unlock-name">Emotional Intentionality</div>
+    </div>
+
+    <button class="fc-ack" id="fcAck" type="button" disabled>Take it in&hellip;</button>
   </div>
 </div>
 
@@ -3012,34 +2927,9 @@
   }
 
   function awardReviewBonus(reviewId) {
-    // Bonus CP: fire addCP only if not already earned for this review today
+    // Records the domain review as done for today (local only). No points system.
     if (reviewBonusEarnedToday(reviewId)) return;
     markReviewBonusEarned(reviewId);
-    const today = todayISO();
-    // addCP — GAS is idempotent per day for normal CP, but review bonus is extra
-    // Use a dedicated bonus action key to avoid conflating with daily CP
-    // For now: fire addCP directly (GAS idempotency on lastEarned === today blocks double)
-    // so we manually bump local and sync
-    if (APPS_SCRIPT_URL) {
-      fetch(APPS_SCRIPT_URL + '?action=addReviewBonus&reviewId=' + encodeURIComponent(reviewId) + '&date=' + encodeURIComponent(today) + '&_=' + Date.now(), { cache:'no-store', redirect:'follow' })
-        .then(r => r.ok ? r.json() : Promise.reject())
-        .then(remote => {
-          if (typeof remote.totalCP === 'number') {
-            var remoteLog = Array.isArray(remote.log) ? remote.log : (remote.log ? String(remote.log).split(',').filter(Boolean) : []);
-            saveCPData({ totalCP: remote.totalCP, lastEarned: remote.lastEarned || today, log: remoteLog });
-            renderCPWidgets();
-          }
-          if (typeof remote.totalTP === 'number') {
-            saveTPData({ totalTP: remote.totalTP, streak: remote.streak || 0, lastComplete: remote.lastComplete || null });
-            renderTPWidgets();
-          }
-        })
-        .catch(() => {
-          // Offline fallback: bump locally
-          var cp = loadCPData(); cp.totalCP = (cp.totalCP||0)+1; saveCPData(cp); renderCPWidgets();
-          var tp = loadTPData(); tp.totalTP = (tp.totalTP||0)+1; saveTPData(tp); renderTPWidgets();
-        });
-    }
   }
 
   function makeTile(reviewId, title, clickFn) {
@@ -3964,8 +3854,7 @@
       const tog = head.querySelector('.rh-toggle');
       if (tog) tog.textContent = '+';
     }
-    checkForCP();
-    checkForTP();
+    checkDayComplete();
     updateOfficeNotif();
   }
 
@@ -4081,182 +3970,269 @@
     if (lv >= 1)  return 'Every task completed today is a stone in the foundation your son will stand on.';
     return 'Begin your discipline. Every consistent man started with a single completed day.';
   }
-  function loadCPData() {
-    try { return JSON.parse(localStorage.getItem(CP_KEY) || 'null') || { totalCP:0, lastEarned:null, log:[] }; }
-    catch(_) { return { totalCP:0, lastEarned:null, log:[] }; }
-  }
-  function saveCPData(d) { try { localStorage.setItem(CP_KEY, JSON.stringify(d)); } catch(_) {} }
+  // ============================================================
+  // COMPLETION LEDGER  single source of truth, cross-device.
+  // Day 1 = 2026-08-06. One ISO date per completed day, deduped.
+  // Consistency (level system), streaks, cycle stats all derive from it.
+  // ============================================================
+  const LEDGER_KEY = 'stewlab-ledger';
+  const DAY_ONE    = '2026-08-06';
+  const FC_SHOWN_PREFIX = 'stewlab-fc-shown-';
+  const FC_ACK_PREFIX   = 'stewlab-fc-ack-';
+
   function todayISO() {
     const d = new Date();
     return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
   }
+  function isoFromDate(d) {
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+  function isoOffset(days) { const d = new Date(); d.setDate(d.getDate() + days); return isoFromDate(d); }
 
-  function renderCPMonthHeatmap() {
-    const wrap = document.getElementById('cpMonthHeatmap');
-    if (!wrap) return;
-    const data  = loadCPData();
-    const log   = new Set(data.log || []);
-    const now   = new Date();
-    const year  = now.getFullYear();
-    const month = now.getMonth();
-    const todayStr = todayISO();
-    const monthName = now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const firstDow = new Date(year, month, 1).getDay();
-    const earnedThisMonth = Array.from({length: daysInMonth}, (_, i) => {
-      const d = year + '-' + String(month+1).padStart(2,'0') + '-' + String(i+1).padStart(2,'0');
-      return log.has(d) ? 1 : 0;
-    }).reduce((a, b) => a + b, 0);
-    const dows = ['S','M','T','W','T','F','S'];
-    let html = `<div class="cp-heatmap-header">
-      <span class="cp-heatmap-month">${monthName}</span>
-      <span class="cp-heatmap-tally">${earnedThisMonth} / ${now.getDate()} days</span>
-    </div><div class="cp-heatmap-grid">`;
-    dows.forEach(d => { html += `<div class="cp-heatmap-dow">${d}</div>`; });
-    for (let i = 0; i < firstDow; i++) html += `<div class="cp-heatmap-cell future"></div>`;
-    for (let day = 1; day <= daysInMonth; day++) {
-      const iso = year + '-' + String(month+1).padStart(2,'0') + '-' + String(day).padStart(2,'0');
-      const isToday  = iso === todayStr;
-      const isFuture = iso > todayStr;
-      const isEarned = log.has(iso);
-      let cls = 'cp-heatmap-cell';
-      if (isFuture) cls += ' future';
-      if (isEarned) cls += ' earned';
-      if (isToday)  cls += ' today';
-      html += `<div class="${cls}"></div>`;
+  function dedupeLedger(arr) {
+    return Array.from(new Set((arr || []).map(function(x){ return String(x).trim(); })
+             .filter(function(x){ return x && x >= DAY_ONE; }))).sort();
+  }
+  function loadLedger() {
+    try { const a = JSON.parse(localStorage.getItem(LEDGER_KEY) || '[]'); return dedupeLedger(Array.isArray(a) ? a : []); }
+    catch(_) { return []; }
+  }
+  function saveLedger(arr) { try { localStorage.setItem(LEDGER_KEY, JSON.stringify(dedupeLedger(arr))); } catch(_) {} }
+
+  // ---- derived metrics (everything the analytics show) ----
+  function ledgerMetrics() {
+    const dates = loadLedger();
+    const set   = new Set(dates);
+    const total = dates.length;
+
+    // current streak  consecutive days ending today (or yesterday if today not yet done)
+    let streak = 0;
+    let anchor = set.has(todayISO()) ? todayISO() : (set.has(isoOffset(-1)) ? isoOffset(-1) : null);
+    if (anchor) {
+      let c = new Date(anchor + 'T00:00:00');
+      while (true) { const iso = isoFromDate(c); if (set.has(iso) && iso >= DAY_ONE) { streak++; c.setDate(c.getDate()-1); } else break; }
     }
-    html += `</div>`;
-    wrap.innerHTML = html;
-  }
 
-  function renderCPWidgets() {
-    const data = loadCPData();
-    const total = data.totalCP || 0;
-    const lv    = levelFromCP(total);
-    const title = cpTitle(lv);
-    const inLv  = cpInLevel(total);
-    const toNext = lv < 99 ? cpCost(lv + 1) : null;
-    const circ  = 188.5;
-    const pct   = toNext ? inLv / toNext : 1;
-    const offset = circ * (1 - pct);
-    ['Office','Stats'].forEach(sfx => {
-      const widget = document.getElementById('cpWidget' + sfx);
-      if (!widget) return;
-      if (total > 0) widget.classList.add('earned');
-      const arc = document.getElementById('cpArc' + sfx);
-      if (arc) arc.setAttribute('stroke-dashoffset', offset.toFixed(1));
-      const lvEl = document.getElementById('cpLevel' + sfx);
-      if (lvEl) lvEl.textContent = lv;
-      const subEl = document.getElementById('cpSub' + sfx);
-      if (subEl) subEl.textContent = lv < 99 ? inLv + ' / ' + toNext : total + ' CP';
-      const ringTitleEl = document.getElementById('cpRingTitle' + sfx);
-      if (ringTitleEl) { ringTitleEl.textContent = title; ringTitleEl.style.display = title ? '' : 'none'; }
-      const titleEl = document.getElementById('cpTitle' + sfx);
-      if (titleEl) titleEl.textContent = 'Competence Level ' + lv;
-      const r1 = document.getElementById('cpRow1' + sfx);
-      if (r1) r1.textContent = 'Level ' + lv + (title ? ' — ' + title : '');
-      const r2 = document.getElementById('cpRow2' + sfx);
-      if (r2) r2.textContent = total + ' CP Total';
-      const r3 = document.getElementById('cpRow3' + sfx);
-      if (r3) r3.textContent = lv < 99 ? inLv + ' / ' + toNext + ' to Level ' + (lv+1) : 'Max Level Reached';
-      const msgEl = document.getElementById('cpMsg' + sfx);
-      if (msgEl) msgEl.textContent = cpMessage(lv);
+    // longest streak ever
+    let longest = 0, run = 0, prev = null;
+    dates.forEach(function(iso){
+      if (prev) { const pd = new Date(prev + 'T00:00:00'); pd.setDate(pd.getDate()+1); run = (iso === isoFromDate(pd)) ? run + 1 : 1; }
+      else run = 1;
+      if (run > longest) longest = run; prev = iso;
     });
-    renderCPMonthHeatmap();
-  }
 
-  function showCPModal(data) {
-    const modal  = document.getElementById('cpModal');
-    const stats  = document.getElementById('cpModalStats');
-    const body   = document.getElementById('cpModalBody');
-    if (!modal) return;
-    const total  = data.totalCP;
+    // lifetime rate since Day 1
+    const day1 = new Date(DAY_ONE + 'T00:00:00');
+    const now  = new Date();
+    const daysSince = Math.max(1, Math.floor((now - day1) / 86400000) + 1);
+    const rate = Math.round(total / daysSince * 100);
+
+    // 12-week cycle  anchored to PHYSIQUE ACADEMY program (via _splashData), 84 days
+    const sd = window._splashData || {};
+    const weekNum = Math.min(12, Math.max(1, sd.weekNum || 1));
+    const dayNum  = Math.min(84, Math.max(1, sd.dayNum  || 1));
+    const cycleEnd = new Date(day1.getTime() + 84 * 86400000);
+    const inCycle = dates.filter(function(iso){ const d = new Date(iso + 'T00:00:00'); return d >= day1 && d < cycleEnd; }).length;
+    const cyclePct = Math.min(100, Math.round(inCycle / dayNum * 100));
+
+    // consistency level (reuse quadratic curve; 1 pt per completed day)
     const lv     = levelFromCP(total);
     const title  = cpTitle(lv);
     const inLv   = cpInLevel(total);
     const toNext = lv < 99 ? cpCost(lv + 1) : null;
-    if (body) body.textContent = 'Daily completion of all difficult tasks and routine habits builds competence as a man over time. You are demonstrating to your son what it looks like to be a man who follows through with his plans.';
-    if (stats) stats.innerHTML =
-      'Total CP &nbsp; <span>' + total + '</span><br>' +
-      'Level &nbsp; <span>' + lv + (title ? ' — ' + title : '') + '</span><br>' +
-      (toNext ? 'Progress &nbsp; <span>' + inLv + ' / ' + toNext + ' to Level ' + (lv+1) + '</span>' : '<span>Max Level</span>');
-    modal.classList.add('open');
-    document.getElementById('cpModalClose').focus();
+    const lvPct  = toNext ? Math.round(inLv / toNext * 100) : 100;
+
+    return { total:total, streak:streak, longest:longest, rate:rate, daysSince:daysSince,
+             weekNum:weekNum, dayNum:dayNum, inCycle:inCycle, cyclePct:cyclePct,
+             lv:lv, title:title, inLv:inLv, toNext:toNext, lvPct:lvPct, message:cpMessage(lv) };
   }
 
-  // Sheets = single source of truth. Always overwrite local from Sheets on load.
-  // Earn = server-side atomic addCP. No local-wins branch, no setCP.
-  let _cpSheetsReady = false;
-  let _cpCheckQueued = false;
+  // ---- month heatmap (fed by the ledger) ----
+  function renderHeatmapInto(elId) {
+    const wrap = document.getElementById(elId);
+    if (!wrap) return;
+    const log = new Set(loadLedger());
+    const now = new Date();
+    const year = now.getFullYear(), month = now.getMonth();
+    const todayStr = todayISO();
+    const monthName = now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const firstDow = new Date(year, month, 1).getDay();
+    let earned = 0;
+    for (let i = 1; i <= now.getDate(); i++) { const d = year + '-' + String(month+1).padStart(2,'0') + '-' + String(i).padStart(2,'0'); if (log.has(d)) earned++; }
+    const dows = ['S','M','T','W','T','F','S'];
+    let html = '<div class="cp-heatmap-header"><span class="cp-heatmap-month">' + monthName + '</span><span class="cp-heatmap-tally">' + earned + ' / ' + now.getDate() + ' days</span></div><div class="cp-heatmap-grid">';
+    dows.forEach(function(d){ html += '<div class="cp-heatmap-dow">' + d + '</div>'; });
+    for (let i = 0; i < firstDow; i++) html += '<div class="cp-heatmap-cell future"></div>';
+    for (let day = 1; day <= daysInMonth; day++) {
+      const iso = year + '-' + String(month+1).padStart(2,'0') + '-' + String(day).padStart(2,'0');
+      let cls = 'cp-heatmap-cell';
+      if (iso > todayStr) cls += ' future';
+      if (log.has(iso))   cls += ' earned';
+      if (iso === todayStr) cls += ' today';
+      html += '<div class="' + cls + '"></div>';
+    }
+    html += '</div>';
+    wrap.innerHTML = html;
+  }
 
-  function loadCPFromSheets() {
-    if (!APPS_SCRIPT_URL) { _cpSheetsReady = true; return; }
-    var bust = '&_=' + Date.now();
-    fetch(APPS_SCRIPT_URL + '?action=getCP' + bust, { cache: 'no-store', redirect: 'follow' })
-      .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
-      .then(function(remote) {
-        // CP — always overwrite local from Sheets unconditionally
-        if (typeof remote.totalCP === 'number') {
-          var remoteLog = Array.isArray(remote.log) ? remote.log
-                        : (remote.log ? String(remote.log).split(',').filter(Boolean) : []);
-          saveCPData({ totalCP: remote.totalCP, lastEarned: remote.lastEarned || null, log: remoteLog });
-          renderCPWidgets();
-        }
-        // TP — same response hydrates TP too
-        if (typeof remote.totalTP === 'number') {
-          saveTPData({ totalTP: remote.totalTP, streak: remote.streak || 0, lastComplete: remote.lastComplete || null });
-          renderTPWidgets();
-          _tpSheetsReady = true;
-          if (_tpCheckQueued) { _tpCheckQueued = false; checkForTP(); }
-        }
-        _cpSheetsReady = true;
-        if (_cpCheckQueued) { _cpCheckQueued = false; checkForCP(); }
-      })
-      .catch(function() {
-        _cpSheetsReady = true;
-        _tpSheetsReady = true;
-        if (_cpCheckQueued) { _cpCheckQueued = false; checkForCP(); }
-        if (_tpCheckQueued) { _tpCheckQueued = false; checkForTP(); }
+  // ---- cloud sync (authoritative for cross-device consistency) ----
+  let _ledgerReady = false;
+  let _completionQueued = false;
+
+  function _mergeRemote(remote) {
+    const list = Array.isArray(remote.completions) ? remote.completions
+               : (remote.completions ? String(remote.completions).split(',') : []);
+    saveLedger(dedupeLedger([].concat(loadLedger(), list)));
+  }
+
+  function loadLedgerFromSheets() {
+    if (!APPS_SCRIPT_URL) { _ledgerReady = true; refreshLedgerUI(); maybeShowCompleteOnLoad(); if (_completionQueued) { _completionQueued = false; checkDayComplete(); } return; }
+    fetch(APPS_SCRIPT_URL + '?action=getCompletions&_=' + Date.now(), { cache: 'no-store', redirect: 'follow' })
+      .then(function(r){ return r.ok ? r.json() : Promise.reject(); })
+      .then(function(remote){ _mergeRemote(remote); })
+      .catch(function(){})
+      .then(function(){
+        _ledgerReady = true;
+        refreshLedgerUI();
+        maybeShowCompleteOnLoad();
+        if (_completionQueued) { _completionQueued = false; checkDayComplete(); }
       });
   }
 
-  function checkForCP() {
-    const routines  = document.querySelectorAll('.routine[data-window]');
-    const allDone   = routines.length > 0 && Array.from(routines).every(r => r.classList.contains('section-complete'));
-    const stewardOk = _stewardActionCount !== null && _stewardActionCount === 0;
-    if (!allDone || !stewardOk) return;
-    if (!_cpSheetsReady) { _cpCheckQueued = true; return; }
-    const data  = loadCPData();
+  function recordCompletion() {
     const today = todayISO();
-    if (data.lastEarned === today) return;
-    // Mark locally first to block duplicate fires
-    data.lastEarned = today;
-    data.log = [...(data.log || []), today].slice(-3650);
-    saveCPData(data);
+    const led = loadLedger();
+    if (led.indexOf(today) === -1) { led.push(today); saveLedger(led); }
+    refreshLedgerUI();
     if (APPS_SCRIPT_URL) {
-      fetch(APPS_SCRIPT_URL + '?action=addCP&date=' + encodeURIComponent(today) + '&_=' + Date.now(), { cache: 'no-store', redirect: 'follow' })
-        .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
-        .then(function(remote) {
-          if (typeof remote.totalCP === 'number') {
-            var remoteLog = Array.isArray(remote.log) ? remote.log
-                          : (remote.log ? String(remote.log).split(',').filter(Boolean) : []);
-            saveCPData({ totalCP: remote.totalCP, lastEarned: remote.lastEarned || today, log: remoteLog });
-            renderCPWidgets(); showCPModal(loadCPData());
-          }
-        })
-        .catch(function() {
-          var d = loadCPData(); d.totalCP = (d.totalCP || 0) + 1;
-          saveCPData(d); renderCPWidgets(); showCPModal(d);
-        });
-    } else {
-      data.totalCP = (data.totalCP || 0) + 1;
-      saveCPData(data); renderCPWidgets(); showCPModal(data);
+      fetch(APPS_SCRIPT_URL + '?action=addCompletion&date=' + encodeURIComponent(today) + '&_=' + Date.now(), { cache: 'no-store' })
+        .then(function(r){ return r.ok ? r.json() : Promise.reject(); })
+        .then(function(remote){ _mergeRemote(remote); refreshLedgerUI(); })
+        .catch(function(){});
     }
   }
 
-  document.getElementById('cpModalClose').addEventListener('click', () => {
-    document.getElementById('cpModal').classList.remove('open');
-  });
+  function refreshLedgerUI() {
+    const panel = document.getElementById('officeCompletePanel');
+    if (panel && panel.classList.contains('shown')) renderOfficeCompletePanel();
+  }
+
+  // ---- completion gate ----
+  function dayGateMet() {
+    const routines = document.querySelectorAll('.routine[data-window]');
+    const allDone  = routines.length > 0 && Array.from(routines).every(function(r){ return r.classList.contains('section-complete'); });
+    const stewardOk = _stewardActionCount !== null && _stewardActionCount === 0;
+    return allDone && stewardOk;
+  }
+
+  function checkDayComplete() {
+    if (!dayGateMet()) return;
+    if (!_ledgerReady) { _completionQueued = true; return; }
+    const today = todayISO();
+    recordCompletion();                    // idempotent: counts once, globally
+    if (localStorage.getItem(FC_SHOWN_PREFIX + today) === '1') { showOfficeCompleteOverlay(true); return; }
+    localStorage.setItem(FC_SHOWN_PREFIX + today, '1');
+    showCompletionModal();                 // cosmetic, per-device
+  }
+
+  // On any device where the cloud already shows today complete: show the
+  // stats overlay directly (no modal)  identical state everywhere.
+  function maybeShowCompleteOnLoad() {
+    const today = todayISO();
+    if (loadLedger().indexOf(today) !== -1) {
+      localStorage.setItem(FC_SHOWN_PREFIX + today, '1');
+      showOfficeCompleteOverlay(true);
+    }
+  }
+  function initCompletionState() { maybeShowCompleteOnLoad(); }
+
+  // ---- staged completion modal ----
+  let _fcT1, _fcT2, _fcT3, _fcT4;
+  function _fcDateLabel() {
+    const d = new Date();
+    const MO = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const DA = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    return DA[d.getDay()] + '  ' + MO[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+  }
+  function _countUp(id, target) {
+    const el = document.getElementById(id); if (!el) return;
+    const dur = 900, t0 = performance.now();
+    function step(t){ const p = Math.min(1, (t - t0) / dur); el.textContent = Math.round(p * target); if (p < 1) requestAnimationFrame(step); }
+    requestAnimationFrame(step);
+  }
+  function fillCompletionModal(m) {
+    setText('fcDate', _fcDateLabel());
+    setText('fcTotal', 0); setText('fcStreak', 0); setText('fcLongest', 0);
+    setText('fcCycleLab', 'Cycle \u00b7 Week ' + m.weekNum + ' of 12');
+    setText('fcCyclePct', m.cyclePct + '%');
+    setText('fcConsLab', 'Consistency \u00b7 Level ' + m.lv + (m.title ? ' \u00b7 ' + m.title : ''));
+    setText('fcConsPct', m.toNext ? (m.inLv + ' / ' + m.toNext) : 'Max');
+    setText('fcConsTitle', m.title || 'Aspirant');
+    setText('fcMessage', m.message);
+    renderHeatmapInto('fcHeatmap');
+    const cf = document.getElementById('fcCycleFill'); if (cf) cf.style.width = '0';
+    const kf = document.getElementById('fcConsFill');  if (kf) kf.style.width = '0';
+  }
+  function animateCompletionModal(m) {
+    _countUp('fcTotal', m.total); _countUp('fcStreak', m.streak); _countUp('fcLongest', m.longest);
+    requestAnimationFrame(function(){
+      const cf = document.getElementById('fcCycleFill'); if (cf) cf.style.width = m.cyclePct + '%';
+      const kf = document.getElementById('fcConsFill');  if (kf) kf.style.width = m.lvPct + '%';
+    });
+  }
+  function showCompletionModal() {
+    const modal = document.getElementById('completionModal');
+    if (!modal) return;
+    const m = ledgerMetrics();
+    fillCompletionModal(m);
+    const lock = document.getElementById('fcLock'); if (lock) lock.classList.remove('unlocked');
+    modal.classList.remove('reveal-analytics','reveal-unlock','ready');
+    modal.classList.add('open','reveal-notice');
+    document.body.style.overflow = 'hidden';
+    clearTimeout(_fcT1); clearTimeout(_fcT2); clearTimeout(_fcT3); clearTimeout(_fcT4);
+    _fcT1 = setTimeout(function(){ modal.classList.add('reveal-analytics'); animateCompletionModal(m); }, 1100);
+    _fcT2 = setTimeout(function(){ modal.classList.add('reveal-unlock'); }, 3300);
+    _fcT3 = setTimeout(function(){ if (lock) lock.classList.add('unlocked'); }, 4050);
+    _fcT4 = setTimeout(function(){ modal.classList.add('ready'); }, 5800);   // enforced beat after the unlock lands
+  }
+
+  // ---- in-place office overlay (stats replace task lists) ----
+  function renderOfficeCompletePanel() {
+    const m = ledgerMetrics();
+    setText('ocTotal', m.total); setText('ocStreak', m.streak); setText('ocLongest', m.longest); setText('ocRate', m.rate + '%');
+    setText('ocCycleLab', 'Cycle \u00b7 Week ' + m.weekNum + ' of 12');
+    setText('ocCyclePct', m.cyclePct + '%');
+    setText('ocConsLab', 'Consistency \u00b7 Level ' + m.lv + (m.title ? ' \u00b7 ' + m.title : ''));
+    setText('ocConsPct', m.toNext ? (m.inLv + ' / ' + m.toNext) : 'Max');
+    renderHeatmapInto('ocHeatmap');
+    requestAnimationFrame(function(){
+      const cf = document.getElementById('ocCycleFill'); if (cf) cf.style.width = m.cyclePct + '%';
+      const kf = document.getElementById('ocConsFill');  if (kf) kf.style.width = m.lvPct + '%';
+    });
+  }
+  function showOfficeCompleteOverlay() {
+    const office = document.getElementById('office');
+    const panel  = document.getElementById('officeCompletePanel');
+    if (!office || !panel) return;
+    office.querySelectorAll('.routine[data-window]').forEach(function(r){ r.style.display = 'none'; });
+    const steward = document.getElementById('stewardBtn'); if (steward) steward.style.display = 'none';
+    panel.classList.add('shown');
+    renderOfficeCompletePanel();
+  }
+
+  (function wireCompletionModal(){
+    const modal = document.getElementById('completionModal');
+    const ack   = document.getElementById('fcAck');
+    if (ack && modal) ack.addEventListener('click', function(){
+      if (!modal.classList.contains('ready')) return;   // no brute-forcing
+      localStorage.setItem(FC_ACK_PREFIX + todayISO(), '1');
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+      showOfficeCompleteOverlay();
+    });
+    // backdrop / escape do NOT close  the sequence must play through
+  })();
 
   // ============================================================
   // DOMAIN HEALTH RINGS
@@ -4553,8 +4529,7 @@
         el.classList.add('loaded');
         if (btn) btn.classList.add('no-actions');
         _stewardActionCount = 0;
-        checkForCP();
-        checkForTP();
+        checkDayComplete();
       } else if (count !== null && count > 0) {
         el.textContent = '\u2014 ' + count + ' REMAINING ACTION' + (count !== 1 ? 'S' : '') + ' FOR TODAY';
         el.classList.add('loaded');
@@ -4592,11 +4567,9 @@
   loadCalendarEvents();
   setInterval(loadCalendarEvents, 10 * 60 * 1000);
   loadStewardCount();
-  renderCPWidgets();
-  loadCPFromSheets();
-  setInterval(loadCPFromSheets, 60 * 1000);
-  renderTPWidgets();
-  // TP is hydrated inside loadCPFromSheets via the combined getCP response — no separate poll needed
+  loadLedgerFromSheets();
+  setInterval(loadLedgerFromSheets, 60 * 1000);
+  initCompletionState();
   loadDomainsCSV();
   setInterval(loadDomainsCSV, 15 * 60 * 1000);
   initFinReviewModal();
@@ -4728,192 +4701,7 @@
   // +1 TP every 5 consecutive fully-complete days
   // No punishment on break — next 5-day streak awards next point
   // ============================================================
-  const TP_KEY = 'stewlab-tenure';
 
-  function tpTitle(lv) {
-    if (lv >= 99) return 'Professor';
-    if (lv >= 80) return 'Associate';
-    if (lv >= 60) return 'Fellow';
-    if (lv >= 30) return 'Candidate';
-    if (lv >= 10) return 'Graduate';
-    if (lv >= 1)  return 'Undergraduate';
-    return '';
-  }
-  // Same quadratic cost curve as Competence
-  function tpCost(n) {
-    if (n <= 0) return 0;
-    return Math.floor(10 + 2*(n-1) + CP_C*(n-1)*(n-1));
-  }
-  function tpLevelFromTP(total) {
-    let lv = 0, spent = 0;
-    while (lv < 99) { const cost = tpCost(lv+1); if (spent+cost > total) break; spent+=cost; lv++; }
-    return lv;
-  }
-  function tpInLevel(total) {
-    let lv = 0, spent = 0;
-    while (lv < 99) { const cost = tpCost(lv+1); if (spent+cost > total) return total-spent; spent+=cost; lv++; }
-    return total-spent;
-  }
-  function tpMessage(lv) {
-    if (lv >= 99) return 'A lifetime of unbroken effort. You have earned the highest rank — not by title, but by the daily practice of showing up.';
-    if (lv >= 80) return 'Associate rank. Few reach this without decades of sustained commitment. Wayne will grow up knowing what consistency looks like.';
-    if (lv >= 60) return 'Fellow. You have demonstrated the rare quality that academic careers are built on — not brilliance alone, but sustained presence.';
-    if (lv >= 30) return 'Candidate. The dissertation of your character is being written one day at a time. Stay in the work.';
-    if (lv >= 10) return 'Graduate. You understand now that the work is not a season — it is a permanent condition of the life you have chosen.';
-    if (lv >= 1)  return 'Undergraduate. The first mark of tenure is showing up long enough to prove you belong. Keep the streak.';
-    return 'Tenure is not granted — it is earned through years of consistent presence. Begin your first streak.';
-  }
-  function loadTPData() {
-    try { return JSON.parse(localStorage.getItem(TP_KEY) || 'null') || { totalTP:0, streak:0, lastComplete:null }; }
-    catch(_) { return { totalTP:0, streak:0, lastComplete:null }; }
-  }
-  function saveTPData(d) { try { localStorage.setItem(TP_KEY, JSON.stringify(d)); } catch(_) {} }
-
-  function renderTPWidgets() {
-    const data   = loadTPData();
-    const total  = data.totalTP  || 0;
-    const streak = data.streak   || 0;
-    const lv     = tpLevelFromTP(total);
-    const title  = tpTitle(lv);
-    const inLv   = tpInLevel(total);
-    const toNext = lv < 99 ? tpCost(lv+1) : null;
-    const circ   = 188.5;
-    const pct    = toNext ? inLv/toNext : 1;
-    const offset = circ * (1 - pct);
-
-    // Position in current 5-day segment
-    const segPos = streak % 5; // 0 = just completed a point or no streak
-    const nextAt = segPos === 0 ? 5 : 5 - segPos;
-
-    ['Office','Stats'].forEach(sfx => {
-      const widget = document.getElementById('tpWidget' + sfx);
-      if (!widget) return;
-      if (total > 0 || streak > 0) widget.classList.add('earned');
-      const arc = document.getElementById('tpArc' + sfx);
-      if (arc) arc.setAttribute('stroke-dashoffset', offset.toFixed(1));
-      const lvEl = document.getElementById('tpLevel' + sfx);
-      if (lvEl) lvEl.textContent = lv;
-      const subEl = document.getElementById('tpSub' + sfx);
-      if (subEl) subEl.textContent = streak + ' day streak';
-      const ringTitleEl = document.getElementById('tpRingTitle' + sfx);
-      if (ringTitleEl) { ringTitleEl.textContent = title; ringTitleEl.style.display = title ? '' : 'none'; }
-      const titleEl = document.getElementById('tpTitle' + sfx);
-      if (titleEl) titleEl.textContent = 'Tenure Level ' + lv;
-      const r1 = document.getElementById('tpRow1' + sfx);
-      if (r1) r1.textContent = 'Level ' + lv + (title ? ' — ' + title : '');
-      const r2 = document.getElementById('tpRow2' + sfx);
-      if (r2) r2.textContent = total + ' TP Total';
-      const r3 = document.getElementById('tpRow3' + sfx);
-      if (r3) r3.textContent = streak + ' day streak · next point in ' + nextAt + ' day' + (nextAt!==1?'s':'');
-      const msgEl = document.getElementById('tpMsg' + sfx);
-      if (msgEl) msgEl.textContent = tpMessage(lv);
-    });
-
-    // Pip display in office cluster
-    const display = document.getElementById('tpStreakDisplay');
-    const countEl = document.getElementById('tpStreakCount');
-    const nextEl  = document.getElementById('tpStreakNext');
-    if (display) {
-      if (streak > 0 || total > 0) display.classList.add('visible');
-      // Light pips based on position in current 5-day window
-      const lit = segPos === 0 && streak > 0 ? 5 : segPos;
-      for (let i = 0; i < 5; i++) {
-        const pip = document.getElementById('tpPip' + i);
-        if (pip) pip.classList.toggle('lit', i < lit);
-      }
-    }
-    if (countEl) {
-      countEl.textContent = streak + ' day streak';
-      countEl.classList.toggle('streak-alive', streak > 0);
-    }
-    if (nextEl) {
-      nextEl.textContent = nextAt === 5 && streak > 0
-        ? 'point earned \u2014 new segment'
-        : 'next point in ' + nextAt + ' day' + (nextAt!==1?'s':'');
-    }
-  }
-
-  function showTPModal(data, newLevel) {
-    const modal    = document.getElementById('tpModal');
-    const statsEl  = document.getElementById('tpModalStats');
-    const bodyEl   = document.getElementById('tpModalBody');
-    const pointsEl = document.getElementById('tpModalPoints');
-    if (!modal) return;
-    const total  = data.totalTP;
-    const streak = data.streak;
-    const lv     = tpLevelFromTP(total);
-    const title  = tpTitle(lv);
-    const inLv   = tpInLevel(total);
-    const toNext = lv < 99 ? tpCost(lv+1) : null;
-    if (pointsEl) pointsEl.textContent = '+1 Tenure Point';
-    if (bodyEl)   bodyEl.textContent   = tpMessage(lv);
-    if (statsEl)  statsEl.innerHTML =
-      'Total TP &nbsp; <span>' + total + '</span><br>' +
-      'Level &nbsp; <span>' + lv + (title ? ' — ' + title : '') + '</span><br>' +
-      'Current Streak &nbsp; <span>' + streak + ' days</span><br>' +
-      (toNext ? 'Progress &nbsp; <span>' + inLv + ' / ' + toNext + ' to Level ' + (lv+1) + '</span>' : '<span>Max Level</span>');
-    modal.classList.add('open');
-    document.getElementById('tpModalClose').focus();
-  }
-
-  // TP is hydrated by loadCPFromSheets (combined getCP response).
-  // _tpSheetsReady is set there too. loadTPFromSheets is a no-op stub.
-  let _tpSheetsReady = false;
-  let _tpCheckQueued = false;
-
-  function loadTPFromSheets() {
-    // TP comes from loadCPFromSheets — nothing to do here
-  }
-
-  function checkForTP() {
-    const routines  = document.querySelectorAll('.routine[data-window]');
-    const allDone   = routines.length > 0 && Array.from(routines).every(r => r.classList.contains('section-complete'));
-    const stewardOk = _stewardActionCount !== null && _stewardActionCount === 0;
-    if (!allDone || !stewardOk) return;
-    if (!_tpSheetsReady) { _tpCheckQueued = true; return; }
-    const data  = loadTPData();
-    const today = todayISO();
-    if (data.lastComplete === today) return;
-    // Optimistic local streak for immediate UI
-    const yesterday = (function() {
-      const d = new Date(); d.setDate(d.getDate() - 1);
-      return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-    })();
-    const prevStreak = data.lastComplete === yesterday ? (data.streak || 0) : 0;
-    const newStreak  = prevStreak + 1;
-    const awardTP    = (newStreak % 5 === 0);
-    data.streak = newStreak; data.lastComplete = today;
-    if (awardTP) data.totalTP = (data.totalTP || 0) + 1;
-    saveTPData(data); renderTPWidgets();
-    if (APPS_SCRIPT_URL) {
-      fetch(APPS_SCRIPT_URL + '?action=addTP&date=' + encodeURIComponent(today) + '&_=' + Date.now(), { cache: 'no-store', redirect: 'follow' })
-        .then(r => r.ok ? r.json() : Promise.reject())
-        .then(remote => {
-          if (typeof remote.totalTP === 'number') {
-            saveTPData({ totalTP: remote.totalTP, streak: remote.streak || newStreak, lastComplete: remote.lastComplete || today });
-            renderTPWidgets();
-            if (remote.awardedTP) showTPModal(loadTPData());
-          }
-          // Sync CP too if returned
-          if (typeof remote.totalCP === 'number') {
-            var remoteLog = Array.isArray(remote.log) ? remote.log
-                          : (remote.log ? String(remote.log).split(',').filter(Boolean) : []);
-            saveCPData({ totalCP: remote.totalCP, lastEarned: remote.lastEarned || null, log: remoteLog });
-            renderCPWidgets();
-          }
-        })
-        .catch(() => { if (awardTP) showTPModal(loadTPData()); });
-    } else {
-      if (awardTP) showTPModal(data);
-    }
-  }
-
-  document.getElementById('tpModalClose').addEventListener('click', () => {
-    document.getElementById('tpModal').classList.remove('open');
-  });
-  document.getElementById('tpModal').addEventListener('click', function(e) {
-    if (e.target === this) this.classList.remove('open');
-  });
 
 
 </script>
