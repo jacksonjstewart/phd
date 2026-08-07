@@ -2608,6 +2608,13 @@
             <div class="r-note">Select from a minimalist set of refined outfit choices every single day.</div>
           </div>
         </li>
+        <li class="r-row static-event" data-cond="always" data-task="deliberate-nutrition" tabindex="0" role="checkbox" aria-checked="false">
+          <span class="box"></span>
+          <div class="label-stack">
+            <div class="r-title">Deliberate Nutrition</div>
+            <div class="r-note">Eat inside of a specific and deliberate calorie range, every single day.</div>
+          </div>
+        </li>
       </ul>
     </div>
 
@@ -2645,23 +2652,6 @@
             <div class="r-note">Monthly lunchtime review of the plan for travel and small family trips.</div>
           </div>
           <span class="r-meta">ACE Coffee</span>
-        </li>
-      </ul>
-    </div>
-
-    <!-- III. DAILY ROUTINE -->
-    <div class="routine" data-window="daily">
-      <button class="routine-head" type="button" onclick="toggleRoutine(this)" aria-expanded="false">
-        <span class="rh-label">III &middot; Daily Routine</span>
-        <span class="rh-toggle" aria-hidden="true">+</span>
-      </button>
-      <ul class="routine-list" id="dailyList">
-        <li class="r-row static-event" data-cond="always" data-task="deliberate-nutrition" tabindex="0" role="checkbox" aria-checked="false">
-          <span class="box"></span>
-          <div class="label-stack">
-            <div class="r-title">Deliberate Nutrition</div>
-            <div class="r-note">Eat inside of a specific and deliberate calorie range, every single day.</div>
-          </div>
         </li>
       </ul>
     </div>
@@ -3836,9 +3826,8 @@
   // ROUTINE COLLAPSIBLES
   // ============================================================
   function activeRoutineWindow(h) {
-    if (h >= 4 && h < 8)  return 'morning';
-    if (h >= 8 && h < 17) return 'office';
-    return 'daily';
+    if (h >= 4 && h < 8) return 'morning';
+    return 'office';
   }
   let _routineInited = false;
   function initRoutines() {
