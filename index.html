@@ -1277,25 +1277,26 @@
   }
   .cp-heatmap-grid {
     display: grid;
-    grid-template-columns: repeat(7, 14px);
+    grid-template-columns: repeat(7, 17px);
     gap: 3px;
   }
   .cp-heatmap-dow {
     font-family: var(--mono);
-    font-size: 5px;
+    font-size: 6px;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: rgba(232,226,208,0.30);
+    color: rgba(232,226,208,0.32);
     text-align: center;
-    width: 14px;
-    height: 12px;
-    line-height: 12px;
+    width: 17px;
+    height: 13px;
+    line-height: 13px;
   }
   .cp-heatmap-cell {
-    width: 14px;
-    height: 14px;
-    border-radius: 3px;
+    width: 17px;
+    height: 17px;
+    border-radius: 3.5px;
     background: rgba(255,255,255,0.05);
+    cursor: default;
   }
   .cp-heatmap-cell.future { background: rgba(255,255,255,0.02); }
   .cp-heatmap-cell.missed { background: rgba(198,92,72,0.20); border: 1px solid rgba(198,92,72,0.32); }
@@ -1439,9 +1440,9 @@
 
   /* ── Competence System ── */
   /* CORE DAILY ACTIONS - completion modal */
-  .fc-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.93);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:9999;align-items:center;justify-content:center;padding:24px;overflow-y:auto;}
+  .fc-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.93);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:9999;align-items:center;justify-content:center;padding:12px;overflow:hidden;}
   .fc-overlay.open{display:flex;}
-  .fc-box{display:grid;grid-template-columns:0.72fr 1.28fr;grid-template-areas:"left right" "unlock unlock" "ack ack";width:92vw;max-width:1300px;max-height:94vh;margin:auto;background:rgba(13,11,8,0.985);border:1px solid rgba(201,161,74,0.26);box-shadow:0 40px 130px rgba(0,0,0,0.62),0 0 100px rgba(201,161,74,0.05);overflow:hidden;position:relative;animation:fcBoxIn 0.9s cubic-bezier(0.16,1,0.3,1) forwards;}
+  .fc-box{display:grid;grid-template-columns:0.72fr 1.28fr;grid-template-areas:"left right" "unlock unlock" "ack ack";width:92vw;max-width:1300px;max-height:96vh;margin:auto;background:rgba(13,11,8,0.985);border:1px solid rgba(201,161,74,0.26);box-shadow:0 40px 130px rgba(0,0,0,0.62),0 0 100px rgba(201,161,74,0.05);overflow:hidden;position:relative;animation:fcBoxIn 0.9s cubic-bezier(0.16,1,0.3,1) forwards;}
   @keyframes fcBoxIn{from{opacity:0;transform:translateY(24px) scale(0.985)}to{opacity:1;transform:none}}
   .fc-left{grid-area:left;padding:44px 48px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;border-right:1px solid var(--border);background:radial-gradient(120% 90% at 50% 40%,rgba(67,181,124,0.06),transparent 70%);opacity:0;transform:translateY(14px);transition:opacity 1.1s ease,transform 1.1s cubic-bezier(0.16,1,0.3,1);}
   .fc-overlay.reveal-left .fc-left{opacity:1;transform:none;}
@@ -1516,8 +1517,8 @@
   @keyframes wgPulse{0%,100%{opacity:0.55}50%{opacity:1}}
   .wg-dot-start.pulse{animation:wgPulse 1.9s ease-in-out infinite;}
   .fc-graphs-row{display:flex;gap:13px;align-items:stretch;}
-  .fc-graphs-row .fc-weight-card{flex:1.4;}
-  .fc-graphs-row .fc-heat-card{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+  .fc-graphs-row .fc-weight-card{flex:1;min-width:0;}
+  .fc-graphs-row .fc-heat-card{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 16px;}
   .fc-heat-title{font-family:var(--mono);font-size:7px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold-dim);align-self:flex-start;}
   .wg-band{fill:rgba(201,161,74,0.07);stroke:none;}
   .wg-target{fill:none;stroke:rgba(201,161,74,0.5);stroke-width:1.1;stroke-dasharray:4 4;}
@@ -1537,7 +1538,7 @@
   .fc-overlay.reveal-unlock .fc-unlock{opacity:1;transform:none;}
   .fc-unlock-btn{display:flex;align-items:center;gap:18px;padding:16px 24px;border-radius:14px;border:1px solid var(--gold);background:linear-gradient(180deg,rgba(201,161,74,0.20),rgba(201,161,74,0.08));box-shadow:0 0 22px rgba(201,161,74,0.14),inset 0 1px 0 rgba(255,255,255,0.05);animation:fcUnlockGlow 3.2s ease-in-out infinite;}
   @keyframes fcUnlockGlow{0%,100%{box-shadow:0 0 16px rgba(201,161,74,0.12),inset 0 1px 0 rgba(255,255,255,0.04)}50%{box-shadow:0 0 32px rgba(201,161,74,0.30),inset 0 1px 0 rgba(255,255,255,0.07)}}
-  .fc-unlock-eyebrow{font-family:var(--mono);font-size:8px;letter-spacing:0.44em;text-transform:uppercase;color:var(--gold-bright);text-shadow:0 0 10px rgba(201,161,74,0.3);margin-bottom:9px;padding-left:3px;}
+  .fc-unlock-eyebrow{font-family:var(--mono);font-size:8px;letter-spacing:0.44em;text-transform:uppercase;color:var(--gold-bright);text-shadow:0 0 10px rgba(201,161,74,0.3);margin-bottom:9px;text-align:center;}
   .fc-unlock-ico{flex:0 0 auto;width:50px;height:50px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(201,161,74,0.16);border:1px solid var(--gold-dim);overflow:visible;}
   .fc-unlock-name{font-family:var(--serif);font-style:normal;font-weight:500;font-size:21px;color:var(--gold-bright);letter-spacing:0.01em;}
   .fc-lock{color:var(--gold-bright);flex:0 0 auto;overflow:visible;transition:filter 0.9s ease;filter:drop-shadow(0 0 5px rgba(201,161,74,0.4));}
@@ -2946,7 +2947,7 @@
     </div>
 
     <div class="fc-unlock" id="fcUnlock">
-      <div class="fc-unlock-eyebrow">Unlocked</div>
+      <div class="fc-unlock-eyebrow">New Function Unlocked</div>
       <div class="fc-unlock-btn">
         <span class="fc-unlock-ico">
           <svg class="fc-lock" id="fcLock" viewBox="0 0 48 48" width="26" height="26" aria-hidden="true" style="overflow:visible">
@@ -4257,15 +4258,17 @@
     let html = '<div class="cp-heatmap-header"><span class="cp-heatmap-month">' + monthName + '</span><span class="cp-heatmap-tally">' + earned + ' / ' + elapsed + ' days</span></div><div class="cp-heatmap-grid">';
     dows.forEach(function(d){ html += '<div class="cp-heatmap-dow">' + d + '</div>'; });
     for (let i = 0; i < firstDow; i++) html += '<div class="cp-heatmap-cell future"></div>';
+    const _mAbbr = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][month];
     for (let day = 1; day <= daysInMonth; day++) {
       const iso = year + '-' + String(month+1).padStart(2,'0') + '-' + String(day).padStart(2,'0');
-      let cls = 'cp-heatmap-cell';
-      if (log.has(iso)) cls += ' earned';
-      else if (iso > todayStr) cls += ' future';
-      else if (iso < DAY_ONE) cls += ' pre';
-      else if (iso < todayStr) cls += ' missed';
-      if (iso === todayStr) cls += ' today';
-      html += '<div class="' + cls + '"></div>';
+      let cls = 'cp-heatmap-cell', status = '';
+      if (log.has(iso)) { cls += ' earned'; status = 'Complete'; }
+      else if (iso > todayStr) { cls += ' future'; status = 'Upcoming'; }
+      else if (iso < DAY_ONE) { cls += ' pre'; status = ''; }
+      else if (iso < todayStr) { cls += ' missed'; status = 'Missed'; }
+      if (iso === todayStr) { cls += ' today'; if (status !== 'Complete') status = 'Today'; }
+      const tip = _mAbbr + ' ' + day + (status ? '  ' + status : '');
+      html += '<div class="' + cls + '" title="' + tip + '"></div>';
     }
     html += '</div>';
     wrap.innerHTML = html;
@@ -4366,7 +4369,7 @@
   function renderWeightGraph(elId) {
     const wrap = document.getElementById(elId); if (!wrap) return;
     const pd = window._physiqueData;
-    const W = 440, H = 112, padL = 32, padR = 40, padT = 10, padB = 18;
+    const W = 460, H = 140, padL = 34, padR = 42, padT = 12, padB = 20;
     const plotW = W - padL - padR, plotH = H - padT - padB;
     if (!pd || pd.startW == null || isNaN(pd.startW)) { wrap.innerHTML = '<div class="wg-empty">Weight data loading</div>'; setText('fcWeightCur', ''); return; }
     const startW = pd.startW, goalW = (pd.goalW != null && !isNaN(pd.goalW)) ? pd.goalW : 140;
