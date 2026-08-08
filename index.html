@@ -1258,9 +1258,9 @@
   .cp-month-heatmap:hover { opacity: 0.9; }
   .cp-heatmap-header {
     display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 5px;
+    flex-direction: column;
+    gap: 1px;
+    margin-bottom: 6px;
   }
   .cp-heatmap-month {
     font-family: var(--mono);
@@ -1441,9 +1441,9 @@
   /* CORE DAILY ACTIONS - completion modal */
   .fc-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.93);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:9999;align-items:center;justify-content:center;padding:24px;overflow-y:auto;}
   .fc-overlay.open{display:flex;}
-  .fc-box{display:grid;grid-template-columns:0.9fr 1.1fr;grid-template-areas:"left right" "unlock unlock" "ack ack";width:76vw;max-width:1040px;min-height:64vh;max-height:90vh;margin:auto;background:rgba(13,11,8,0.985);border:1px solid rgba(201,161,74,0.26);box-shadow:0 40px 130px rgba(0,0,0,0.62),0 0 100px rgba(201,161,74,0.05);overflow-y:auto;overflow-x:hidden;position:relative;animation:fcBoxIn 0.9s cubic-bezier(0.16,1,0.3,1) forwards;}
+  .fc-box{display:grid;grid-template-columns:0.72fr 1.28fr;grid-template-areas:"left right" "unlock unlock" "ack ack";width:92vw;max-width:1300px;max-height:94vh;margin:auto;background:rgba(13,11,8,0.985);border:1px solid rgba(201,161,74,0.26);box-shadow:0 40px 130px rgba(0,0,0,0.62),0 0 100px rgba(201,161,74,0.05);overflow:hidden;position:relative;animation:fcBoxIn 0.9s cubic-bezier(0.16,1,0.3,1) forwards;}
   @keyframes fcBoxIn{from{opacity:0;transform:translateY(24px) scale(0.985)}to{opacity:1;transform:none}}
-  .fc-left{grid-area:left;padding:56px 48px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;border-right:1px solid var(--border);background:radial-gradient(120% 90% at 50% 40%,rgba(67,181,124,0.06),transparent 70%);opacity:0;transform:translateY(14px);transition:opacity 1.1s ease,transform 1.1s cubic-bezier(0.16,1,0.3,1);}
+  .fc-left{grid-area:left;padding:44px 48px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;border-right:1px solid var(--border);background:radial-gradient(120% 90% at 50% 40%,rgba(67,181,124,0.06),transparent 70%);opacity:0;transform:translateY(14px);transition:opacity 1.1s ease,transform 1.1s cubic-bezier(0.16,1,0.3,1);}
   .fc-overlay.reveal-left .fc-left{opacity:1;transform:none;}
   .fc-hero-eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:0.52em;text-transform:uppercase;color:var(--gold-bright);text-shadow:0 0 12px rgba(201,161,74,0.25);}
   .fc-heat-card{padding:16px 20px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,0.015);}
@@ -1465,7 +1465,7 @@
   .fc-date{font-family:var(--mono);font-size:8.5px;letter-spacing:0.22em;text-transform:uppercase;color:var(--text-dim);margin-top:6px;}
   .fc-pills{display:flex;gap:8px;margin-top:16px;}
   .fc-pill{font-family:var(--mono);font-size:8px;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold-bright);border:1px solid var(--gold-dim);border-radius:100px;padding:6px 15px;background:rgba(201,161,74,0.07);}
-  .fc-right{grid-area:right;padding:52px 48px;display:flex;flex-direction:column;gap:20px;opacity:0;transform:translateY(14px);transition:opacity 1.1s ease 0.12s,transform 1.1s cubic-bezier(0.16,1,0.3,1) 0.12s;}
+  .fc-right{grid-area:right;padding:32px 42px;display:flex;flex-direction:column;gap:11px;opacity:0;transform:translateY(14px);transition:opacity 1.1s ease 0.12s,transform 1.1s cubic-bezier(0.16,1,0.3,1) 0.12s;}
   .fc-overlay.reveal-right .fc-right{opacity:1;transform:none;}
   .fc-sec-head{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:8.5px;letter-spacing:0.5em;text-transform:uppercase;color:var(--gold);}
   .fc-sec-head::after{content:"";flex:1;height:1px;background:var(--border);}
@@ -1490,11 +1490,11 @@
   .fc-tile-num{font-family:var(--sans);font-weight:600;font-size:26px;color:var(--text);line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-0.01em;}
   .fc-tile-lab{font-family:var(--mono);font-size:6.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-faint);}
   .fc-stats-tile{flex:1;display:flex;flex-direction:column;justify-content:center;padding:4px 18px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,0.015);}
-  .fc-stat-row{display:flex;align-items:baseline;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);}
+  .fc-stat-row{display:flex;align-items:baseline;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);}
   .fc-stat-row:last-child{border-bottom:none;}
   .fc-stat-lab{font-family:var(--mono);font-size:7.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-dim);}
   .fc-stat-val{font-family:var(--sans);font-weight:600;font-size:19px;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:-0.01em;}
-  .fc-weight-card{padding:14px 16px 10px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,0.015);}
+  .fc-weight-card{padding:12px 14px 8px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,0.015);}
   .fc-weight-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
   .fc-weight-title{font-family:var(--mono);font-size:7.5px;letter-spacing:0.26em;text-transform:uppercase;color:var(--gold-dim);}
   .fc-weight-cur{font-family:var(--sans);font-weight:600;font-size:14px;color:var(--gold-bright);font-variant-numeric:tabular-nums;}
@@ -1515,6 +1515,17 @@
   .wg-empty{font-family:var(--mono);font-size:8px;color:var(--text-faint);text-align:center;padding:44px 0;letter-spacing:0.12em;text-transform:uppercase;}
   @keyframes wgPulse{0%,100%{opacity:0.55}50%{opacity:1}}
   .wg-dot-start.pulse{animation:wgPulse 1.9s ease-in-out infinite;}
+  .fc-graphs-row{display:flex;gap:13px;align-items:stretch;}
+  .fc-graphs-row .fc-weight-card{flex:1.4;}
+  .fc-graphs-row .fc-heat-card{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+  .fc-heat-title{font-family:var(--mono);font-size:7px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold-dim);align-self:flex-start;}
+  .wg-band{fill:rgba(201,161,74,0.07);stroke:none;}
+  .wg-target{fill:none;stroke:rgba(201,161,74,0.5);stroke-width:1.1;stroke-dasharray:4 4;}
+  .wg-dot-cur{fill:var(--green-bright);stroke:rgba(255,255,255,0.55);stroke-width:1;}
+  .wg-halo{fill:none;stroke:var(--green-bright);stroke-width:1.4;opacity:0.5;transform-box:fill-box;transform-origin:center;animation:wgHalo 1.9s ease-in-out infinite;}
+  @keyframes wgHalo{0%,100%{transform:scale(0.8);opacity:0.5}50%{transform:scale(1.3);opacity:0.1}}
+  .wg-leg-target::before{background:var(--gold-dim);}
+  .oc-stats-tile{max-width:340px;}
   .fc-phase-card{padding:16px 18px;border:1px solid var(--border);border-radius:11px;background:rgba(255,255,255,0.015);}
   .fc-phase-head{display:flex;justify-content:space-between;font-family:var(--mono);font-size:7.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-dim);margin-bottom:9px;}
   .fc-phase-head span:last-child{color:var(--gold);}
@@ -1522,7 +1533,7 @@
   .bar-marker{position:absolute;top:50%;left:0;width:11px;height:11px;border-radius:50%;background:var(--gold-bright);transform:translate(-50%,-50%);transition:left 1.5s cubic-bezier(0.16,1,0.3,1);animation:barMarkerPulse 1.9s ease-in-out infinite;z-index:2;}
   @keyframes barMarkerPulse{0%,100%{box-shadow:0 0 4px rgba(201,161,74,0.5);transform:translate(-50%,-50%) scale(0.88)}50%{box-shadow:0 0 13px rgba(201,161,74,0.95);transform:translate(-50%,-50%) scale(1.12)}}
   .fc-bar-fill{height:100%;width:0;background:linear-gradient(90deg,rgba(201,161,74,0.5),var(--gold-bright));border-radius:3px;transition:width 1.5s cubic-bezier(0.16,1,0.3,1);}
-  .fc-unlock{grid-area:unlock;padding:24px 40px 14px;opacity:0;transform:translateY(10px);transition:opacity 1s ease,transform 1s cubic-bezier(0.16,1,0.3,1);}
+  .fc-unlock{grid-area:unlock;padding:18px 40px 12px;opacity:0;transform:translateY(10px);transition:opacity 1s ease,transform 1s cubic-bezier(0.16,1,0.3,1);}
   .fc-overlay.reveal-unlock .fc-unlock{opacity:1;transform:none;}
   .fc-unlock-btn{display:flex;align-items:center;gap:18px;padding:16px 24px;border-radius:14px;border:1px solid var(--gold);background:linear-gradient(180deg,rgba(201,161,74,0.20),rgba(201,161,74,0.08));box-shadow:0 0 22px rgba(201,161,74,0.14),inset 0 1px 0 rgba(255,255,255,0.05);animation:fcUnlockGlow 3.2s ease-in-out infinite;}
   @keyframes fcUnlockGlow{0%,100%{box-shadow:0 0 16px rgba(201,161,74,0.12),inset 0 1px 0 rgba(255,255,255,0.04)}50%{box-shadow:0 0 32px rgba(201,161,74,0.30),inset 0 1px 0 rgba(255,255,255,0.07)}}
@@ -1534,7 +1545,7 @@
   .fc-lock .fc-lock-hole{fill:rgba(24,18,8,0.95);}
   .fc-lock.unlocked{filter:drop-shadow(0 0 12px rgba(201,161,74,0.7));}
   .fc-lock.unlocked .fc-shackle{transform:rotate(42deg);}
-  .fc-ack{grid-area:ack;margin:0;font-family:var(--mono);font-size:8.5px;letter-spacing:0.45em;text-transform:uppercase;color:var(--text-faint);background:transparent;border:none;border-top:1px solid var(--border);padding:22px;cursor:not-allowed;transition:color .6s ease,background .3s ease,opacity .6s ease;opacity:0.4;}
+  .fc-ack{grid-area:ack;margin:0;font-family:var(--mono);font-size:8.5px;letter-spacing:0.45em;text-transform:uppercase;color:var(--text-faint);background:transparent;border:none;border-top:1px solid var(--border);padding:17px;cursor:not-allowed;transition:color .6s ease,background .3s ease,opacity .6s ease;opacity:0.4;}
   .fc-overlay.ready .fc-ack{color:var(--green-bright);cursor:pointer;opacity:1;animation:fcAckGlow 2.6s ease-in-out infinite;}
   .fc-overlay.ready .fc-ack:hover{background:rgba(67,181,124,0.09);color:var(--green-bright);}
   @keyframes fcAckGlow{0%,100%{background:rgba(67,181,124,0)}50%{background:rgba(67,181,124,0.055)}}
@@ -2707,11 +2718,12 @@
             </div>
             <div class="oc-cons-title" id="ocRingTitle">Level 0</div>
           </div>
-          <div class="oc-tiles">
-            <div class="oc-tile"><span class="oc-tile-num" id="ocTotal">0</span><span class="oc-tile-lab">Days Complete</span></div>
-            <div class="oc-tile"><span class="oc-tile-num" id="ocStreak">0</span><span class="oc-tile-lab">Current Streak</span></div>
-            <div class="oc-tile"><span class="oc-tile-num" id="ocLongest">0</span><span class="oc-tile-lab">Longest Streak</span></div>
-            <div class="oc-tile"><span class="oc-tile-num" id="ocRate">0%</span><span class="oc-tile-lab">Lifetime Rate</span></div>
+          <div class="fc-stats-tile oc-stats-tile">
+            <div class="fc-stat-row"><span class="fc-stat-lab">Days Complete</span><span class="fc-stat-val" id="ocTotal">0</span></div>
+            <div class="fc-stat-row"><span class="fc-stat-lab">Phase Days</span><span class="fc-stat-val" id="ocPhaseDays">0 / 84</span></div>
+            <div class="fc-stat-row"><span class="fc-stat-lab">Current Streak</span><span class="fc-stat-val" id="ocStreak">0</span></div>
+            <div class="fc-stat-row"><span class="fc-stat-lab">Best Streak</span><span class="fc-stat-val" id="ocLongest">0</span></div>
+            <div class="fc-stat-row"><span class="fc-stat-lab">Phase Streak</span><span class="fc-stat-val" id="ocPhaseStreak">0</span></div>
           </div>
         </div>
         <div class="oc-phase-card">
@@ -2920,13 +2932,16 @@
           <div class="fc-stat-row"><span class="fc-stat-lab">Phase Streak</span><span class="fc-stat-val" id="fcPhaseStreak">0</span></div>
         </div>
       </div>
+      <div class="fc-graphs-row">
+        <div class="fc-weight-card">
+          <div class="fc-weight-head"><span class="fc-weight-title">Body Weight &middot; 12-Week Cut</span><span class="fc-weight-cur" id="fcWeightCur">&mdash;</span></div>
+          <div id="fcWeightGraph"></div>
+        </div>
+        <div class="fc-heat-card"><div class="fc-heat-title">This Month</div><div id="fcHeatmap"></div></div>
+      </div>
       <div class="fc-phase-card">
         <div class="fc-phase-head"><span id="fcCycleLab">Cycle &middot; Week 1 of 12</span><span id="fcCyclePct">0%</span></div>
         <div class="fc-bar-track"><div class="fc-bar-fill" id="fcCycleFill"></div><span class="bar-marker" id="fcCycleMarker"></span></div>
-      </div>
-      <div class="fc-weight-card">
-        <div class="fc-weight-head"><span class="fc-weight-title">Body Weight &middot; 12-Week Cut</span><span class="fc-weight-cur" id="fcWeightCur">&mdash;</span></div>
-        <div id="fcWeightGraph"></div>
       </div>
     </div>
 
@@ -3583,7 +3598,7 @@
         const rows = parseCSV(text);
         const weekRows = rows.slice(3, 15);
         const labels = weekRows.map((r,i) => r[0] || ('W' + (i+1)));
-        window._physiqueData = { startW: num(rows[1] ? rows[1][2] : null), goalW: (function(){ const md = weekRows.map(function(r){return num(r[3]);}); for (var i=md.length-1;i>=0;i--){ if (md[i]!=null) return md[i]; } return 140; })(), actual: weekRows.map(function(r){return num(r[5]);}), labels: labels };
+        window._physiqueData = { startW: num(rows[1] ? rows[1][2] : null), goalW: (function(){ const md = weekRows.map(function(r){return num(r[3]);}); for (var i=md.length-1;i>=0;i--){ if (md[i]!=null) return md[i]; } return 140; })(), actual: weekRows.map(function(r){return num(r[5]);}), min: weekRows.map(function(r){return num(r[2]);}), target: weekRows.map(function(r){return num(r[3]);}), max: weekRows.map(function(r){return num(r[4]);}), labels: labels };
         renderWeightChart(
           labels,
           weekRows.map(r => num(r[2])),
@@ -3614,7 +3629,7 @@
           [158.0,156.0,153.8,151.7,149.7,147.8,145.8,144.0,142.1,140.3,138.5,136.7],
           [158.0,156.8,155.4,null,null,null,null,null,null,null,null,null]
         );
-        window._physiqueData = { startW: 162.4, goalW: 140, actual: [158.0,156.8,155.4,null,null,null,null,null,null,null,null,null], labels: ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12'] };
+        window._physiqueData = { startW: 162.4, goalW: 140, actual: [160.1,158.6,157.2,null,null,null,null,null,null,null,null,null], min: [158.0,156.7,155.5,154.2,152.9,151.7,150.5,149.3,148.0,146.8,145.5,144.3], target: [158.0,156.4,154.8,153.2,151.7,150.2,148.7,147.2,145.8,144.4,142.9,140.0], max: [158.0,156.0,153.8,151.7,149.7,147.8,145.8,144.0,142.1,140.3,138.5,136.7], labels: ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12'] };
         updateSheetBtn(null);
       });
   }
@@ -4351,40 +4366,54 @@
   function renderWeightGraph(elId) {
     const wrap = document.getElementById(elId); if (!wrap) return;
     const pd = window._physiqueData;
-    const W = 460, H = 138, padL = 40, padR = 48, padT = 12, padB = 22;
+    const W = 440, H = 112, padL = 32, padR = 40, padT = 10, padB = 18;
     const plotW = W - padL - padR, plotH = H - padT - padB;
     if (!pd || pd.startW == null || isNaN(pd.startW)) { wrap.innerHTML = '<div class="wg-empty">Weight data loading</div>'; setText('fcWeightCur', ''); return; }
     const startW = pd.startW, goalW = (pd.goalW != null && !isNaN(pd.goalW)) ? pd.goalW : 140;
-    const actual = pd.actual || [];
-    const pts = [{ i:0, w:startW }];
-    for (let k = 0; k < actual.length; k++) { if (actual[k] != null && !isNaN(actual[k])) pts.push({ i:k+1, w:actual[k] }); }
-    const hasWeeks = pts.length > 1;
-    const lastW = pts[pts.length-1].w;
-    setText('fcWeightCur', lastW.toFixed(1) + ' lb');
-    const ws = pts.map(function(p){return p.w;}).concat([goalW, startW]);
-    let yHi = Math.max.apply(null, ws), yLo = Math.min.apply(null, ws);
-    const pad = Math.max(1.5, (yHi - yLo) * 0.14); yHi += pad; yLo -= pad;
+    const actual = pd.actual || [], tgt = pd.target || [], mn = pd.min || [], mx = pd.max || [];
+    const aPts = [{ i:0, w:startW }];
+    for (let k = 0; k < actual.length; k++) { if (actual[k] != null && !isNaN(actual[k])) aPts.push({ i:k+1, w:actual[k] }); }
+    const hasWeeks = aPts.length > 1;
+    setText('fcWeightCur', aPts[aPts.length-1].w.toFixed(1) + ' lb');
+    let vals = [startW, goalW];
+    aPts.forEach(function(p){ vals.push(p.w); });
+    for (let k = 0; k < 12; k++) { if (mn[k]!=null) vals.push(mn[k]); if (mx[k]!=null) vals.push(mx[k]); if (tgt[k]!=null) vals.push(tgt[k]); }
+    let yHi = Math.max.apply(null, vals), yLo = Math.min.apply(null, vals);
+    const buf = Math.max(1.2, (yHi - yLo) * 0.1); yHi += buf; yLo -= buf;
     const X = function(i){ return padL + (i/12) * plotW; };
     const Y = function(w){ return padT + (yHi - w)/(yHi - yLo) * plotH; };
     let svg = '<svg class="wg-svg" viewBox="0 0 ' + W + ' ' + H + '">';
-    const gy = Y(goalW);
-    svg += '<line class="wg-goal" x1="' + padL + '" y1="' + gy.toFixed(1) + '" x2="' + (W-padR) + '" y2="' + gy.toFixed(1) + '"/>';
-    svg += '<text class="wg-goal-lab" x="' + (W-padR+5) + '" y="' + (gy+2.5).toFixed(1) + '" text-anchor="start">Goal ' + goalW.toFixed(0) + '</text>';
-    svg += '<text class="wg-axis" x="' + (padL-5) + '" y="' + (Y(startW)+2.5).toFixed(1) + '" text-anchor="end">' + startW.toFixed(0) + '</text>';
-    svg += '<text class="wg-axis" x="' + (padL-5) + '" y="' + (gy+2.5).toFixed(1) + '" text-anchor="end">' + goalW.toFixed(0) + '</text>';
-    [['Start',0],['W4',4],['W8',8],['W12',12]].forEach(function(t){ svg += '<text class="wg-axis" x="' + X(t[1]).toFixed(1) + '" y="' + (H-6) + '" text-anchor="middle">' + t[0] + '</text>'; });
+    // min-max target band
+    const bw = []; for (let k = 0; k < 12; k++) { if (mn[k]!=null && mx[k]!=null) bw.push(k+1); }
+    if (bw.length > 1) {
+      let d = '';
+      bw.forEach(function(k){ d += (d?' L':'M') + X(k).toFixed(1) + ' ' + Y(mn[k-1]).toFixed(1); });
+      for (let z = bw.length-1; z >= 0; z--) { const k = bw[z]; d += ' L' + X(k).toFixed(1) + ' ' + Y(mx[k-1]).toFixed(1); }
+      svg += '<path class="wg-band" d="' + d + ' Z"/>';
+    }
+    // target dashed line
+    const tw = []; for (let k = 0; k < 12; k++) { if (tgt[k]!=null) tw.push(k+1); }
+    if (tw.length > 1) { let d = ''; tw.forEach(function(k){ d += (d?' L':'M') + X(k).toFixed(1) + ' ' + Y(tgt[k-1]).toFixed(1); }); svg += '<path class="wg-target" d="' + d + '"/>'; }
+    // axis labels
+    svg += '<text class="wg-axis" x="' + (padL-4) + '" y="' + (Y(startW)+2.5).toFixed(1) + '" text-anchor="end">' + startW.toFixed(0) + '</text>';
+    svg += '<text class="wg-axis" x="' + (padL-4) + '" y="' + (Y(goalW)+2.5).toFixed(1) + '" text-anchor="end">' + goalW.toFixed(0) + '</text>';
+    [['Start',0],['W4',4],['W8',8],['W12',12]].forEach(function(t){ svg += '<text class="wg-axis" x="' + X(t[1]).toFixed(1) + '" y="' + (H-5) + '" text-anchor="middle">' + t[0] + '</text>'; });
     if (hasWeeks) {
-      let d = 'M' + X(pts[0].i).toFixed(1) + ' ' + Y(pts[0].w).toFixed(1);
-      for (let j = 1; j < pts.length; j++) d += ' L' + X(pts[j].i).toFixed(1) + ' ' + Y(pts[j].w).toFixed(1);
+      let d = 'M' + X(aPts[0].i).toFixed(1) + ' ' + Y(aPts[0].w).toFixed(1);
+      for (let j = 1; j < aPts.length; j++) d += ' L' + X(aPts[j].i).toFixed(1) + ' ' + Y(aPts[j].w).toFixed(1);
       svg += '<path class="wg-line" d="' + d + '"/>';
-      pts.forEach(function(p){ svg += '<circle class="' + (p.i===0?'wg-dot-start':'wg-dot') + '" cx="' + X(p.i).toFixed(1) + '" cy="' + Y(p.w).toFixed(1) + '" r="' + (p.i===0?4:3) + '"/>'; });
+      aPts.forEach(function(p){ svg += '<circle class="' + (p.i===0 ? 'wg-dot-start' : 'wg-dot') + '" cx="' + X(p.i).toFixed(1) + '" cy="' + Y(p.w).toFixed(1) + '" r="' + (p.i===0?3.2:2.6) + '"/>'; });
+      const cp = aPts[aPts.length-1];
+      svg += '<circle class="wg-halo" cx="' + X(cp.i).toFixed(1) + '" cy="' + Y(cp.w).toFixed(1) + '" r="7"/>';
+      svg += '<circle class="wg-dot-cur" cx="' + X(cp.i).toFixed(1) + '" cy="' + Y(cp.w).toFixed(1) + '" r="4"/>';
     } else {
       const sx = X(0), sy = Y(startW);
-      svg += '<circle class="wg-dot-start pulse" cx="' + sx.toFixed(1) + '" cy="' + sy.toFixed(1) + '" r="5"/>';
-      svg += '<text class="wg-start-lab" x="' + (sx+11) + '" y="' + (sy-7).toFixed(1) + '" text-anchor="start">' + startW.toFixed(1) + ' lb</text>';
-      svg += '<text class="wg-start-sub" x="' + (sx+11) + '" y="' + (sy+7).toFixed(1) + '" text-anchor="start">Starting weight &middot; awaiting Week 1</text>';
+      svg += '<circle class="wg-halo" cx="' + sx.toFixed(1) + '" cy="' + sy.toFixed(1) + '" r="8"/>';
+      svg += '<circle class="wg-dot-cur" cx="' + sx.toFixed(1) + '" cy="' + sy.toFixed(1) + '" r="4.5"/>';
+      svg += '<text class="wg-start-lab" x="' + (sx+11) + '" y="' + (sy-6).toFixed(1) + '" text-anchor="start">' + startW.toFixed(1) + ' lb</text>';
+      svg += '<text class="wg-start-sub" x="' + (sx+11) + '" y="' + (sy+7).toFixed(1) + '" text-anchor="start">Awaiting Week 1</text>';
     }
-    svg += '</svg><div class="wg-legend"><span class="wg-leg wg-leg-line">Weight</span><span class="wg-leg wg-leg-goal">Goal</span></div>';
+    svg += '</svg><div class="wg-legend"><span class="wg-leg wg-leg-line">Actual</span><span class="wg-leg wg-leg-target">Target</span></div>';
     wrap.innerHTML = svg;
   }
   function animateWeightGraph(elId) {
@@ -4399,14 +4428,14 @@
         requestAnimationFrame(function(){ line.style.strokeDashoffset = '0'; });
       }
     }
-    const dots = wrap.querySelectorAll('.wg-dot, .wg-dot-start');
+    const dots = wrap.querySelectorAll('.wg-dot, .wg-dot-start, .wg-dot-cur');
     dots.forEach(function(dt, idx){ dt.style.opacity = '0'; setTimeout(function(){ dt.style.transition = 'opacity .4s ease'; dt.style.opacity = '1'; }, 500 + idx*130); });
   }
   function fillCompletionModal(m) {
     setText('fcDate', _fcDateLabel());
     setText('fcDayPill', 'Day ' + m.dayNum);
     setText('fcWeekPill', 'Week ' + m.weekNum + ' / 12');
-    setText('fcTotal', 0); setText('fcPhaseDays', 0); setText('fcStreak', 0); setText('fcLongest', 0); setText('fcPhaseStreak', 0);
+    setText('fcTotal', 0); setText('fcPhaseDays', '0 / 84'); setText('fcStreak', 0); setText('fcLongest', 0); setText('fcPhaseStreak', 0);
     setText('fcRingLevel', m.lv);
     setText('fcRingTitle', m.title);
     var _cc = document.getElementById('fcConsCard'); if (_cc) _cc.classList.remove('leveled');
@@ -4417,9 +4446,10 @@
     const cf = document.getElementById('fcCycleFill'); if (cf) cf.style.width = '0';
     const mk = document.getElementById('fcCycleMarker'); if (mk) mk.style.left = '0';
     renderWeightGraph('fcWeightGraph');
+    renderHeatmapInto('fcHeatmap');
   }
   function animateCompletionRight(m) {
-    _countUp('fcTotal', m.total); _countUp('fcPhaseDays', m.inCycle); _countUp('fcStreak', m.streak); _countUp('fcLongest', m.longest); _countUp('fcPhaseStreak', m.phaseStreak);
+    _countUp('fcTotal', m.total); _countUp('fcPhaseDays', m.inCycle, ' / 84'); _countUp('fcStreak', m.streak); _countUp('fcLongest', m.longest); _countUp('fcPhaseStreak', m.phaseStreak);
     const ringPct = m.leveledUp ? 100 : m.lvPct;
     requestAnimationFrame(function(){
       const arc = document.getElementById('fcRingArc'); if (arc) arc.setAttribute('stroke-dashoffset', (FC_RING_C * (1 - ringPct / 100)).toFixed(1));
@@ -4469,7 +4499,7 @@
   // ---- in-place office overlay (stats replace task lists) ----
   function renderOfficeCompletePanel() {
     const m = ledgerMetrics();
-    setText('ocTotal', m.total); setText('ocStreak', m.streak); setText('ocLongest', m.longest); setText('ocRate', m.rate + '%');
+    setText('ocTotal', m.total); setText('ocPhaseDays', m.inCycle + ' / 84'); setText('ocStreak', m.streak); setText('ocLongest', m.longest); setText('ocPhaseStreak', m.phaseStreak);
     setText('ocRingLevel', m.lv);
     setText('ocRingTitle', m.title || ('Level ' + m.lv));
     setText('ocCycleLab', 'Cycle \u00b7 Week ' + m.weekNum + ' of 12');
