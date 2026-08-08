@@ -1482,7 +1482,10 @@
   .fc-phase-head span:last-child{color:var(--gold);}
   .fc-bar-track{height:5px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden;}
   .fc-bar-fill{height:100%;width:0;background:linear-gradient(90deg,rgba(201,161,74,0.5),var(--gold-bright));border-radius:3px;transition:width 1.5s cubic-bezier(0.16,1,0.3,1);}
-  .fc-unlock{grid-area:unlock;display:flex;align-items:center;gap:16px;padding:22px 48px;border-top:1px solid var(--border);background:rgba(201,161,74,0.02);opacity:0;transform:translateY(10px);transition:opacity 1s ease,transform 1s cubic-bezier(0.16,1,0.3,1);}
+  .fc-unlock{grid-area:unlock;padding:22px 40px 10px;opacity:0;transform:translateY(10px);transition:opacity 1s ease,transform 1s cubic-bezier(0.16,1,0.3,1);}
+  .fc-unlock-card{display:flex;align-items:center;gap:16px;padding:16px 22px;border:1px solid var(--gold-dim);border-radius:12px;background:linear-gradient(180deg,rgba(201,161,74,0.07),rgba(201,161,74,0.02));animation:fcUnlockGlow 3s ease-in-out infinite;}
+  @keyframes fcUnlockGlow{0%,100%{box-shadow:0 0 14px rgba(201,161,74,0.10);border-color:rgba(201,161,74,0.32)}50%{box-shadow:0 0 26px rgba(201,161,74,0.26);border-color:rgba(201,161,74,0.62)}}
+  .fc-unlock-badge{margin-left:auto;font-family:var(--mono);font-size:7px;letter-spacing:0.32em;text-transform:uppercase;color:var(--gold-bright);border:1px solid var(--gold-dim);border-radius:100px;padding:5px 13px;background:rgba(201,161,74,0.06);}
   .fc-overlay.reveal-unlock .fc-unlock{opacity:1;transform:none;}
   .fc-lock{color:var(--gold-dim);flex:0 0 auto;transition:color 0.9s ease,filter 0.9s ease;animation:fcLockIdle 2.2s ease-in-out infinite;}
   @keyframes fcLockIdle{0%,100%{opacity:0.5}50%{opacity:0.9}}
@@ -1509,32 +1512,32 @@
 
   /* ── Office · in-place completion overlay (replaces task lists) ── */
   /* Office - in-place completion overlay (replaces task lists) */
-  .oc-panel{display:none;animation:fcBoxIn 0.7s cubic-bezier(0.16,1,0.3,1) forwards;}
+  .oc-panel{display:none;animation:fcBoxIn 0.7s cubic-bezier(0.16,1,0.3,1) forwards;padding-top:6px;}
   .oc-panel.shown{display:block;}
-  .oc-eyebrow{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:8px;letter-spacing:0.42em;text-transform:uppercase;color:var(--green);margin-bottom:8px;}
+  .oc-eyebrow{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:8px;letter-spacing:0.42em;text-transform:uppercase;color:var(--green);margin-bottom:10px;}
   .oc-dot{width:6px;height:6px;border-radius:50%;background:var(--green-bright);box-shadow:0 0 8px var(--green-glow);animation:ocDot 2.4s ease-in-out infinite;}
   @keyframes ocDot{0%,100%{opacity:0.45}50%{opacity:1}}
-  .oc-title{font-family:var(--serif);font-style:normal;font-weight:500;font-size:27px;color:var(--text);margin-bottom:26px;}
-  .oc-sec-head{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:8px;letter-spacing:0.5em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;}
+  .oc-title{font-family:var(--serif);font-style:normal;font-weight:500;font-size:29px;color:var(--text);margin-bottom:34px;}
+  .oc-sec-head{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:8px;letter-spacing:0.5em;text-transform:uppercase;color:var(--gold);margin-bottom:20px;}
   .oc-sec-head::after{content:"";flex:1;height:1px;background:var(--border);}
-  .oc-top{display:flex;gap:18px;align-items:stretch;flex-wrap:wrap;margin-bottom:16px;}
-  .oc-cons-card{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:11px;padding:18px 26px;border:1px solid var(--border);border-radius:11px;background:rgba(255,255,255,0.015);}
+  .oc-top{display:flex;gap:16px;align-items:stretch;flex-wrap:wrap;margin-bottom:16px;}
+  .oc-cons-card{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:22px 32px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,0.015);}
   .oc-cons-lab{font-family:var(--mono);font-size:7px;letter-spacing:0.32em;text-transform:uppercase;color:var(--text-faint);}
   .oc-cons-title{font-family:var(--mono);font-size:7.5px;letter-spacing:0.24em;text-transform:uppercase;color:var(--gold-dim);}
-  .oc-tiles{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:12px;min-width:230px;}
-  .oc-tile{display:flex;flex-direction:column;justify-content:center;gap:7px;padding:14px 16px;border:1px solid var(--border);border-radius:11px;background:rgba(255,255,255,0.015);transition:border-color .4s ease;}
+  .oc-tiles{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:14px;min-width:250px;}
+  .oc-tile{display:flex;flex-direction:column;justify-content:center;gap:8px;padding:16px 18px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,0.015);transition:border-color .4s ease;}
   .oc-tile:hover{border-color:rgba(201,161,74,0.28);}
-  .oc-tile-num{font-family:var(--serif);font-style:normal;font-weight:500;font-size:26px;color:var(--text);line-height:1;}
+  .oc-tile-num{font-family:var(--serif);font-style:normal;font-weight:500;font-size:27px;color:var(--text);line-height:1;}
   .oc-tile-lab{font-family:var(--mono);font-size:6.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-faint);}
-  .oc-heat-card{display:flex;align-items:center;padding:14px 18px;border:1px solid var(--border);border-radius:11px;background:rgba(255,255,255,0.015);}
-  .oc-phase-card{padding:16px 18px;border:1px solid var(--border);border-radius:11px;background:rgba(255,255,255,0.015);margin-bottom:16px;}
-  .oc-phase-head{display:flex;justify-content:space-between;font-family:var(--mono);font-size:7.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-dim);margin-bottom:9px;}
+  .oc-phase-card{padding:18px 20px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,0.015);margin-bottom:14px;}
+  .oc-phase-head{display:flex;justify-content:space-between;font-family:var(--mono);font-size:7.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-dim);margin-bottom:11px;}
   .oc-phase-head span:last-child{color:var(--gold);}
   .oc-bar-track{height:5px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden;}
   .oc-bar-fill{height:100%;width:0;background:linear-gradient(90deg,rgba(201,161,74,0.5),var(--gold-bright));border-radius:3px;transition:width 1.2s cubic-bezier(0.16,1,0.3,1);}
-  .oc-next{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:7.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold-dim);padding-top:16px;border-top:1px solid var(--border);}
-  .oc-next-lock{color:var(--gold);}
-  @media(prefers-reduced-motion:reduce){.fc-left,.fc-right,.fc-unlock,.fc-lock,.fc-lock .fc-shackle,.fc-seal-ring,.fc-seal-check,.fc-bar-fill,.oc-bar-fill,.cons-ring-arc,.oc-dot{transition:none!important;animation:none!important;}.fc-box,.oc-panel,.fc-left.sealed .fc-seal{animation:none!important;}}
+  .oc-heat-card{padding:18px 22px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,0.015);margin-bottom:16px;}
+  .oc-next-card{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:7.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold-bright);padding:13px 22px;border:1px solid var(--gold-dim);border-radius:100px;background:rgba(201,161,74,0.05);box-shadow:0 0 16px rgba(201,161,74,0.08);}
+  .oc-next-lock{color:var(--gold-bright);}
+  @media(prefers-reduced-motion:reduce){.fc-left,.fc-right,.fc-unlock,.fc-unlock-card,.fc-lock,.fc-lock .fc-shackle,.fc-seal-ring,.fc-seal-check,.fc-bar-fill,.oc-bar-fill,.cons-ring-arc,.oc-dot{transition:none!important;animation:none!important;}.fc-box,.oc-panel,.fc-left.sealed .fc-seal{animation:none!important;}}
 
 
   .stats-split {
@@ -2662,13 +2665,13 @@
           <div class="oc-tile"><span class="oc-tile-num" id="ocLongest">0</span><span class="oc-tile-lab">Longest Streak</span></div>
           <div class="oc-tile"><span class="oc-tile-num" id="ocRate">0%</span><span class="oc-tile-lab">Lifetime Rate</span></div>
         </div>
-        <div class="oc-heat-card"><div id="ocHeatmap"></div></div>
       </div>
       <div class="oc-phase-card">
-        <div class="oc-phase-head"><span id="ocCycleLab">Cycle &middot; Week 1 of 12</span><span id="ocCyclePct">0%</span></div>
+        <div class="oc-phase-head"><span id="ocCycleLab">Cycle &middot; Week 1 of 12</span><span id="ocCyclePct">Day 1 / 84</span></div>
         <div class="oc-bar-track"><div class="oc-bar-fill" id="ocCycleFill"></div></div>
       </div>
-      <div class="oc-next"><span class="oc-next-lock">&#10003;</span> Emotional Intentionality unlocked</div>
+      <div class="oc-heat-card"><div id="ocHeatmap"></div></div>
+      <div class="oc-next-card"><span class="oc-next-lock">&#10003;</span> Emotional Intentionality unlocked</div>
     </div>
 
   </div>
@@ -2870,15 +2873,18 @@
     </div>
 
     <div class="fc-unlock" id="fcUnlock">
-      <svg class="fc-lock" id="fcLock" viewBox="0 0 64 80" width="38" height="48" aria-hidden="true">
-        <g class="fc-shackle"><path d="M18 34 V22 a14 14 0 0 1 28 0 V34" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></g>
-        <rect class="fc-lock-body" x="12" y="34" width="40" height="34" rx="6" fill="currentColor"/>
-        <circle class="fc-lock-hole" cx="32" cy="49" r="4"/>
-        <rect class="fc-lock-hole" x="30.5" y="49" width="3" height="9" rx="1.5"/>
-      </svg>
-      <div class="fc-unlock-text">
-        <div class="fc-unlock-label">Next Unlocked</div>
-        <div class="fc-unlock-name">Emotional Intentionality</div>
+      <div class="fc-unlock-card">
+        <svg class="fc-lock" id="fcLock" viewBox="0 0 64 80" width="36" height="46" aria-hidden="true">
+          <g class="fc-shackle"><path d="M18 34 V22 a14 14 0 0 1 28 0 V34" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></g>
+          <rect class="fc-lock-body" x="12" y="34" width="40" height="34" rx="6" fill="currentColor"/>
+          <circle class="fc-lock-hole" cx="32" cy="49" r="4"/>
+          <rect class="fc-lock-hole" x="30.5" y="49" width="3" height="9" rx="1.5"/>
+        </svg>
+        <div class="fc-unlock-text">
+          <div class="fc-unlock-label">Next Unlocked</div>
+          <div class="fc-unlock-name">Emotional Intentionality</div>
+        </div>
+        <span class="fc-unlock-badge">Unlocked</span>
       </div>
     </div>
 
@@ -4112,7 +4118,7 @@
     const dayNum  = Math.min(84, Math.max(1, sd.dayNum  || 1));
     const cycleEnd = new Date(day1.getTime() + 84 * 86400000);
     const inCycle = dates.filter(function(iso){ const d = new Date(iso + 'T00:00:00'); return d >= day1 && d < cycleEnd; }).length;
-    const cyclePct = Math.min(100, Math.round(inCycle / dayNum * 100));
+    const cyclePct = Math.min(100, Math.round(dayNum / 84 * 100));
 
     // consistency level (reuse quadratic curve; 1 pt per completed day)
     const lv     = levelFromCP(total);
@@ -4254,7 +4260,7 @@
     setText('fcRingLevel', m.lv);
     setText('fcRingTitle', m.title || ('Level ' + m.lv));
     setText('fcCycleLab', 'Cycle \u00b7 Week ' + m.weekNum + ' of 12');
-    setText('fcCyclePct', m.cyclePct + '%');
+    setText('fcCyclePct', 'Day ' + m.dayNum + ' / 84');
     const arc = document.getElementById('fcRingArc'); if (arc) arc.setAttribute('stroke-dashoffset', FC_RING_C.toFixed(1));
     const cf = document.getElementById('fcCycleFill'); if (cf) cf.style.width = '0';
   }
@@ -4273,7 +4279,7 @@
     if (elapsed >= _FC_BEATS.right)  { modal.classList.add('reveal-right'); if (!_fcAnimated) { _fcAnimated = true; animateCompletionRight(_fcMetrics); } }
     if (elapsed >= _FC_BEATS.unlock) modal.classList.add('reveal-unlock');
     if (elapsed >= _FC_BEATS.unlocked) { const lk = document.getElementById('fcLock'); if (lk) lk.classList.add('unlocked'); }
-    if (elapsed >= FC_READY_MS) { modal.classList.add('ready'); _fcRAF = 0; return; }
+    if (elapsed >= FC_READY_MS) { modal.classList.add('ready'); var _ab = document.getElementById('fcAck'); if (_ab) _ab.removeAttribute('disabled'); _fcRAF = 0; return; }
     _fcRAF = requestAnimationFrame(_fcTick);
   }
   function showCompletionModal() {
@@ -4285,6 +4291,7 @@
     const lock = document.getElementById('fcLock'); if (lock) lock.classList.remove('unlocked');
     const lf = document.getElementById('fcLeft'); if (lf) lf.classList.remove('sealed');
     modal.classList.remove('reveal-left','reveal-right','reveal-unlock','ready');
+    var _ab = document.getElementById('fcAck'); if (_ab) _ab.setAttribute('disabled', '');
     modal.classList.add('open');
     document.body.style.overflow = 'hidden';
     _fcStart = Date.now();
@@ -4308,7 +4315,7 @@
     setText('ocRingLevel', m.lv);
     setText('ocRingTitle', m.title || ('Level ' + m.lv));
     setText('ocCycleLab', 'Cycle \u00b7 Week ' + m.weekNum + ' of 12');
-    setText('ocCyclePct', m.cyclePct + '%');
+    setText('ocCyclePct', 'Day ' + m.dayNum + ' / 84');
     renderHeatmapInto('ocHeatmap');
     requestAnimationFrame(function(){
       const arc = document.getElementById('ocRingArc'); if (arc) arc.setAttribute('stroke-dashoffset', (326.7 * (1 - m.lvPct / 100)).toFixed(1));
