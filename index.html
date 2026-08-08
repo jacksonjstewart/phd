@@ -1489,6 +1489,32 @@
   .fc-tile:hover{border-color:rgba(201,161,74,0.28);}
   .fc-tile-num{font-family:var(--sans);font-weight:600;font-size:26px;color:var(--text);line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-0.01em;}
   .fc-tile-lab{font-family:var(--mono);font-size:6.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-faint);}
+  .fc-stats-tile{flex:1;display:flex;flex-direction:column;justify-content:center;padding:4px 18px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,0.015);}
+  .fc-stat-row{display:flex;align-items:baseline;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);}
+  .fc-stat-row:last-child{border-bottom:none;}
+  .fc-stat-lab{font-family:var(--mono);font-size:7.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-dim);}
+  .fc-stat-val{font-family:var(--sans);font-weight:600;font-size:19px;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:-0.01em;}
+  .fc-weight-card{padding:14px 16px 10px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,0.015);}
+  .fc-weight-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
+  .fc-weight-title{font-family:var(--mono);font-size:7.5px;letter-spacing:0.26em;text-transform:uppercase;color:var(--gold-dim);}
+  .fc-weight-cur{font-family:var(--sans);font-weight:600;font-size:14px;color:var(--gold-bright);font-variant-numeric:tabular-nums;}
+  .wg-svg{width:100%;height:auto;display:block;overflow:visible;}
+  .wg-goal{stroke:var(--gold-dim);stroke-width:1;stroke-dasharray:4 4;}
+  .wg-goal-lab{font-family:var(--mono);font-size:7px;fill:var(--gold-dim);letter-spacing:0.08em;}
+  .wg-axis{font-family:var(--mono);font-size:7px;fill:rgba(232,226,208,0.42);letter-spacing:0.04em;}
+  .wg-line{fill:none;stroke:var(--green-bright);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px rgba(99,214,150,0.4));}
+  .wg-dot{fill:var(--green-bright);}
+  .wg-dot-start{fill:var(--gold-bright);stroke:rgba(24,18,8,0.7);stroke-width:1;}
+  .wg-start-lab{font-family:var(--serif);font-style:normal;font-size:14px;fill:var(--gold-bright);}
+  .wg-start-sub{font-family:var(--mono);font-size:7px;fill:var(--text-faint);letter-spacing:0.16em;text-transform:uppercase;}
+  .wg-legend{display:flex;gap:16px;justify-content:flex-end;margin-top:2px;}
+  .wg-leg{font-family:var(--mono);font-size:6.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-faint);display:inline-flex;align-items:center;gap:5px;}
+  .wg-leg::before{content:"";display:inline-block;width:12px;height:2px;border-radius:2px;}
+  .wg-leg-line::before{background:var(--green-bright);}
+  .wg-leg-goal::before{background:var(--gold-dim);}
+  .wg-empty{font-family:var(--mono);font-size:8px;color:var(--text-faint);text-align:center;padding:44px 0;letter-spacing:0.12em;text-transform:uppercase;}
+  @keyframes wgPulse{0%,100%{opacity:0.55}50%{opacity:1}}
+  .wg-dot-start.pulse{animation:wgPulse 1.9s ease-in-out infinite;}
   .fc-phase-card{padding:16px 18px;border:1px solid var(--border);border-radius:11px;background:rgba(255,255,255,0.015);}
   .fc-phase-head{display:flex;justify-content:space-between;font-family:var(--mono);font-size:7.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-dim);margin-bottom:9px;}
   .fc-phase-head span:last-child{color:var(--gold);}
@@ -2886,18 +2912,22 @@
           </div>
           <div class="fc-cons-title" id="fcRingTitle">Level 0</div>
         </div>
-        <div class="fc-tiles">
-          <div class="fc-tile"><span class="fc-tile-num" id="fcTotal">0</span><span class="fc-tile-lab">Days Complete</span></div>
-          <div class="fc-tile"><span class="fc-tile-num" id="fcStreak">0</span><span class="fc-tile-lab">Current Streak</span></div>
-          <div class="fc-tile"><span class="fc-tile-num" id="fcLongest">0</span><span class="fc-tile-lab">Longest Streak</span></div>
-          <div class="fc-tile"><span class="fc-tile-num" id="fcRate">0%</span><span class="fc-tile-lab">Lifetime Rate</span></div>
+        <div class="fc-stats-tile">
+          <div class="fc-stat-row"><span class="fc-stat-lab">Days Complete</span><span class="fc-stat-val" id="fcTotal">0</span></div>
+          <div class="fc-stat-row"><span class="fc-stat-lab">Phase Days</span><span class="fc-stat-val" id="fcPhaseDays">0</span></div>
+          <div class="fc-stat-row"><span class="fc-stat-lab">Current Streak</span><span class="fc-stat-val" id="fcStreak">0</span></div>
+          <div class="fc-stat-row"><span class="fc-stat-lab">Best Streak</span><span class="fc-stat-val" id="fcLongest">0</span></div>
+          <div class="fc-stat-row"><span class="fc-stat-lab">Phase Streak</span><span class="fc-stat-val" id="fcPhaseStreak">0</span></div>
         </div>
       </div>
       <div class="fc-phase-card">
         <div class="fc-phase-head"><span id="fcCycleLab">Cycle &middot; Week 1 of 12</span><span id="fcCyclePct">0%</span></div>
         <div class="fc-bar-track"><div class="fc-bar-fill" id="fcCycleFill"></div><span class="bar-marker" id="fcCycleMarker"></span></div>
       </div>
-      <div class="fc-heat-card"><div id="fcHeatmap"></div></div>
+      <div class="fc-weight-card">
+        <div class="fc-weight-head"><span class="fc-weight-title">Body Weight &middot; 12-Week Cut</span><span class="fc-weight-cur" id="fcWeightCur">&mdash;</span></div>
+        <div id="fcWeightGraph"></div>
+      </div>
     </div>
 
     <div class="fc-unlock" id="fcUnlock">
@@ -3553,6 +3583,7 @@
         const rows = parseCSV(text);
         const weekRows = rows.slice(3, 15);
         const labels = weekRows.map((r,i) => r[0] || ('W' + (i+1)));
+        window._physiqueData = { startW: num(rows[1] ? rows[1][2] : null), goalW: (function(){ const md = weekRows.map(function(r){return num(r[3]);}); for (var i=md.length-1;i>=0;i--){ if (md[i]!=null) return md[i]; } return 140; })(), actual: weekRows.map(function(r){return num(r[5]);}), labels: labels };
         renderWeightChart(
           labels,
           weekRows.map(r => num(r[2])),
@@ -3583,6 +3614,7 @@
           [158.0,156.0,153.8,151.7,149.7,147.8,145.8,144.0,142.1,140.3,138.5,136.7],
           [158.0,156.8,155.4,null,null,null,null,null,null,null,null,null]
         );
+        window._physiqueData = { startW: 162.4, goalW: 140, actual: [158.0,156.8,155.4,null,null,null,null,null,null,null,null,null], labels: ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12'] };
         updateSheetBtn(null);
       });
   }
@@ -4172,6 +4204,9 @@
     const cycleEnd = new Date(day1.getTime() + 84 * 86400000);
     const inCycle = dates.filter(function(iso){ const d = new Date(iso + 'T00:00:00'); return d >= day1 && d < cycleEnd; }).length;
     const cyclePct = Math.min(100, Math.round(dayNum / 84 * 100));
+    // phase best streak (longest consecutive run within the current cycle window)
+    let phaseStreak = 0, _prun = 0, _pprev = null;
+    dates.forEach(function(iso){ const dd = new Date(iso + 'T00:00:00'); if (dd >= day1 && dd < cycleEnd) { if (_pprev) { const _pd = new Date(_pprev + 'T00:00:00'); _pd.setDate(_pd.getDate()+1); _prun = (iso === isoFromDate(_pd)) ? _prun + 1 : 1; } else _prun = 1; if (_prun > phaseStreak) phaseStreak = _prun; _pprev = iso; } });
 
     // consistency progression (today may cross a level and/or a rank)
     const lv        = consLevel(total);
@@ -4185,7 +4220,7 @@
     const newRank   = title !== consTitle(Math.max(0, total - 1));
 
     return { total:total, streak:streak, longest:longest, rate:rate, daysSince:daysSince,
-             weekNum:weekNum, dayNum:dayNum, inCycle:inCycle, cyclePct:cyclePct,
+             weekNum:weekNum, dayNum:dayNum, inCycle:inCycle, cyclePct:cyclePct, phaseStreak:phaseStreak,
              lv:lv, title:title, inLv:inLv, toNext:toNext, lvPct:lvPct,
              leveledUp:leveledUp, newRank:newRank };
   }
@@ -4312,11 +4347,66 @@
     function step(t){ const p = Math.min(1, (t - t0) / dur); const e = 1 - Math.pow(1 - p, 3); el.textContent = Math.round(e * target) + suffix; if (p < 1) requestAnimationFrame(step); }
     requestAnimationFrame(step);
   }
+  // ---- physique weight trend graph (completion modal) ----
+  function renderWeightGraph(elId) {
+    const wrap = document.getElementById(elId); if (!wrap) return;
+    const pd = window._physiqueData;
+    const W = 460, H = 138, padL = 40, padR = 48, padT = 12, padB = 22;
+    const plotW = W - padL - padR, plotH = H - padT - padB;
+    if (!pd || pd.startW == null || isNaN(pd.startW)) { wrap.innerHTML = '<div class="wg-empty">Weight data loading</div>'; setText('fcWeightCur', ''); return; }
+    const startW = pd.startW, goalW = (pd.goalW != null && !isNaN(pd.goalW)) ? pd.goalW : 140;
+    const actual = pd.actual || [];
+    const pts = [{ i:0, w:startW }];
+    for (let k = 0; k < actual.length; k++) { if (actual[k] != null && !isNaN(actual[k])) pts.push({ i:k+1, w:actual[k] }); }
+    const hasWeeks = pts.length > 1;
+    const lastW = pts[pts.length-1].w;
+    setText('fcWeightCur', lastW.toFixed(1) + ' lb');
+    const ws = pts.map(function(p){return p.w;}).concat([goalW, startW]);
+    let yHi = Math.max.apply(null, ws), yLo = Math.min.apply(null, ws);
+    const pad = Math.max(1.5, (yHi - yLo) * 0.14); yHi += pad; yLo -= pad;
+    const X = function(i){ return padL + (i/12) * plotW; };
+    const Y = function(w){ return padT + (yHi - w)/(yHi - yLo) * plotH; };
+    let svg = '<svg class="wg-svg" viewBox="0 0 ' + W + ' ' + H + '">';
+    const gy = Y(goalW);
+    svg += '<line class="wg-goal" x1="' + padL + '" y1="' + gy.toFixed(1) + '" x2="' + (W-padR) + '" y2="' + gy.toFixed(1) + '"/>';
+    svg += '<text class="wg-goal-lab" x="' + (W-padR+5) + '" y="' + (gy+2.5).toFixed(1) + '" text-anchor="start">Goal ' + goalW.toFixed(0) + '</text>';
+    svg += '<text class="wg-axis" x="' + (padL-5) + '" y="' + (Y(startW)+2.5).toFixed(1) + '" text-anchor="end">' + startW.toFixed(0) + '</text>';
+    svg += '<text class="wg-axis" x="' + (padL-5) + '" y="' + (gy+2.5).toFixed(1) + '" text-anchor="end">' + goalW.toFixed(0) + '</text>';
+    [['Start',0],['W4',4],['W8',8],['W12',12]].forEach(function(t){ svg += '<text class="wg-axis" x="' + X(t[1]).toFixed(1) + '" y="' + (H-6) + '" text-anchor="middle">' + t[0] + '</text>'; });
+    if (hasWeeks) {
+      let d = 'M' + X(pts[0].i).toFixed(1) + ' ' + Y(pts[0].w).toFixed(1);
+      for (let j = 1; j < pts.length; j++) d += ' L' + X(pts[j].i).toFixed(1) + ' ' + Y(pts[j].w).toFixed(1);
+      svg += '<path class="wg-line" d="' + d + '"/>';
+      pts.forEach(function(p){ svg += '<circle class="' + (p.i===0?'wg-dot-start':'wg-dot') + '" cx="' + X(p.i).toFixed(1) + '" cy="' + Y(p.w).toFixed(1) + '" r="' + (p.i===0?4:3) + '"/>'; });
+    } else {
+      const sx = X(0), sy = Y(startW);
+      svg += '<circle class="wg-dot-start pulse" cx="' + sx.toFixed(1) + '" cy="' + sy.toFixed(1) + '" r="5"/>';
+      svg += '<text class="wg-start-lab" x="' + (sx+11) + '" y="' + (sy-7).toFixed(1) + '" text-anchor="start">' + startW.toFixed(1) + ' lb</text>';
+      svg += '<text class="wg-start-sub" x="' + (sx+11) + '" y="' + (sy+7).toFixed(1) + '" text-anchor="start">Starting weight &middot; awaiting Week 1</text>';
+    }
+    svg += '</svg><div class="wg-legend"><span class="wg-leg wg-leg-line">Weight</span><span class="wg-leg wg-leg-goal">Goal</span></div>';
+    wrap.innerHTML = svg;
+  }
+  function animateWeightGraph(elId) {
+    const wrap = document.getElementById(elId); if (!wrap) return;
+    const line = wrap.querySelector('.wg-line');
+    if (line && line.getTotalLength) {
+      let len = 0; try { len = line.getTotalLength(); } catch(e) {}
+      if (len > 0) {
+        line.style.strokeDasharray = len; line.style.strokeDashoffset = len;
+        line.getBoundingClientRect();
+        line.style.transition = 'stroke-dashoffset 1.7s cubic-bezier(0.16,1,0.3,1)';
+        requestAnimationFrame(function(){ line.style.strokeDashoffset = '0'; });
+      }
+    }
+    const dots = wrap.querySelectorAll('.wg-dot, .wg-dot-start');
+    dots.forEach(function(dt, idx){ dt.style.opacity = '0'; setTimeout(function(){ dt.style.transition = 'opacity .4s ease'; dt.style.opacity = '1'; }, 500 + idx*130); });
+  }
   function fillCompletionModal(m) {
     setText('fcDate', _fcDateLabel());
     setText('fcDayPill', 'Day ' + m.dayNum);
     setText('fcWeekPill', 'Week ' + m.weekNum + ' / 12');
-    setText('fcTotal', 0); setText('fcStreak', 0); setText('fcLongest', 0); setText('fcRate', '0%');
+    setText('fcTotal', 0); setText('fcPhaseDays', 0); setText('fcStreak', 0); setText('fcLongest', 0); setText('fcPhaseStreak', 0);
     setText('fcRingLevel', m.lv);
     setText('fcRingTitle', m.title);
     var _cc = document.getElementById('fcConsCard'); if (_cc) _cc.classList.remove('leveled');
@@ -4326,10 +4416,10 @@
     const arc = document.getElementById('fcRingArc'); if (arc) arc.setAttribute('stroke-dashoffset', FC_RING_C.toFixed(1));
     const cf = document.getElementById('fcCycleFill'); if (cf) cf.style.width = '0';
     const mk = document.getElementById('fcCycleMarker'); if (mk) mk.style.left = '0';
-    renderHeatmapInto('fcHeatmap');
+    renderWeightGraph('fcWeightGraph');
   }
   function animateCompletionRight(m) {
-    _countUp('fcTotal', m.total); _countUp('fcStreak', m.streak); _countUp('fcLongest', m.longest); _countUp('fcRate', m.rate, '%');
+    _countUp('fcTotal', m.total); _countUp('fcPhaseDays', m.inCycle); _countUp('fcStreak', m.streak); _countUp('fcLongest', m.longest); _countUp('fcPhaseStreak', m.phaseStreak);
     const ringPct = m.leveledUp ? 100 : m.lvPct;
     requestAnimationFrame(function(){
       const arc = document.getElementById('fcRingArc'); if (arc) arc.setAttribute('stroke-dashoffset', (FC_RING_C * (1 - ringPct / 100)).toFixed(1));
@@ -4337,6 +4427,7 @@
       const mk = document.getElementById('fcCycleMarker'); if (mk) mk.style.left = m.cyclePct + '%';
     });
     if (m.leveledUp) { const cc = document.getElementById('fcConsCard'); if (cc) setTimeout(function(){ cc.classList.add('leveled'); }, 800); }
+    animateWeightGraph('fcWeightGraph');
   }
   function _fcTick() {
     const modal = document.getElementById('completionModal');
