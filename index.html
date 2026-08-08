@@ -1445,7 +1445,11 @@
   .fc-left{grid-area:left;padding:56px 48px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;border-right:1px solid var(--border);background:radial-gradient(120% 90% at 50% 40%,rgba(67,181,124,0.06),transparent 70%);opacity:0;transform:translateY(14px);transition:opacity 1.1s ease,transform 1.1s cubic-bezier(0.16,1,0.3,1);}
   .fc-overlay.reveal-left .fc-left{opacity:1;transform:none;}
   .fc-hero-eyebrow{font-family:var(--mono);font-size:8.5px;letter-spacing:0.5em;text-transform:uppercase;color:var(--gold-dim);}
-  .fc-seal{width:130px;height:130px;margin:8px 0;}
+  .fc-seal-wrap{position:relative;display:inline-flex;margin:8px 0;}
+  .fc-seal{width:130px;height:130px;}
+  .fc-seal-ripple{position:absolute;inset:6px;border-radius:50%;border:1.5px solid var(--green-bright);opacity:0;pointer-events:none;}
+  .fc-left.sealed .fc-seal-ripple{animation:fcSealRipple 1s ease-out 1.15s;}
+  @keyframes fcSealRipple{0%{transform:scale(0.72);opacity:0.55}100%{transform:scale(1.55);opacity:0}}
   .fc-seal-track{stroke:rgba(255,255,255,0.06);}
   .fc-seal-ring{stroke:var(--green);stroke-dashoffset:276.5;transition:stroke-dashoffset 0.95s cubic-bezier(0.16,1,0.3,1);filter:drop-shadow(0 0 6px var(--green-glow));}
   .fc-seal-check{stroke:var(--green-bright);stroke-dashoffset:60;transition:stroke-dashoffset 0.55s ease 0.8s;filter:drop-shadow(0 0 4px var(--green-glow));}
@@ -1463,7 +1467,12 @@
   .fc-sec-head{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:8.5px;letter-spacing:0.5em;text-transform:uppercase;color:var(--gold);}
   .fc-sec-head::after{content:"";flex:1;height:1px;background:var(--border);}
   .fc-stats-row{display:flex;gap:18px;}
-  .fc-cons-card{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:11px;padding:18px 24px;border:1px solid var(--border);border-radius:11px;background:rgba(255,255,255,0.015);}
+  .fc-cons-card{position:relative;flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:11px;padding:18px 24px;border:1px solid var(--border);border-radius:11px;background:rgba(255,255,255,0.015);transition:border-color .8s ease,box-shadow .8s ease;}
+  .fc-cons-card.leveled{border-color:var(--gold-dim);box-shadow:0 0 26px rgba(201,161,74,0.18);animation:fcConsGlow 2.8s ease-in-out infinite;}
+  @keyframes fcConsGlow{0%,100%{box-shadow:0 0 16px rgba(201,161,74,0.12)}50%{box-shadow:0 0 30px rgba(201,161,74,0.26)}}
+  .fc-levelup{display:none;position:absolute;top:-11px;left:50%;transform:translateX(-50%);white-space:nowrap;font-family:var(--mono);font-size:6.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--bg-deep);background:linear-gradient(180deg,var(--gold-bright),var(--gold));padding:4px 11px;border-radius:100px;box-shadow:0 0 14px rgba(201,161,74,0.4);}
+  .fc-cons-card.leveled .fc-levelup{display:block;animation:fcBadgePop 0.6s cubic-bezier(0.34,1.56,0.64,1);}
+  @keyframes fcBadgePop{0%{transform:translateX(-50%) scale(0.4);opacity:0}60%{transform:translateX(-50%) scale(1.12)}100%{transform:translateX(-50%) scale(1);opacity:1}}
   .fc-cons-lab{font-family:var(--mono);font-size:7px;letter-spacing:0.34em;text-transform:uppercase;color:var(--text-faint);}
   .cons-ring{position:relative;width:104px;height:104px;}
   .cons-ring svg{display:block;}
@@ -2831,11 +2840,14 @@
 
     <div class="fc-left" id="fcLeft">
       <div class="fc-hero-eyebrow">Core Daily Actions</div>
+      <div class="fc-seal-wrap">
+        <span class="fc-seal-ripple"></span>
       <svg class="fc-seal" viewBox="0 0 100 100" aria-hidden="true">
         <circle class="fc-seal-track" cx="50" cy="50" r="44" fill="none" stroke-width="3.5"/>
         <circle class="fc-seal-ring" cx="50" cy="50" r="44" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="276.5" transform="rotate(-90 50 50)"/>
         <path class="fc-seal-check" d="M32 51 L44 63 L69 37" fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="60"/>
       </svg>
+      </div>
       <div class="fc-complete">Complete</div>
       <div class="fc-complete-sub">All core actions done</div>
       <div class="fc-date" id="fcDate">&mdash;</div>
@@ -2848,7 +2860,8 @@
     <div class="fc-right">
       <div class="fc-sec-head">Statistics</div>
       <div class="fc-stats-row">
-        <div class="fc-cons-card">
+        <div class="fc-cons-card" id="fcConsCard">
+          <div class="fc-levelup" id="fcLevelUp">Level Up</div>
           <div class="fc-cons-lab">Consistency</div>
           <div class="cons-ring">
             <svg viewBox="0 0 120 120" width="104" height="104" aria-hidden="true">
@@ -4085,6 +4098,30 @@
   function saveLedger(arr) { try { localStorage.setItem(LEDGER_KEY, JSON.stringify(dedupeLedger(arr))); } catch(_) {} }
 
   // ---- derived metrics (everything the analytics show) ----
+  // Consistency progression - milestone cadence, Level 1 from day one.
+  var CONS_STEPS = [0,1,3,7,14,21,30,45,60,90,120,150,180,220,260,300,350,400,460,520,600];
+  function consLevel(days) {
+    if (days <= 0) return 0;
+    var lv = 0;
+    for (var i = 1; i < CONS_STEPS.length; i++) { if (days >= CONS_STEPS[i]) lv = i; else return lv; }
+    return lv + Math.floor((days - CONS_STEPS[CONS_STEPS.length - 1]) / 90);
+  }
+  function consFloor(lv) {
+    if (lv <= 0) return 0;
+    if (lv < CONS_STEPS.length) return CONS_STEPS[lv];
+    return CONS_STEPS[CONS_STEPS.length - 1] + (lv - (CONS_STEPS.length - 1)) * 90;
+  }
+  function consTitle(days) {
+    if (days >= 730) return 'Emeritus';
+    if (days >= 365) return 'Laureate';
+    if (days >= 180) return 'Doctor';
+    if (days >= 90)  return 'Fellow';
+    if (days >= 45)  return 'Scholar';
+    if (days >= 21)  return 'Adept';
+    if (days >= 7)   return 'Apprentice';
+    return 'Aspirant';
+  }
+
   function ledgerMetrics() {
     const dates = loadLedger();
     const set   = new Set(dates);
@@ -4120,16 +4157,21 @@
     const inCycle = dates.filter(function(iso){ const d = new Date(iso + 'T00:00:00'); return d >= day1 && d < cycleEnd; }).length;
     const cyclePct = Math.min(100, Math.round(dayNum / 84 * 100));
 
-    // consistency level (reuse quadratic curve; 1 pt per completed day)
-    const lv     = levelFromCP(total);
-    const title  = cpTitle(lv);
-    const inLv   = cpInLevel(total);
-    const toNext = lv < 99 ? cpCost(lv + 1) : null;
-    const lvPct  = toNext ? Math.round(inLv / toNext * 100) : 100;
+    // consistency progression (today may cross a level and/or a rank)
+    const lv        = consLevel(total);
+    const prevLv    = consLevel(total - 1);
+    const title     = consTitle(total);
+    const cur       = consFloor(lv), nxt = consFloor(lv + 1);
+    const inLv      = total - cur;
+    const toNext    = nxt - cur;
+    const lvPct     = toNext > 0 ? Math.round(inLv / toNext * 100) : 100;
+    const leveledUp = lv > prevLv;
+    const newRank   = title !== consTitle(Math.max(0, total - 1));
 
     return { total:total, streak:streak, longest:longest, rate:rate, daysSince:daysSince,
              weekNum:weekNum, dayNum:dayNum, inCycle:inCycle, cyclePct:cyclePct,
-             lv:lv, title:title, inLv:inLv, toNext:toNext, lvPct:lvPct, message:cpMessage(lv) };
+             lv:lv, title:title, inLv:inLv, toNext:toNext, lvPct:lvPct,
+             leveledUp:leveledUp, newRank:newRank };
   }
 
   // ---- month heatmap (fed by the ledger) ----
@@ -4258,7 +4300,9 @@
     setText('fcWeekPill', 'Week ' + m.weekNum + ' / 12');
     setText('fcTotal', 0); setText('fcStreak', 0); setText('fcLongest', 0); setText('fcRate', '0%');
     setText('fcRingLevel', m.lv);
-    setText('fcRingTitle', m.title || ('Level ' + m.lv));
+    setText('fcRingTitle', m.title);
+    var _cc = document.getElementById('fcConsCard'); if (_cc) _cc.classList.remove('leveled');
+    var _lu = document.getElementById('fcLevelUp'); if (_lu) _lu.textContent = m.newRank ? m.title : 'Level Up';
     setText('fcCycleLab', 'Cycle \u00b7 Week ' + m.weekNum + ' of 12');
     setText('fcCyclePct', 'Day ' + m.dayNum + ' / 84');
     const arc = document.getElementById('fcRingArc'); if (arc) arc.setAttribute('stroke-dashoffset', FC_RING_C.toFixed(1));
@@ -4266,10 +4310,12 @@
   }
   function animateCompletionRight(m) {
     _countUp('fcTotal', m.total); _countUp('fcStreak', m.streak); _countUp('fcLongest', m.longest); _countUp('fcRate', m.rate, '%');
+    const ringPct = m.leveledUp ? 100 : m.lvPct;
     requestAnimationFrame(function(){
-      const arc = document.getElementById('fcRingArc'); if (arc) arc.setAttribute('stroke-dashoffset', (FC_RING_C * (1 - m.lvPct / 100)).toFixed(1));
+      const arc = document.getElementById('fcRingArc'); if (arc) arc.setAttribute('stroke-dashoffset', (FC_RING_C * (1 - ringPct / 100)).toFixed(1));
       const cf = document.getElementById('fcCycleFill'); if (cf) cf.style.width = m.cyclePct + '%';
     });
+    if (m.leveledUp) { const cc = document.getElementById('fcConsCard'); if (cc) setTimeout(function(){ cc.classList.add('leveled'); }, 800); }
   }
   function _fcTick() {
     const modal = document.getElementById('completionModal');
