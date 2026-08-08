@@ -14,7 +14,7 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%230a0806'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Georgia,serif' font-size='24' fill='%23c9a14a'%3EDr.%3C/text%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
 <!-- Library photograph — served from /lab/library.webp on GitHub Pages (CONFIRMED working).
      Wikimedia is NOT used (blocks hotlinks). Source: Long Room, Trinity College Dublin · CC BY-SA 3.0 -->
@@ -52,6 +52,7 @@
 
     --serif: 'Cormorant Garamond', 'Cormorant', Georgia, 'Times New Roman', serif;
     --mono:  'DM Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+    --sans:  'Inter', -apple-system, 'Segoe UI', system-ui, sans-serif;
 
     --container: 1320px;
   }
@@ -1479,32 +1480,31 @@
   .cons-ring-track{stroke:rgba(255,255,255,0.06);}
   .cons-ring-arc{stroke:var(--gold);transition:stroke-dashoffset 1.6s cubic-bezier(0.16,1,0.3,1);filter:drop-shadow(0 0 5px rgba(201,161,74,0.4));}
   .cons-ring-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
-  .cons-ring-lv{font-family:var(--serif);font-style:normal;font-weight:500;font-size:38px;color:var(--gold);line-height:1;}
+  .cons-ring-lv{font-family:var(--sans);font-weight:600;font-size:36px;color:var(--gold);line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-0.02em;}
   .fc-cons-title{font-family:var(--mono);font-size:7.5px;letter-spacing:0.26em;text-transform:uppercase;color:var(--gold-dim);}
   .fc-tiles{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:12px;}
   .fc-tile{display:flex;flex-direction:column;justify-content:center;gap:7px;padding:14px 16px;border:1px solid var(--border);border-radius:11px;background:rgba(255,255,255,0.015);transition:border-color .4s ease;}
   .fc-tile:hover{border-color:rgba(201,161,74,0.28);}
-  .fc-tile-num{font-family:var(--serif);font-style:normal;font-weight:500;font-size:27px;color:var(--text);line-height:1;}
+  .fc-tile-num{font-family:var(--sans);font-weight:600;font-size:26px;color:var(--text);line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-0.01em;}
   .fc-tile-lab{font-family:var(--mono);font-size:6.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-faint);}
   .fc-phase-card{padding:16px 18px;border:1px solid var(--border);border-radius:11px;background:rgba(255,255,255,0.015);}
   .fc-phase-head{display:flex;justify-content:space-between;font-family:var(--mono);font-size:7.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-dim);margin-bottom:9px;}
   .fc-phase-head span:last-child{color:var(--gold);}
   .fc-bar-track{height:5px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden;}
   .fc-bar-fill{height:100%;width:0;background:linear-gradient(90deg,rgba(201,161,74,0.5),var(--gold-bright));border-radius:3px;transition:width 1.5s cubic-bezier(0.16,1,0.3,1);}
-  .fc-unlock{grid-area:unlock;padding:22px 40px 10px;opacity:0;transform:translateY(10px);transition:opacity 1s ease,transform 1s cubic-bezier(0.16,1,0.3,1);}
-  .fc-unlock-card{display:flex;align-items:center;gap:16px;padding:16px 22px;border:1px solid var(--gold-dim);border-radius:12px;background:linear-gradient(180deg,rgba(201,161,74,0.07),rgba(201,161,74,0.02));animation:fcUnlockGlow 3s ease-in-out infinite;}
-  @keyframes fcUnlockGlow{0%,100%{box-shadow:0 0 14px rgba(201,161,74,0.10);border-color:rgba(201,161,74,0.32)}50%{box-shadow:0 0 26px rgba(201,161,74,0.26);border-color:rgba(201,161,74,0.62)}}
-  .fc-unlock-badge{margin-left:auto;font-family:var(--mono);font-size:7px;letter-spacing:0.32em;text-transform:uppercase;color:var(--gold-bright);border:1px solid var(--gold-dim);border-radius:100px;padding:5px 13px;background:rgba(201,161,74,0.06);}
+  .fc-unlock{grid-area:unlock;padding:24px 40px 14px;opacity:0;transform:translateY(10px);transition:opacity 1s ease,transform 1s cubic-bezier(0.16,1,0.3,1);}
   .fc-overlay.reveal-unlock .fc-unlock{opacity:1;transform:none;}
-  .fc-lock{color:var(--gold-dim);flex:0 0 auto;transition:color 0.9s ease,filter 0.9s ease;animation:fcLockIdle 2.2s ease-in-out infinite;}
-  @keyframes fcLockIdle{0%,100%{opacity:0.5}50%{opacity:0.9}}
+  .fc-unlock-btn{display:flex;align-items:center;gap:18px;padding:16px 24px;border-radius:14px;border:1px solid var(--gold);background:linear-gradient(180deg,rgba(201,161,74,0.20),rgba(201,161,74,0.08));box-shadow:0 0 22px rgba(201,161,74,0.14),inset 0 1px 0 rgba(255,255,255,0.05);animation:fcUnlockGlow 3.2s ease-in-out infinite;}
+  @keyframes fcUnlockGlow{0%,100%{box-shadow:0 0 16px rgba(201,161,74,0.12),inset 0 1px 0 rgba(255,255,255,0.04)}50%{box-shadow:0 0 32px rgba(201,161,74,0.30),inset 0 1px 0 rgba(255,255,255,0.07)}}
+  .fc-unlock-ico{flex:0 0 auto;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(201,161,74,0.16);border:1px solid var(--gold-dim);overflow:visible;}
+  .fc-unlock-text{display:flex;flex-direction:column;gap:5px;}
+  .fc-unlock-header{font-family:var(--mono);font-size:7.5px;letter-spacing:0.44em;text-transform:uppercase;color:var(--gold-bright);}
+  .fc-unlock-name{font-family:var(--serif);font-style:normal;font-weight:500;font-size:21px;color:var(--gold-bright);letter-spacing:0.01em;}
+  .fc-lock{color:var(--gold-bright);flex:0 0 auto;transition:filter 0.9s ease;filter:drop-shadow(0 0 5px rgba(201,161,74,0.4));}
   .fc-lock .fc-shackle{transform-origin:44px 26px;transition:transform 0.9s cubic-bezier(0.34,1.56,0.64,1);}
-  .fc-lock .fc-lock-hole{fill:rgba(13,11,8,0.985);}
-  .fc-lock.unlocked{color:var(--gold-bright);filter:drop-shadow(0 0 12px rgba(201,161,74,0.6));animation:none;}
+  .fc-lock .fc-lock-hole{fill:rgba(26,20,10,0.92);}
+  .fc-lock.unlocked{filter:drop-shadow(0 0 11px rgba(201,161,74,0.7));}
   .fc-lock.unlocked .fc-shackle{transform:translate(9px,-7px) rotate(32deg);}
-  .fc-unlock-text{display:flex;flex-direction:column;gap:3px;}
-  .fc-unlock-label{font-family:var(--mono);font-size:7px;letter-spacing:0.42em;text-transform:uppercase;color:var(--text-faint);}
-  .fc-unlock-name{font-family:var(--serif);font-style:normal;font-weight:500;font-size:21px;color:var(--text);}
   .fc-ack{grid-area:ack;margin:0;font-family:var(--mono);font-size:8.5px;letter-spacing:0.45em;text-transform:uppercase;color:var(--text-faint);background:transparent;border:none;border-top:1px solid var(--border);padding:22px;cursor:not-allowed;transition:color .6s ease,background .3s ease,opacity .6s ease;opacity:0.4;}
   .fc-overlay.ready .fc-ack{color:var(--green-bright);cursor:pointer;opacity:1;animation:fcAckGlow 2.6s ease-in-out infinite;}
   .fc-overlay.ready .fc-ack:hover{background:rgba(67,181,124,0.09);color:var(--green-bright);}
@@ -1523,12 +1523,18 @@
   /* Office - in-place completion overlay (replaces task lists) */
   .oc-panel{display:none;animation:fcBoxIn 0.7s cubic-bezier(0.16,1,0.3,1) forwards;padding-top:6px;}
   .oc-panel.shown{display:block;}
-  .oc-eyebrow{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:8px;letter-spacing:0.42em;text-transform:uppercase;color:var(--green);margin-bottom:10px;}
-  .oc-dot{width:6px;height:6px;border-radius:50%;background:var(--green-bright);box-shadow:0 0 8px var(--green-glow);animation:ocDot 2.4s ease-in-out infinite;}
-  @keyframes ocDot{0%,100%{opacity:0.45}50%{opacity:1}}
-  .oc-title{font-family:var(--serif);font-style:normal;font-weight:500;font-size:29px;color:var(--text);margin-bottom:34px;}
+  .oc-status{display:flex;align-items:center;gap:13px;width:100%;text-align:left;font-family:var(--mono);font-size:9px;letter-spacing:0.34em;text-transform:uppercase;color:var(--green-bright);background:linear-gradient(180deg,rgba(50,130,88,0.30),rgba(40,105,72,0.14));border:1px solid rgba(67,181,124,0.42);border-radius:13px;padding:17px 22px;cursor:pointer;transition:background .3s ease,border-color .3s ease,box-shadow .3s ease;box-shadow:0 0 20px rgba(67,181,124,0.10);}
+  .oc-status:hover{background:linear-gradient(180deg,rgba(50,130,88,0.38),rgba(40,105,72,0.20));border-color:rgba(67,181,124,0.62);box-shadow:0 0 26px rgba(67,181,124,0.18);}
+  .oc-status-check{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(67,181,124,0.24);color:var(--green-bright);font-size:11px;flex:0 0 auto;}
+  .oc-status-txt{flex:1;}
+  .oc-status-chev{font-size:7px;color:var(--green-dim);transition:transform .45s cubic-bezier(0.16,1,0.3,1);}
+  .oc-panel.collapsed .oc-status-chev{transform:rotate(180deg);}
+  .oc-body{overflow:hidden;transition:max-height .55s cubic-bezier(0.16,1,0.3,1),opacity .4s ease,margin-top .45s ease;max-height:1400px;opacity:1;margin-top:26px;}
+  .oc-panel.collapsed .oc-body{max-height:0;opacity:0;margin-top:0;}
   .oc-sec-head{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:8px;letter-spacing:0.5em;text-transform:uppercase;color:var(--gold);margin-bottom:20px;}
-  .oc-sec-head::after{content:"";flex:1;height:1px;background:var(--border);}
+  .oc-rule{flex:1;height:1px;background:var(--border);}
+  .oc-replay{font-family:var(--mono);font-size:7px;letter-spacing:0.24em;text-transform:uppercase;color:var(--gold-dim);background:transparent;border:1px solid var(--border);border-radius:100px;padding:6px 13px;cursor:pointer;transition:color .3s ease,border-color .3s ease,background .3s ease;}
+  .oc-replay:hover{color:var(--gold-bright);border-color:var(--gold-dim);background:rgba(201,161,74,0.05);}
   .oc-top{display:flex;gap:16px;align-items:stretch;flex-wrap:wrap;margin-bottom:16px;}
   .oc-cons-card{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:22px 32px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,0.015);}
   .oc-cons-lab{font-family:var(--mono);font-size:7px;letter-spacing:0.32em;text-transform:uppercase;color:var(--text-faint);}
@@ -1536,7 +1542,7 @@
   .oc-tiles{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:14px;min-width:250px;}
   .oc-tile{display:flex;flex-direction:column;justify-content:center;gap:8px;padding:16px 18px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,0.015);transition:border-color .4s ease;}
   .oc-tile:hover{border-color:rgba(201,161,74,0.28);}
-  .oc-tile-num{font-family:var(--serif);font-style:normal;font-weight:500;font-size:27px;color:var(--text);line-height:1;}
+  .oc-tile-num{font-family:var(--sans);font-weight:600;font-size:25px;color:var(--text);line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-0.01em;}
   .oc-tile-lab{font-family:var(--mono);font-size:6.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-faint);}
   .oc-phase-card{padding:18px 20px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,0.015);margin-bottom:14px;}
   .oc-phase-head{display:flex;justify-content:space-between;font-family:var(--mono);font-size:7.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-dim);margin-bottom:11px;}
@@ -1546,7 +1552,7 @@
   .oc-heat-card{padding:18px 22px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,0.015);margin-bottom:16px;}
   .oc-next-card{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:7.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold-bright);padding:13px 22px;border:1px solid var(--gold-dim);border-radius:100px;background:rgba(201,161,74,0.05);box-shadow:0 0 16px rgba(201,161,74,0.08);}
   .oc-next-lock{color:var(--gold-bright);}
-  @media(prefers-reduced-motion:reduce){.fc-left,.fc-right,.fc-unlock,.fc-unlock-card,.fc-lock,.fc-lock .fc-shackle,.fc-seal-ring,.fc-seal-check,.fc-bar-fill,.oc-bar-fill,.cons-ring-arc,.oc-dot{transition:none!important;animation:none!important;}.fc-box,.oc-panel,.fc-left.sealed .fc-seal{animation:none!important;}}
+  @media(prefers-reduced-motion:reduce){.fc-left,.fc-right,.fc-unlock,.fc-unlock-btn,.fc-lock,.fc-lock .fc-shackle,.fc-seal-ring,.fc-seal-check,.fc-bar-fill,.oc-bar-fill,.cons-ring-arc,.oc-body,.oc-status-chev{transition:none!important;animation:none!important;}.fc-box,.oc-panel,.fc-left.sealed .fc-seal{animation:none!important;}}
 
 
   .stats-split {
@@ -2653,34 +2659,39 @@
 
     <!-- In-place completion overlay: replaces task lists once the day is set -->
     <div class="oc-panel" id="officeCompletePanel" aria-live="polite">
-      <div class="oc-eyebrow"><span class="oc-dot"></span> Core Daily Actions &middot; Complete</div>
-      <div class="oc-title">Today&rsquo;s core actions are done.</div>
-      <div class="oc-sec-head">Statistics</div>
-      <div class="oc-top">
-        <div class="oc-cons-card">
-          <div class="oc-cons-lab">Consistency</div>
-          <div class="cons-ring">
-            <svg viewBox="0 0 120 120" width="104" height="104" aria-hidden="true">
-              <circle class="cons-ring-track" cx="60" cy="60" r="52" fill="none" stroke-width="6"/>
-              <circle class="cons-ring-arc" id="ocRingArc" cx="60" cy="60" r="52" fill="none" stroke-width="6" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7" transform="rotate(-90 60 60)"/>
-            </svg>
-            <div class="cons-ring-inner"><span class="cons-ring-lv" id="ocRingLevel">0</span></div>
+      <button class="oc-status" id="ocStatusBtn" type="button">
+        <span class="oc-status-check">&#10003;</span>
+        <span class="oc-status-txt">Daily Routine Complete</span>
+        <span class="oc-status-chev" id="ocChev">&#9650;</span>
+      </button>
+      <div class="oc-body" id="ocBody">
+        <div class="oc-sec-head"><span>Statistics</span><span class="oc-rule"></span><button class="oc-replay" id="ocReplayBtn" type="button">&#8635; Summary</button></div>
+        <div class="oc-top">
+          <div class="oc-cons-card">
+            <div class="oc-cons-lab">Consistency</div>
+            <div class="cons-ring">
+              <svg viewBox="0 0 120 120" width="104" height="104" aria-hidden="true">
+                <circle class="cons-ring-track" cx="60" cy="60" r="52" fill="none" stroke-width="6"/>
+                <circle class="cons-ring-arc" id="ocRingArc" cx="60" cy="60" r="52" fill="none" stroke-width="6" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7" transform="rotate(-90 60 60)"/>
+              </svg>
+              <div class="cons-ring-inner"><span class="cons-ring-lv" id="ocRingLevel">0</span></div>
+            </div>
+            <div class="oc-cons-title" id="ocRingTitle">Level 0</div>
           </div>
-          <div class="oc-cons-title" id="ocRingTitle">Level 0</div>
+          <div class="oc-tiles">
+            <div class="oc-tile"><span class="oc-tile-num" id="ocTotal">0</span><span class="oc-tile-lab">Days Complete</span></div>
+            <div class="oc-tile"><span class="oc-tile-num" id="ocStreak">0</span><span class="oc-tile-lab">Current Streak</span></div>
+            <div class="oc-tile"><span class="oc-tile-num" id="ocLongest">0</span><span class="oc-tile-lab">Longest Streak</span></div>
+            <div class="oc-tile"><span class="oc-tile-num" id="ocRate">0%</span><span class="oc-tile-lab">Lifetime Rate</span></div>
+          </div>
         </div>
-        <div class="oc-tiles">
-          <div class="oc-tile"><span class="oc-tile-num" id="ocTotal">0</span><span class="oc-tile-lab">Days Complete</span></div>
-          <div class="oc-tile"><span class="oc-tile-num" id="ocStreak">0</span><span class="oc-tile-lab">Current Streak</span></div>
-          <div class="oc-tile"><span class="oc-tile-num" id="ocLongest">0</span><span class="oc-tile-lab">Longest Streak</span></div>
-          <div class="oc-tile"><span class="oc-tile-num" id="ocRate">0%</span><span class="oc-tile-lab">Lifetime Rate</span></div>
+        <div class="oc-phase-card">
+          <div class="oc-phase-head"><span id="ocCycleLab">Cycle &middot; Week 1 of 12</span><span id="ocCyclePct">Day 1 / 84</span></div>
+          <div class="oc-bar-track"><div class="oc-bar-fill" id="ocCycleFill"></div></div>
         </div>
+        <div class="oc-heat-card"><div id="ocHeatmap"></div></div>
+        <div class="oc-next-card"><span class="oc-next-lock">&#10003;</span> Emotional Intentionality unlocked</div>
       </div>
-      <div class="oc-phase-card">
-        <div class="oc-phase-head"><span id="ocCycleLab">Cycle &middot; Week 1 of 12</span><span id="ocCyclePct">Day 1 / 84</span></div>
-        <div class="oc-bar-track"><div class="oc-bar-fill" id="ocCycleFill"></div></div>
-      </div>
-      <div class="oc-heat-card"><div id="ocHeatmap"></div></div>
-      <div class="oc-next-card"><span class="oc-next-lock">&#10003;</span> Emotional Intentionality unlocked</div>
     </div>
 
   </div>
@@ -2886,18 +2897,19 @@
     </div>
 
     <div class="fc-unlock" id="fcUnlock">
-      <div class="fc-unlock-card">
-        <svg class="fc-lock" id="fcLock" viewBox="0 0 64 80" width="36" height="46" aria-hidden="true">
-          <g class="fc-shackle"><path d="M18 34 V22 a14 14 0 0 1 28 0 V34" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></g>
-          <rect class="fc-lock-body" x="12" y="34" width="40" height="34" rx="6" fill="currentColor"/>
-          <circle class="fc-lock-hole" cx="32" cy="49" r="4"/>
-          <rect class="fc-lock-hole" x="30.5" y="49" width="3" height="9" rx="1.5"/>
-        </svg>
-        <div class="fc-unlock-text">
-          <div class="fc-unlock-label">Next Unlocked</div>
-          <div class="fc-unlock-name">Emotional Intentionality</div>
-        </div>
-        <span class="fc-unlock-badge">Unlocked</span>
+      <div class="fc-unlock-btn">
+        <span class="fc-unlock-ico">
+          <svg class="fc-lock" id="fcLock" viewBox="0 0 64 80" width="27" height="34" aria-hidden="true">
+            <g class="fc-shackle"><path d="M18 34 V22 a14 14 0 0 1 28 0 V34" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></g>
+            <rect class="fc-lock-body" x="12" y="34" width="40" height="34" rx="6" fill="currentColor"/>
+            <circle class="fc-lock-hole" cx="32" cy="49" r="4"/>
+            <rect class="fc-lock-hole" x="30.5" y="49" width="3" height="9" rx="1.5"/>
+          </svg>
+        </span>
+        <span class="fc-unlock-text">
+          <span class="fc-unlock-header">Unlocked</span>
+          <span class="fc-unlock-name">Emotional Intentionality</span>
+        </span>
       </div>
     </div>
 
@@ -4146,8 +4158,10 @@
     // lifetime rate since Day 1
     const day1 = new Date(DAY_ONE + 'T00:00:00');
     const now  = new Date();
-    const daysSince = Math.max(1, Math.floor((now - day1) / 86400000) + 1);
-    const rate = Math.min(100, Math.round(total / daysSince * 100));
+    const todayComplete = set.has(todayISO());
+    const fullyPassed = Math.max(0, Math.floor((new Date(todayISO() + 'T00:00:00') - day1) / 86400000));
+    const daysSince = fullyPassed + (todayComplete ? 1 : 0);   // today only counts once it's done
+    const rate = daysSince > 0 ? Math.min(100, Math.round(total / daysSince * 100)) : 100;
 
     // 12-week cycle  anchored to PHYSIQUE ACADEMY program (via _splashData), 84 days
     const sd = window._splashData || {};
@@ -4277,8 +4291,8 @@
   // ---- staged completion modal ----
   // ---- staged completion modal (wall-clock driven -> background-safe, never bricks) ----
   let _fcStart = 0, _fcMetrics = null, _fcRAF = 0, _fcAnimated = false;
-  const FC_READY_MS = 4600;                       // Acknowledged unlocks at this elapsed time
-  const _FC_BEATS = { left: 350, right: 1150, unlock: 2500, unlocked: 3200 };
+  const FC_READY_MS = 5600;                       // Acknowledged unlocks at this elapsed time
+  const _FC_BEATS = { left: 450, right: 1750, unlock: 3400, unlocked: 4150 };
   const FC_RING_C = 326.7;
 
   function _fcDateLabel() {
@@ -4374,6 +4388,7 @@
     if (!office || !panel) return;
     office.querySelectorAll('.routine[data-window]').forEach(function(r){ r.style.display = 'none'; });
     const steward = document.getElementById('stewardBtn'); if (steward) steward.style.display = 'none';
+    panel.classList.remove('collapsed');
     panel.classList.add('shown');
     renderOfficeCompletePanel();
   }
@@ -4382,6 +4397,10 @@
     const modal = document.getElementById('completionModal');
     const ack   = document.getElementById('fcAck');
     if (ack) ack.addEventListener('click', _fcClose);
+    var _st = document.getElementById('ocStatusBtn');
+    if (_st) _st.addEventListener('click', function(){ var pnl = document.getElementById('officeCompletePanel'); if (pnl) pnl.classList.toggle('collapsed'); });
+    var _rp = document.getElementById('ocReplayBtn');
+    if (_rp) _rp.addEventListener('click', function(){ showCompletionModal(); });
     // Escape closes ONLY after the sequence has completed (same gate as the button)
     document.addEventListener('keydown', function(e){
       if (e.key === 'Escape' && modal && modal.classList.contains('open') && modal.classList.contains('ready')) _fcClose();
