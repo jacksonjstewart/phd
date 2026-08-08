@@ -1505,11 +1505,6 @@
   .oc-phys-card .fc-phys-val{font-size:15px;}
   .fc-stat-row.ablaze .fc-stat-val{color:var(--gold-bright);text-shadow:0 0 9px rgba(201,161,74,0.5);}
   .fc-stat-row.ablaze .fc-stat-lab::after{content:" \2726";color:var(--gold-bright);font-size:8px;}
-  .fc-tiles{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-  .fc-tile{display:flex;flex-direction:column;justify-content:center;gap:7px;padding:14px 16px;border:1px solid var(--border);border-radius:11px;background:rgba(255,255,255,0.015);transition:border-color .4s ease;}
-  .fc-tile:hover{border-color:rgba(201,161,74,0.28);}
-  .fc-tile-num{font-family:var(--sans);font-weight:600;font-size:26px;color:var(--text);line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-0.01em;}
-  .fc-tile-lab{font-family:var(--mono);font-size:6.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-faint);}
   .fc-stats-tile{flex:1;display:flex;padding:12px 0;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,0.015);}
   .fc-stats-col{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 18px;}
   .fc-stats-col:first-child{border-right:1px solid var(--border);}
@@ -1528,19 +1523,14 @@
   .fc-weight-title{font-family:var(--mono);font-size:7.5px;letter-spacing:0.26em;text-transform:uppercase;color:var(--gold-dim);}
   .fc-weight-cur{font-family:var(--sans);font-weight:600;font-size:14px;color:var(--gold-bright);font-variant-numeric:tabular-nums;}
   .wg-svg{width:100%;height:auto;display:block;overflow:visible;}
-  .wg-goal{stroke:var(--gold-dim);stroke-width:1;stroke-dasharray:4 4;}
-  .wg-goal-lab{font-family:var(--mono);font-size:7px;fill:var(--gold-dim);letter-spacing:0.08em;}
   .wg-axis{font-family:var(--mono);font-size:7px;fill:rgba(232,226,208,0.42);letter-spacing:0.04em;}
   .wg-line{fill:none;stroke:var(--green-bright);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px rgba(99,214,150,0.4));}
   .wg-dot{fill:var(--green-bright);}
   .wg-dot-start{fill:var(--gold-bright);stroke:rgba(24,18,8,0.7);stroke-width:1;}
-  .wg-start-lab{font-family:var(--serif);font-style:normal;font-size:14px;fill:var(--gold-bright);}
-  .wg-start-sub{font-family:var(--mono);font-size:7px;fill:var(--text-faint);letter-spacing:0.16em;text-transform:uppercase;}
   .wg-legend{display:flex;gap:16px;justify-content:flex-end;margin-top:2px;}
   .wg-leg{font-family:var(--mono);font-size:6.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-faint);display:inline-flex;align-items:center;gap:5px;}
   .wg-leg::before{content:"";display:inline-block;width:12px;height:2px;border-radius:2px;}
   .wg-leg-line::before{background:var(--green-bright);}
-  .wg-leg-goal::before{background:var(--gold-dim);}
   .wg-empty{font-family:var(--mono);font-size:8px;color:var(--text-faint);text-align:center;padding:44px 0;letter-spacing:0.12em;text-transform:uppercase;}
   @keyframes wgPulse{0%,100%{opacity:0.55}50%{opacity:1}}
   .wg-dot-start.pulse{animation:wgPulse 1.9s ease-in-out infinite;}
@@ -1588,12 +1578,15 @@
   .fc-overlay.ready .fc-ack:hover{background:rgba(67,181,124,0.09);color:var(--green-bright);}
   @keyframes fcAckGlow{0%,100%{background:rgba(67,181,124,0)}50%{background:rgba(67,181,124,0.055)}}
   @media(max-width:820px){
-    .fc-box{grid-template-columns:1fr;grid-template-areas:"left" "right" "unlock" "ack";width:93vw;min-height:0;max-height:92vh;overflow-y:auto;}
-    .fc-left{border-right:none;border-bottom:1px solid var(--border);padding:42px 30px;}
-    .fc-right{padding:34px 26px;}
+    .fc-box{grid-template-columns:minmax(0,1fr);grid-template-areas:"left" "right" "unlock" "ack";width:93vw;min-height:0;max-height:92vh;overflow-y:auto;overflow-x:hidden;}
+    .fc-left{border-right:none;border-bottom:1px solid var(--border);padding:40px 26px;min-width:0;}
+    .fc-right{padding:30px 22px;min-width:0;}
     .fc-complete{font-size:44px;}
     .fc-stats-row{flex-direction:column;align-items:stretch;}
-    .fc-cons-card{flex-direction:row;justify-content:center;gap:20px;}
+    .fc-cons-card{flex-direction:column;}
+    .fc-graphs-row{flex-direction:column;}
+    .fc-graphs-row .fc-weight-card{flex:none;}
+    .fc-graphs-row .fc-heat-card{flex:none;align-self:stretch;}
     .fc-unlock{padding:20px 26px;}
   }
 
@@ -1601,13 +1594,13 @@
   /* Office - in-place completion overlay (replaces task lists) */
   .oc-panel{display:none;animation:fcBoxIn 0.7s cubic-bezier(0.16,1,0.3,1) forwards;padding-top:6px;}
   .oc-panel.shown{display:block;}
-  .oc-status{display:flex;align-items:center;gap:14px;width:100%;text-align:left;font-family:var(--mono);font-size:9.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold-bright);background:linear-gradient(180deg,rgba(201,161,74,0.14),rgba(201,161,74,0.045));border:1px solid var(--gold-dim);border-radius:13px;padding:16px 16px 16px 18px;cursor:pointer;transition:background .3s ease,border-color .3s ease,box-shadow .3s ease;box-shadow:0 0 18px rgba(201,161,74,0.08),inset 0 1px 0 rgba(255,255,255,0.04);}
-  .oc-status:hover{background:linear-gradient(180deg,rgba(201,161,74,0.20),rgba(201,161,74,0.07));border-color:var(--gold);box-shadow:0 0 28px rgba(201,161,74,0.16),inset 0 1px 0 rgba(255,255,255,0.05);}
+  .oc-status{display:flex;align-items:center;gap:14px;width:100%;text-align:left;font-family:var(--mono);font-size:9.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--green-bright);background:linear-gradient(180deg,rgba(67,181,124,0.14),rgba(67,181,124,0.045));border:1px solid rgba(67,181,124,0.4);border-radius:13px;padding:16px 16px 16px 18px;cursor:pointer;transition:background .3s ease,border-color .3s ease,box-shadow .3s ease;box-shadow:0 0 18px rgba(67,181,124,0.08),inset 0 1px 0 rgba(255,255,255,0.04);}
+  .oc-status:hover{background:linear-gradient(180deg,rgba(67,181,124,0.20),rgba(67,181,124,0.07));border-color:rgba(67,181,124,0.6);box-shadow:0 0 28px rgba(67,181,124,0.16),inset 0 1px 0 rgba(255,255,255,0.05);}
   .oc-status-check{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:rgba(67,181,124,0.22);border:1px solid rgba(67,181,124,0.4);color:var(--green-bright);flex:0 0 auto;}
-  .oc-status-txt{flex:1;color:var(--gold-bright);}
-  .oc-status-part{color:var(--gold-bright);font-weight:500;padding:2px 7px;border:1px solid var(--gold-dim);border-radius:5px;background:rgba(201,161,74,0.08);margin-right:2px;}
-  .oc-status-chev{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;border:1px solid var(--gold-dim);background:rgba(201,161,74,0.10);color:var(--gold-bright);transition:transform .45s cubic-bezier(0.16,1,0.3,1),background .3s ease;}
-  .oc-status:hover .oc-status-chev{background:rgba(201,161,74,0.18);}
+  .oc-status-txt{flex:1;color:var(--green-bright);}
+  .oc-status-part{color:var(--green-bright);font-weight:500;padding:2px 7px;border:1px solid rgba(67,181,124,0.4);border-radius:5px;background:rgba(67,181,124,0.08);margin-right:2px;}
+  .oc-status-chev{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;border:1px solid rgba(67,181,124,0.4);background:rgba(67,181,124,0.10);color:var(--green-bright);transition:transform .45s cubic-bezier(0.16,1,0.3,1),background .3s ease;}
+  .oc-status:hover .oc-status-chev{background:rgba(67,181,124,0.18);}
   .oc-panel:not(.collapsed) .oc-status-chev{transform:rotate(180deg);}
   .oc-body{overflow:hidden;transition:max-height .55s cubic-bezier(0.16,1,0.3,1),opacity .4s ease,margin-top .45s ease;max-height:1400px;opacity:1;margin-top:26px;}
   .oc-panel.collapsed .oc-body{max-height:0;opacity:0;margin-top:0;}
@@ -1619,11 +1612,6 @@
   .oc-cons-card{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:22px 32px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,0.015);}
   .oc-cons-lab{font-family:var(--mono);font-size:7px;letter-spacing:0.32em;text-transform:uppercase;color:var(--text-faint);}
   .oc-cons-title{font-family:var(--mono);font-size:7.5px;letter-spacing:0.24em;text-transform:uppercase;color:var(--gold-dim);}
-  .oc-tiles{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:14px;min-width:250px;}
-  .oc-tile{display:flex;flex-direction:column;justify-content:center;gap:8px;padding:16px 18px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,0.015);transition:border-color .4s ease;}
-  .oc-tile:hover{border-color:rgba(201,161,74,0.28);}
-  .oc-tile-num{font-family:var(--sans);font-weight:600;font-size:25px;color:var(--text);line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-0.01em;}
-  .oc-tile-lab{font-family:var(--mono);font-size:6.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-faint);}
   .oc-phase-card{padding:18px 20px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,0.015);margin-bottom:14px;}
   .oc-phase-head{display:flex;justify-content:space-between;font-family:var(--mono);font-size:7.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-dim);margin-bottom:11px;}
   .oc-phase-head span:last-child{color:var(--gold);}
@@ -1650,6 +1638,18 @@
   .ei-title{font-family:var(--serif);font-weight:500;font-size:33px;color:var(--text);text-align:center;margin-top:10px;line-height:1.05;}
   .ei-sub{font-family:var(--mono);font-size:8px;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-faint);text-align:center;margin-top:9px;}
   .ei-fields{display:flex;flex-direction:column;gap:15px;margin:26px 0 22px;}
+  .ei-checks{display:flex;flex-direction:column;gap:12px;margin:26px 0 22px;}
+  .ei-check{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid var(--border);border-radius:11px;background:rgba(255,255,255,0.015);cursor:pointer;transition:border-color .3s ease,background .3s ease;}
+  .ei-check:hover{border-color:var(--gold-dim);}
+  .ei-check-input{position:absolute;opacity:0;pointer-events:none;width:0;height:0;}
+  .ei-check-box{flex:0 0 auto;width:27px;height:27px;border-radius:8px;border:1.5px solid var(--gold-dim);display:inline-flex;align-items:center;justify-content:center;color:var(--bg);transition:background .35s cubic-bezier(0.16,1,0.3,1),border-color .35s ease,box-shadow .35s ease;}
+  .ei-check-box svg{transform:scale(0);transition:transform .4s cubic-bezier(0.34,1.56,0.64,1);}
+  .ei-check-label{font-family:var(--serif);font-size:19px;color:var(--text);transition:color .3s ease;}
+  .ei-check-input:checked ~ .ei-check-box{background:var(--green-bright);border-color:var(--green-bright);box-shadow:0 0 16px var(--green-glow);}
+  .ei-check-input:checked ~ .ei-check-box svg{transform:scale(1);}
+  .ei-check-input:checked ~ .ei-check-label{color:var(--green-bright);}
+  .ei-check.checked{border-color:rgba(67,181,124,0.4);background:rgba(67,181,124,0.06);}
+  .ei-check-input:focus-visible ~ .ei-check-box{outline:2px solid var(--gold-dim);outline-offset:2px;}
   .ei-field{display:flex;flex-direction:column;gap:7px;}
   .ei-label{font-family:var(--mono);font-size:7.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold-dim);}
   .ei-input{width:100%;font-family:var(--serif);font-size:18px;color:var(--text);background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:10px;padding:11px 14px;outline:none;transition:border-color .3s ease,background .3s ease;}
@@ -1683,7 +1683,6 @@
   .ei-unlock-name{font-family:var(--serif);font-size:20px;color:var(--gold-bright);}
   .ei-ack{width:100%;font-family:var(--mono);font-size:8.5px;letter-spacing:0.45em;text-transform:uppercase;color:var(--green-bright);background:transparent;border:none;border-top:1px solid var(--border);padding:17px;cursor:pointer;transition:background .3s ease;animation:fcAckGlow 2.6s ease-in-out infinite;}
   .ei-ack:hover{background:rgba(67,181,124,0.09);}
-  .oc-next-lock{color:var(--gold-bright);}
   @media(prefers-reduced-motion:reduce){.fc-left,.fc-right,.fc-unlock,.fc-unlock-btn,.fc-lock,.fc-lock .fc-shackle,.fc-seal-ring,.fc-seal-check,.fc-bar-fill,.oc-bar-fill,.cons-ring-arc,.oc-body,.oc-status-chev{transition:none!important;animation:none!important;}.fc-box,.oc-panel,.fc-left.sealed .fc-seal{animation:none!important;}}
 
 
@@ -2025,24 +2024,6 @@
     text-transform: uppercase;
     color: rgba(232,226,208,0.22);
     margin-bottom: 20px;
-  }
-  .domain-rings-section {
-    margin-top: 48px;
-  }
-  .domain-rings-eyebrow {
-    display: none;
-  }
-  .domain-rings-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
-    align-items: start;
-  }
-  @media (max-width: 880px) {
-    .domain-rings-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
-  }
-  @media (max-width: 480px) {
-    .domain-rings-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
   }
   /* ===== DESKS ===== */
   .desks-tagline{font-family:var(--mono);font-size:8px;letter-spacing:0.24em;text-transform:uppercase;color:var(--text-faint);margin-top:10px;}
@@ -2892,7 +2873,6 @@
   <div class="section-inner">
     <p class="section-eyebrow">III &middot; Desks</p>
     <p class="desks-tagline">Your standing desks &mdash; one per domain of the practice.</p>
-    <div class="week-grid" id="weekGrid" style="display:none"></div>
     <div class="desks-row" id="domainRingsGrid">
       <div class="desk-tile domain-card" id="dr-finances"></div>
       <div class="desk-tile domain-card" id="dr-home"></div>
@@ -3076,19 +3056,10 @@
       <div class="ei-eyebrow">Part II</div>
       <div class="ei-title">Daily Disposition</div>
       <div class="ei-sub">A brief ritual to set how you show up today</div>
-      <div class="ei-fields">
-        <div class="ei-field">
-          <label class="ei-label" for="eiIntent">Today I intend to embody</label>
-          <input class="ei-input" id="eiIntent" type="text" maxlength="120" placeholder="grounded &middot; focused &middot; present" autocomplete="off" spellcheck="false">
-        </div>
-        <div class="ei-field">
-          <label class="ei-label" for="eiAffirm">Affirmation</label>
-          <input class="ei-input" id="eiAffirm" type="text" maxlength="160" placeholder="I am&hellip;" autocomplete="off" spellcheck="false">
-        </div>
-        <div class="ei-field">
-          <label class="ei-label" for="eiGrat">Gratitude</label>
-          <input class="ei-input" id="eiGrat" type="text" maxlength="160" placeholder="Today I&rsquo;m grateful for&hellip;" autocomplete="off" spellcheck="false">
-        </div>
+            <div class="ei-checks">
+        <label class="ei-check"><input type="checkbox" class="ei-check-input" id="eiChk1"><span class="ei-check-box"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M5 12.5 L10 17 L19 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="ei-check-label">Set today&rsquo;s intention</span></label>
+        <label class="ei-check"><input type="checkbox" class="ei-check-input" id="eiChk2"><span class="ei-check-box"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M5 12.5 L10 17 L19 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="ei-check-label">Speak your affirmation</span></label>
+        <label class="ei-check"><input type="checkbox" class="ei-check-input" id="eiChk3"><span class="ei-check-box"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M5 12.5 L10 17 L19 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="ei-check-label">Name your gratitude</span></label>
       </div>
       <button class="ei-submit" id="eiSubmit" type="button" disabled>Complete Ritual</button>
       <button class="ei-cancel" id="eiCancel" type="button">Not now</button>
@@ -3104,7 +3075,6 @@
       </div>
       <div class="ei-done-title">Disposition Set</div>
       <div class="ei-done-sub">Your disposition is set for the day</div>
-      <div class="ei-recap" id="eiRecap"></div>
       <div class="ei-unlock">
         <div class="fc-unlock-eyebrow">New Function Unlocked</div>
         <div class="ei-unlock-btn">
@@ -3621,63 +3591,6 @@
   // 6 · Weekly grid
   let _allCalEvents = [];
 
-  function buildWeekGrid() {
-    const grid = document.getElementById('weekGrid');
-    if (!grid) return;
-    const now = new Date();
-    const p2 = n => String(n).padStart(2, '0');
-    const localDate = d => d.getFullYear() + '-' + p2(d.getMonth()+1) + '-' + p2(d.getDate());
-    let html = '';
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(now); d.setDate(now.getDate() + i); d.setHours(0,0,0,0);
-      const isToday  = (i === 0);
-      const dayName  = DAYS_SHORT[d.getDay()];
-      const dateLabel= (MONTHS[d.getMonth()].slice(0,3) + ' ' + d.getDate()).toUpperCase();
-      const dateStr  = localDate(d);
-      const dayEvs = _allCalEvents.filter(ev => {
-        if (ev.allDay) {
-          const evStart = ev.date || (ev.start && ev.start.date) || '';
-          const evEnd   = (ev.end && ev.end.date) || evStart;
-          return evStart <= dateStr && dateStr < evEnd;
-        }
-        const evDate = ev.date || (ev.start && ev.start.dateTime
-          ? localDate(new Date(ev.start.dateTime)) : null);
-        return evDate === dateStr;
-      });
-      html += '<div class="week-day' + (isToday ? ' today' : '') + '">';
-      html += '<div class="wd-head"><span class="wd-name">' + dayName + (isToday ? ' · TODAY' : '') + '</span><span class="wd-date">' + dateLabel + '</span></div>';
-      const allDayEvs = dayEvs.filter(ev => ev.allDay);
-      const timedEvs  = dayEvs.filter(ev => !ev.allDay);
-      if (allDayEvs.length > 0) {
-        allDayEvs.forEach(ev => {
-          const t = (ev.summary || '').toLowerCase();
-          let kwCls = '';
-          if (t.includes('day off') || t.includes('day-off')) kwCls = ' kw-dayoff';
-          else if (t.includes('stewardship') || t.includes('antimicrobial')) kwCls = ' kw-stewardship';
-          else if (/\bid\b/.test(t)) kwCls = ' kw-id';
-          else if (/\bwf\d/.test(t)) kwCls = ' kw-wf';
-          const isReview = t.includes('review');
-          html += '<div class="wd-allday' + kwCls + (isReview ? ' wd-review' : '') + '">' + (ev.summary || 'Event') + '</div>';
-        });
-      }
-      if (timedEvs.length > 0) {
-        timedEvs.forEach(ev => {
-          const isReview = ev.summary && ev.summary.toLowerCase().includes('review');
-          const st = ev.start && ev.start.dateTime ? new Date(ev.start.dateTime) : null;
-          const et = ev.end   && ev.end.dateTime   ? new Date(ev.end.dateTime)   : null;
-          const timeStr = st ? p2(st.getHours()) + ':' + p2(st.getMinutes()) + (et ? '—' + p2(et.getHours()) + ':' + p2(et.getMinutes()) : '') : '';
-          html += '<div class="wd-block' + (isReview ? ' wd-review' : '') + '">';
-          if (timeStr) html += '<span class="h">' + timeStr + '</span>';
-          html += (ev.summary || 'Event') + '</div>';
-        });
-      }
-      if (dayEvs.length === 0) {
-        html += '<div class="wd-block wd-empty">Clear</div>';
-      }
-      html += '</div>';
-    }
-    grid.innerHTML = html;
-  }
 
   // 7 · Statistics — heatmap + Chart.js
   function buildHeatmap12(weekRows, allRows) {
@@ -4068,7 +3981,6 @@
       const routine = list.closest('.routine');
       if (routine && !routine.classList.contains('section-complete')) checkSectionCompletion(routine);
     });
-    buildWeekGrid();
     if (todayTimed.length === 0) {
       if (placeholder) { const note = placeholder.querySelector('.r-note'); if (note) note.textContent = 'No events scheduled — calendar is clear for this window.'; }
       return;
@@ -4175,7 +4087,6 @@
     link.setAttribute('aria-disabled', unlocked ? 'false' : 'true');
     const wk = document.getElementById('weekly'); if (wk) wk.style.display = unlocked ? '' : 'none';
   }
-  updateDesksNav();
   function openProDesks(){ const s = document.getElementById('proDesks'); if (!s) return; s.style.display = 'block'; requestAnimationFrame(function(){ s.scrollIntoView({ behavior:'smooth', block:'start' }); }); }
   function closeProDesks(){ const s = document.getElementById('proDesks'); const w = document.getElementById('weekly'); if (w) w.scrollIntoView({ behavior:'smooth', block:'start' }); if (s) setTimeout(function(){ s.style.display = 'none'; }, 550); }
   (function wireDesks(){ var pro = document.getElementById('deskProfessional'); if (pro) pro.addEventListener('click', openProDesks); var back = document.getElementById('proDesksBack'); if (back) back.addEventListener('click', closeProDesks); })();
@@ -4622,21 +4533,12 @@
     }
   }
   function _eiValidate(){
-    const a = (document.getElementById('eiAffirm') || {}).value || '';
-    const g = (document.getElementById('eiGrat') || {}).value || '';
-    const btn = document.getElementById('eiSubmit');
-    if (btn) btn.disabled = !(a.trim() && g.trim());
+    var all = ['eiChk1','eiChk2','eiChk3'].every(function(id){ var el = document.getElementById(id); return el && el.checked; });
+    var btn = document.getElementById('eiSubmit');
+    if (btn) btn.disabled = !all;
   }
-  function _eiShowDone(data, animate){
+  function _eiShowDone(animate){
     const box = document.querySelector('.ei-box'); const dn = document.getElementById('eiDone'); if (!box || !dn) return;
-    const recap = document.getElementById('eiRecap');
-    if (recap){
-      let h = '';
-      if (data.intent) h += '<div class="ei-recap-row"><span class="ei-recap-lab">Intention</span><span class="ei-recap-val">' + _eiEsc(data.intent) + '</span></div>';
-      if (data.affirm) h += '<div class="ei-recap-row"><span class="ei-recap-lab">Affirmation</span><span class="ei-recap-val">' + _eiEsc(data.affirm) + '</span></div>';
-      if (data.grat)   h += '<div class="ei-recap-row"><span class="ei-recap-lab">Gratitude</span><span class="ei-recap-val">' + _eiEsc(data.grat) + '</span></div>';
-      recap.innerHTML = h;
-    }
     box.classList.add('done');
     dn.classList.remove('ei-reveal');
     if (animate === false){ dn.classList.add('ei-reveal'); }
@@ -4645,26 +4547,22 @@
   function openEIModal(mode){
     const modal = document.getElementById('eiModal'); const box = modal ? modal.querySelector('.ei-box') : null; if (!modal || !box) return;
     if (mode === 'done' || eiDoneToday()){
-      _eiShowDone(eiDataToday(), false);
+      _eiShowDone(false);
     } else {
       box.classList.remove('done');
       const dn = document.getElementById('eiDone'); if (dn) dn.classList.remove('ei-reveal');
-      ['eiIntent','eiAffirm','eiGrat'].forEach(function(id){ const el = document.getElementById(id); if (el) el.value = ''; });
+      ['eiChk1','eiChk2','eiChk3'].forEach(function(id){ var el = document.getElementById(id); if (el) el.checked = false; });
+      var _cl = document.querySelectorAll('.ei-check.checked'); for (var _i=0;_i<_cl.length;_i++) _cl[_i].classList.remove('checked');
       _eiValidate();
     }
     modal.classList.add('open');
-    if (!box.classList.contains('done')){ const f = document.getElementById('eiIntent'); if (f) setTimeout(function(){ try { f.focus(); } catch(_){} }, 300); }
   }
   function closeEIModal(){ const modal = document.getElementById('eiModal'); if (modal) modal.classList.remove('open'); }
   function completeEIRitual(){
-    const data = {
-      intent: (document.getElementById('eiIntent') || {}).value || '',
-      affirm: (document.getElementById('eiAffirm') || {}).value || '',
-      grat:   (document.getElementById('eiGrat') || {}).value || ''
-    };
-    if (!(data.affirm.trim() && data.grat.trim())) return;
-    recordEICompletion(data);
-    _eiShowDone(data, true);
+    var all = ['eiChk1','eiChk2','eiChk3'].every(function(id){ var el = document.getElementById(id); return el && el.checked; });
+    if (!all) return;
+    recordEICompletion();
+    _eiShowDone(true);
     updateEiButton();
     updateDesksNav();
   }
@@ -4779,15 +4677,18 @@
     const dots = wrap.querySelectorAll('.wg-dot, .wg-dot-start, .wg-dot-cur');
     dots.forEach(function(dt, idx){ dt.style.opacity = '0'; setTimeout(function(){ dt.style.transition = 'opacity .4s ease'; dt.style.opacity = '1'; }, 500 + idx*130); });
   }
+  function applyStatMeta(prefix, m){
+    setText(prefix + 'WeekStat', m.weekNum + ' / 12');
+    setText(prefix + 'RingNext', (m.toNext - m.inLv) + ' to Level ' + (m.lv + 1));
+    var sr = document.getElementById(prefix + 'StreakRow'); if (sr) sr.classList.toggle('ablaze', m.streak > 1 && m.streak === m.longest);
+    fillPhysStrip(prefix);
+  }
   function fillCompletionModal(m) {
     setText('fcDate', _fcDateLabel());
     setText('fcDayPill', 'Day ' + m.dayNum);
     setText('fcWeekPill', 'Week ' + m.weekNum + ' / 12');
     setText('fcTotal', 0); setText('fcPhaseDays', '0 / 84'); setText('fcStreak', 0); setText('fcLongest', 0); setText('fcPhaseStreak', 0);
-    setText('fcRate', '0%'); setText('fcWeekStat', m.weekNum + ' / 12');
-    setText('fcRingNext', (m.toNext - m.inLv) + ' to Level ' + (m.lv + 1));
-    var _sr = document.getElementById('fcStreakRow'); if (_sr) _sr.classList.toggle('ablaze', m.streak > 1 && m.streak === m.longest);
-    fillPhysStrip('fc');
+    setText('fcRate', '0%'); applyStatMeta('fc', m);
     setText('fcRingLevel', m.lv);
     setText('fcRingTitle', m.title);
     var _cc = document.getElementById('fcConsCard'); if (_cc) _cc.classList.remove('leveled');
@@ -4852,10 +4753,7 @@
   function renderOfficeCompletePanel() {
     const m = ledgerMetrics();
     setText('ocTotal', m.total); setText('ocPhaseDays', m.inCycle + ' / 84'); setText('ocStreak', m.streak); setText('ocLongest', m.longest); setText('ocPhaseStreak', m.phaseStreak);
-    setText('ocRate', m.rate + '%'); setText('ocWeekStat', m.weekNum + ' / 12');
-    setText('ocRingNext', (m.toNext - m.inLv) + ' to Level ' + (m.lv + 1));
-    var _osr = document.getElementById('ocStreakRow'); if (_osr) _osr.classList.toggle('ablaze', m.streak > 1 && m.streak === m.longest);
-    fillPhysStrip('oc');
+    setText('ocRate', m.rate + '%'); applyStatMeta('oc', m);
     setText('ocRingLevel', m.lv);
     setText('ocRingTitle', m.title || ('Level ' + m.lv));
     setText('ocCycleLab', 'Cycle \u00b7 Week ' + m.weekNum + ' of 12');
@@ -4877,6 +4775,7 @@
     panel.classList.add('shown');
     renderOfficeCompletePanel();
     updateEiButton();
+    updateDesksNav();
   }
 
   (function wireCompletionModal(){
@@ -4889,7 +4788,7 @@
     if (_rp) _rp.addEventListener('click', function(){ showCompletionModal(); });
     var _ei = document.getElementById('ocEiBtn');
     if (_ei) _ei.addEventListener('click', function(){ if (!eiDoneToday()) openEIModal('ritual'); });
-    ['eiIntent','eiAffirm','eiGrat'].forEach(function(id){ var el = document.getElementById(id); if (el) el.addEventListener('input', _eiValidate); });
+    ['eiChk1','eiChk2','eiChk3'].forEach(function(id){ var el = document.getElementById(id); if (el) el.addEventListener('change', function(){ var lab = el.closest('.ei-check'); if (lab) lab.classList.toggle('checked', el.checked); _eiValidate(); }); });
     var _eis = document.getElementById('eiSubmit'); if (_eis) _eis.addEventListener('click', completeEIRitual);
     var _eia = document.getElementById('eiAck'); if (_eia) _eia.addEventListener('click', closeEIModal);
     var _eic = document.getElementById('eiCancel'); if (_eic) _eic.addEventListener('click', closeEIModal);
@@ -5234,7 +5133,6 @@
   initStatsNotif();
   refreshWeather();
   setInterval(refreshWeather, 30 * 60 * 1000);
-  buildWeekGrid();
   buildHeatmap12();
   updateSheetBtn(null);
   loadPhysiqueFromCSV();
@@ -5245,6 +5143,7 @@
   setInterval(loadLedgerFromSheets, 60 * 1000);
   initCompletionState();
   loadDomainsCSV();
+  updateDesksNav();
   setInterval(loadDomainsCSV, 15 * 60 * 1000);
   initFinReviewModal();
   initHealthReviewModal();
