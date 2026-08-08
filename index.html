@@ -176,6 +176,10 @@
     color: var(--gold);
     border-bottom-color: var(--gold-dim);
   }
+  .nav-links a.nav-locked { opacity: 0.34; cursor: not-allowed; }
+  .nav-links a.nav-locked:hover { color: var(--text-dim); border-bottom-color: transparent; }
+  .nav-lock { display: inline-block; margin-left: 5px; vertical-align: -1px; opacity: 0.85; }
+  .nav-links a:not(.nav-locked) .nav-lock { display: none; }
   .stamp { display: flex; flex-direction: column; gap: 3px; }
   .stamp .day {
     font-family: var(--mono); font-size: 8px;
@@ -1303,6 +1307,10 @@
   .cp-heatmap-cell.earned { background: linear-gradient(180deg,var(--gold-bright),var(--gold)); box-shadow: 0 0 5px rgba(201,161,74,0.45); border: none; }
   .cp-heatmap-cell.today  { outline: 1.5px solid var(--gold-bright); outline-offset: 1px; }
   .cp-heatmap-cell.today.earned { background: linear-gradient(180deg,var(--gold-bright),var(--gold)); }
+  .cp-heatmap-cell[data-tip]{ position: relative; }
+  .cp-heatmap-cell[data-tip]:hover{ z-index: 50; }
+  .cp-heatmap-cell[data-tip]:hover::after{ content: attr(data-tip); position: absolute; bottom: calc(100% + 7px); left: 50%; transform: translateX(-50%); background: rgba(14,11,7,0.98); border: 1px solid var(--gold-dim); border-radius: 7px; padding: 6px 10px; font-family: var(--mono); font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold-bright); white-space: nowrap; pointer-events: none; box-shadow: 0 6px 20px rgba(0,0,0,0.6); z-index: 50; }
+  .cp-heatmap-cell[data-tip]:hover::before{ content: ""; position: absolute; bottom: calc(100% + 2px); left: 50%; transform: translateX(-50%); border: 5px solid transparent; border-top-color: var(--gold-dim); pointer-events: none; z-index: 50; }
 
   .routine.section-complete .routine-head {
     color: rgba(42, 157, 110, 0.65);
@@ -1442,7 +1450,7 @@
   /* CORE DAILY ACTIONS - completion modal */
   .fc-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.93);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:9999;align-items:center;justify-content:center;padding:12px;overflow:hidden;}
   .fc-overlay.open{display:flex;}
-  .fc-box{display:grid;grid-template-columns:0.72fr 1.28fr;grid-template-areas:"left right" "unlock unlock" "ack ack";width:92vw;max-width:1300px;max-height:96vh;margin:auto;background:rgba(13,11,8,0.985);border:1px solid rgba(201,161,74,0.26);box-shadow:0 40px 130px rgba(0,0,0,0.62),0 0 100px rgba(201,161,74,0.05);overflow:hidden;position:relative;animation:fcBoxIn 0.9s cubic-bezier(0.16,1,0.3,1) forwards;}
+  .fc-box{display:grid;grid-template-columns:0.72fr 1.28fr;grid-template-areas:"left right" "unlock unlock" "ack ack";width:92vw;max-width:1300px;max-height:97vh;margin:auto;background:rgba(13,11,8,0.985);border:1px solid rgba(201,161,74,0.26);box-shadow:0 40px 130px rgba(0,0,0,0.62),0 0 100px rgba(201,161,74,0.05);overflow:hidden;position:relative;animation:fcBoxIn 0.9s cubic-bezier(0.16,1,0.3,1) forwards;}
   @keyframes fcBoxIn{from{opacity:0;transform:translateY(24px) scale(0.985)}to{opacity:1;transform:none}}
   .fc-left{grid-area:left;padding:44px 48px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;border-right:1px solid var(--border);background:radial-gradient(120% 90% at 50% 40%,rgba(67,181,124,0.06),transparent 70%);opacity:0;transform:translateY(14px);transition:opacity 1.1s ease,transform 1.1s cubic-bezier(0.16,1,0.3,1);}
   .fc-overlay.reveal-left .fc-left{opacity:1;transform:none;}
@@ -1466,7 +1474,7 @@
   .fc-date{font-family:var(--mono);font-size:8.5px;letter-spacing:0.22em;text-transform:uppercase;color:var(--text-dim);margin-top:6px;}
   .fc-pills{display:flex;gap:8px;margin-top:16px;}
   .fc-pill{font-family:var(--mono);font-size:8px;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold-bright);border:1px solid var(--gold-dim);border-radius:100px;padding:6px 15px;background:rgba(201,161,74,0.07);}
-  .fc-right{grid-area:right;padding:32px 42px;display:flex;flex-direction:column;gap:11px;opacity:0;transform:translateY(14px);transition:opacity 1.1s ease 0.12s,transform 1.1s cubic-bezier(0.16,1,0.3,1) 0.12s;}
+  .fc-right{grid-area:right;padding:30px 42px;display:flex;flex-direction:column;gap:9px;opacity:0;transform:translateY(14px);transition:opacity 1.1s ease 0.12s,transform 1.1s cubic-bezier(0.16,1,0.3,1) 0.12s;}
   .fc-overlay.reveal-right .fc-right{opacity:1;transform:none;}
   .fc-sec-head{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:8.5px;letter-spacing:0.5em;text-transform:uppercase;color:var(--gold);}
   .fc-sec-head::after{content:"";flex:1;height:1px;background:var(--border);}
@@ -1485,16 +1493,36 @@
   .cons-ring-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
   .cons-ring-lv{font-family:var(--sans);font-weight:600;font-size:36px;color:var(--gold);line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-0.02em;}
   .fc-cons-title{font-family:var(--mono);font-size:7.5px;letter-spacing:0.26em;text-transform:uppercase;color:var(--gold-dim);}
+  .fc-cons-next{font-family:var(--mono);font-size:6.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-faint);margin-top:4px;}
+  .fc-phys-strip{display:flex;justify-content:space-between;gap:8px;margin-top:7px;padding-top:7px;border-top:1px solid var(--border);}
+  .fc-phys{display:flex;flex-direction:column;gap:3px;align-items:flex-start;}
+  .fc-phys-lab{font-family:var(--mono);font-size:6px;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-faint);}
+  .fc-phys-val{font-family:var(--sans);font-weight:600;font-size:13px;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:-0.01em;}
+  .fc-phys-val.hl{color:var(--gold-bright);}
+  .oc-phys-card{padding:14px 18px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,0.015);margin-bottom:14px;}
+  .oc-phys-card .fc-heat-title{margin-bottom:10px;display:block;}
+  .oc-phys-card .fc-phys-strip{margin-top:0;padding-top:0;border-top:none;}
+  .oc-phys-card .fc-phys-val{font-size:15px;}
+  .fc-stat-row.ablaze .fc-stat-val{color:var(--gold-bright);text-shadow:0 0 9px rgba(201,161,74,0.5);}
+  .fc-stat-row.ablaze .fc-stat-lab::after{content:" \2726";color:var(--gold-bright);font-size:8px;}
   .fc-tiles{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:12px;}
   .fc-tile{display:flex;flex-direction:column;justify-content:center;gap:7px;padding:14px 16px;border:1px solid var(--border);border-radius:11px;background:rgba(255,255,255,0.015);transition:border-color .4s ease;}
   .fc-tile:hover{border-color:rgba(201,161,74,0.28);}
   .fc-tile-num{font-family:var(--sans);font-weight:600;font-size:26px;color:var(--text);line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-0.01em;}
   .fc-tile-lab{font-family:var(--mono);font-size:6.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-faint);}
-  .fc-stats-tile{flex:1;display:flex;flex-direction:column;justify-content:center;padding:4px 18px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,0.015);}
-  .fc-stat-row{display:flex;align-items:baseline;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);}
+  .fc-stats-tile{flex:1;display:flex;padding:12px 0;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,0.015);}
+  .fc-stats-col{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 18px;}
+  .fc-stats-col:first-child{border-right:1px solid var(--border);}
+  .fc-stats-colhead{font-family:var(--mono);font-size:7px;letter-spacing:0.32em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:6px;}
+  .fc-overlay .fc-stats-col{opacity:0;}
+  .fc-overlay.reveal-right .fc-stats-col{animation:fcColIn 0.6s cubic-bezier(0.16,1,0.3,1) forwards;}
+  .fc-overlay.reveal-right .fc-stats-col:nth-child(1){animation-delay:0.15s;}
+  .fc-overlay.reveal-right .fc-stats-col:nth-child(2){animation-delay:0.42s;}
+  @keyframes fcColIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+  .fc-stat-row{display:flex;align-items:baseline;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);}
   .fc-stat-row:last-child{border-bottom:none;}
-  .fc-stat-lab{font-family:var(--mono);font-size:7.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-dim);}
-  .fc-stat-val{font-family:var(--sans);font-weight:600;font-size:19px;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:-0.01em;}
+  .fc-stat-lab{font-family:var(--mono);font-size:7px;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-dim);}
+  .fc-stat-val{font-family:var(--sans);font-weight:600;font-size:18px;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:-0.01em;}
   .fc-weight-card{padding:12px 14px 8px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,0.015);}
   .fc-weight-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
   .fc-weight-title{font-family:var(--mono);font-size:7.5px;letter-spacing:0.26em;text-transform:uppercase;color:var(--gold-dim);}
@@ -1520,13 +1548,21 @@
   .fc-graphs-row .fc-weight-card{flex:1;min-width:0;}
   .fc-graphs-row .fc-heat-card{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 16px;}
   .fc-heat-title{font-family:var(--mono);font-size:7px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold-dim);align-self:flex-start;}
+  .oc-heat-card{display:block;padding:16px 20px;}
+  .oc-heat-card #ocHeatmap{width:100%;}
+  .oc-heat-card .cp-heatmap-grid{grid-template-columns:repeat(7,1fr);gap:6px;width:100%;}
+  .oc-heat-card .cp-heatmap-cell{width:auto;height:auto;aspect-ratio:1.35;border-radius:5px;}
+  .oc-heat-card .cp-heatmap-dow{width:auto;font-size:6px;}
   .wg-band{fill:rgba(201,161,74,0.07);stroke:none;}
   .wg-target{fill:none;stroke:rgba(201,161,74,0.5);stroke-width:1.1;stroke-dasharray:4 4;}
   .wg-dot-cur{fill:var(--green-bright);stroke:rgba(255,255,255,0.55);stroke-width:1;}
   .wg-halo{fill:none;stroke:var(--green-bright);stroke-width:1.4;opacity:0.5;transform-box:fill-box;transform-origin:center;animation:wgHalo 1.9s ease-in-out infinite;}
   @keyframes wgHalo{0%,100%{transform:scale(0.8);opacity:0.5}50%{transform:scale(1.3);opacity:0.1}}
   .wg-leg-target::before{background:var(--gold-dim);}
-  .oc-stats-tile{max-width:340px;}
+  .wg-proj{fill:none;stroke:var(--green-dim);stroke-width:1.4;stroke-dasharray:1.5 4;stroke-linecap:round;opacity:0.75;}
+  .wg-proj-dot{fill:none;stroke:var(--green-dim);stroke-width:1.4;}
+  .wg-leg-proj::before{background:var(--green-dim);border-radius:0;height:0;border-top:1.4px dashed var(--green-dim);}
+  .oc-stats-tile{max-width:380px;}
   .fc-phase-card{padding:16px 18px;border:1px solid var(--border);border-radius:11px;background:rgba(255,255,255,0.015);}
   .fc-phase-head{display:flex;justify-content:space-between;font-family:var(--mono);font-size:7.5px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-dim);margin-bottom:9px;}
   .fc-phase-head span:last-child{color:var(--gold);}
@@ -1538,7 +1574,8 @@
   .fc-overlay.reveal-unlock .fc-unlock{opacity:1;transform:none;}
   .fc-unlock-btn{display:flex;align-items:center;gap:18px;padding:16px 24px;border-radius:14px;border:1px solid var(--gold);background:linear-gradient(180deg,rgba(201,161,74,0.20),rgba(201,161,74,0.08));box-shadow:0 0 22px rgba(201,161,74,0.14),inset 0 1px 0 rgba(255,255,255,0.05);animation:fcUnlockGlow 3.2s ease-in-out infinite;}
   @keyframes fcUnlockGlow{0%,100%{box-shadow:0 0 16px rgba(201,161,74,0.12),inset 0 1px 0 rgba(255,255,255,0.04)}50%{box-shadow:0 0 32px rgba(201,161,74,0.30),inset 0 1px 0 rgba(255,255,255,0.07)}}
-  .fc-unlock-eyebrow{font-family:var(--mono);font-size:8px;letter-spacing:0.44em;text-transform:uppercase;color:var(--gold-bright);text-shadow:0 0 10px rgba(201,161,74,0.3);margin-bottom:9px;text-align:center;}
+  .fc-unlock-eyebrow{font-family:var(--mono);font-size:9.5px;letter-spacing:0.46em;text-transform:uppercase;color:var(--gold-bright);margin-bottom:10px;text-align:center;animation:fcEyebrowPulse 2.8s ease-in-out infinite;}
+  @keyframes fcEyebrowPulse{0%,100%{opacity:0.78;text-shadow:0 0 6px rgba(201,161,74,0.2)}50%{opacity:1;text-shadow:0 0 15px rgba(201,161,74,0.55)}}
   .fc-unlock-ico{flex:0 0 auto;width:50px;height:50px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(201,161,74,0.16);border:1px solid var(--gold-dim);overflow:visible;}
   .fc-unlock-name{font-family:var(--serif);font-style:normal;font-weight:500;font-size:21px;color:var(--gold-bright);letter-spacing:0.01em;}
   .fc-lock{color:var(--gold-bright);flex:0 0 auto;overflow:visible;transition:filter 0.9s ease;filter:drop-shadow(0 0 5px rgba(201,161,74,0.4));}
@@ -1564,12 +1601,14 @@
   /* Office - in-place completion overlay (replaces task lists) */
   .oc-panel{display:none;animation:fcBoxIn 0.7s cubic-bezier(0.16,1,0.3,1) forwards;padding-top:6px;}
   .oc-panel.shown{display:block;}
-  .oc-status{display:flex;align-items:center;gap:13px;width:100%;text-align:left;font-family:var(--mono);font-size:9px;letter-spacing:0.34em;text-transform:uppercase;color:var(--green-bright);background:linear-gradient(180deg,rgba(50,130,88,0.30),rgba(40,105,72,0.14));border:1px solid rgba(67,181,124,0.42);border-radius:13px;padding:17px 22px;cursor:pointer;transition:background .3s ease,border-color .3s ease,box-shadow .3s ease;box-shadow:0 0 20px rgba(67,181,124,0.10);}
-  .oc-status:hover{background:linear-gradient(180deg,rgba(50,130,88,0.38),rgba(40,105,72,0.20));border-color:rgba(67,181,124,0.62);box-shadow:0 0 26px rgba(67,181,124,0.18);}
-  .oc-status-check{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(67,181,124,0.24);color:var(--green-bright);font-size:11px;flex:0 0 auto;}
-  .oc-status-txt{flex:1;}
-  .oc-status-chev{font-size:7px;color:var(--green-dim);transition:transform .45s cubic-bezier(0.16,1,0.3,1);}
-  .oc-panel.collapsed .oc-status-chev{transform:rotate(180deg);}
+  .oc-status{display:flex;align-items:center;gap:14px;width:100%;text-align:left;font-family:var(--mono);font-size:9.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold-bright);background:linear-gradient(180deg,rgba(201,161,74,0.14),rgba(201,161,74,0.045));border:1px solid var(--gold-dim);border-radius:13px;padding:16px 16px 16px 18px;cursor:pointer;transition:background .3s ease,border-color .3s ease,box-shadow .3s ease;box-shadow:0 0 18px rgba(201,161,74,0.08),inset 0 1px 0 rgba(255,255,255,0.04);}
+  .oc-status:hover{background:linear-gradient(180deg,rgba(201,161,74,0.20),rgba(201,161,74,0.07));border-color:var(--gold);box-shadow:0 0 28px rgba(201,161,74,0.16),inset 0 1px 0 rgba(255,255,255,0.05);}
+  .oc-status-check{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:rgba(67,181,124,0.22);border:1px solid rgba(67,181,124,0.4);color:var(--green-bright);flex:0 0 auto;}
+  .oc-status-txt{flex:1;color:var(--gold-bright);}
+  .oc-status-part{color:var(--gold-bright);font-weight:500;padding:2px 7px;border:1px solid var(--gold-dim);border-radius:5px;background:rgba(201,161,74,0.08);margin-right:2px;}
+  .oc-status-chev{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;border:1px solid var(--gold-dim);background:rgba(201,161,74,0.10);color:var(--gold-bright);transition:transform .45s cubic-bezier(0.16,1,0.3,1),background .3s ease;}
+  .oc-status:hover .oc-status-chev{background:rgba(201,161,74,0.18);}
+  .oc-panel:not(.collapsed) .oc-status-chev{transform:rotate(180deg);}
   .oc-body{overflow:hidden;transition:max-height .55s cubic-bezier(0.16,1,0.3,1),opacity .4s ease,margin-top .45s ease;max-height:1400px;opacity:1;margin-top:26px;}
   .oc-panel.collapsed .oc-body{max-height:0;opacity:0;margin-top:0;}
   .oc-sec-head{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:8px;letter-spacing:0.5em;text-transform:uppercase;color:var(--gold);margin-bottom:20px;}
@@ -1591,7 +1630,59 @@
   .oc-bar-track{position:relative;height:6px;background:rgba(255,255,255,0.05);border-radius:3px;}
   .oc-bar-fill{height:100%;width:0;background:linear-gradient(90deg,rgba(201,161,74,0.5),var(--gold-bright));border-radius:3px;transition:width 1.2s cubic-bezier(0.16,1,0.3,1);}
   .oc-heat-card{padding:18px 22px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,0.015);margin-bottom:16px;}
-  .oc-next-card{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:7.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold-bright);padding:13px 22px;border:1px solid var(--gold-dim);border-radius:100px;background:rgba(201,161,74,0.05);box-shadow:0 0 16px rgba(201,161,74,0.08);}
+  /* Part II button (always visible in overlay) */
+  .oc-ei-btn{display:flex;align-items:center;gap:13px;width:100%;text-align:left;font-family:var(--mono);font-size:9.5px;letter-spacing:0.3em;text-transform:uppercase;border-radius:13px;padding:16px 18px;cursor:pointer;margin-top:14px;transition:background .3s ease,border-color .3s ease,box-shadow .3s ease;color:var(--gold-bright);background:linear-gradient(180deg,rgba(201,161,74,0.15),rgba(201,161,74,0.05));border:1px solid var(--gold-dim);box-shadow:0 0 18px rgba(201,161,74,0.08),inset 0 1px 0 rgba(255,255,255,0.04);animation:ocEiPulse 3s ease-in-out infinite;}
+  .oc-ei-btn:hover{background:linear-gradient(180deg,rgba(201,161,74,0.22),rgba(201,161,74,0.07));border-color:var(--gold);box-shadow:0 0 26px rgba(201,161,74,0.18);}
+  @keyframes ocEiPulse{0%,100%{box-shadow:0 0 14px rgba(201,161,74,0.08),inset 0 1px 0 rgba(255,255,255,0.03)}50%{box-shadow:0 0 26px rgba(201,161,74,0.2),inset 0 1px 0 rgba(255,255,255,0.05)}}
+  .oc-ei-btn.done{color:var(--green-bright);background:linear-gradient(180deg,rgba(50,130,88,0.28),rgba(40,105,72,0.12));border:1px solid rgba(67,181,124,0.42);box-shadow:0 0 18px rgba(67,181,124,0.1);cursor:default;animation:none;}
+  .oc-ei-btn.done:hover{background:linear-gradient(180deg,rgba(50,130,88,0.28),rgba(40,105,72,0.12));border-color:rgba(67,181,124,0.42);box-shadow:0 0 18px rgba(67,181,124,0.1);}
+  .oc-ei-icon,.oc-ei-check{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;flex:0 0 auto;}
+  .oc-ei-icon{background:rgba(201,161,74,0.14);border:1px solid var(--gold-dim);color:var(--gold-bright);overflow:visible;}
+  .oc-ei-check{background:rgba(67,181,124,0.22);border:1px solid rgba(67,181,124,0.4);color:var(--green-bright);}
+  .oc-ei-txt{flex:1;}
+  .oc-ei-part{padding:2px 7px;border:1px solid currentColor;border-radius:5px;background:rgba(255,255,255,0.04);margin-right:2px;opacity:0.85;}
+  .oc-ei-go{font-size:8px;color:var(--gold-bright);letter-spacing:0.18em;opacity:0.85;flex:0 0 auto;}
+  /* Emotional Intentionality modal */
+  .ei-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:10000;align-items:center;justify-content:center;padding:16px;overflow:hidden;}
+  .ei-overlay.open{display:flex;}
+  .ei-box{width:min(560px,94vw);max-height:94vh;overflow-y:auto;background:rgba(13,11,8,0.985);border:1px solid rgba(201,161,74,0.26);border-radius:20px;box-shadow:0 40px 130px rgba(0,0,0,0.62),0 0 100px rgba(201,161,74,0.05);padding:38px 38px 30px;position:relative;animation:fcBoxIn 0.7s cubic-bezier(0.16,1,0.3,1);}
+  .ei-eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:0.5em;text-transform:uppercase;color:var(--gold-bright);text-align:center;text-shadow:0 0 12px rgba(201,161,74,0.25);}
+  .ei-title{font-family:var(--serif);font-weight:500;font-size:33px;color:var(--text);text-align:center;margin-top:10px;line-height:1.05;}
+  .ei-sub{font-family:var(--mono);font-size:8px;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-faint);text-align:center;margin-top:9px;}
+  .ei-fields{display:flex;flex-direction:column;gap:15px;margin:26px 0 22px;}
+  .ei-field{display:flex;flex-direction:column;gap:7px;}
+  .ei-label{font-family:var(--mono);font-size:7.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold-dim);}
+  .ei-input{width:100%;font-family:var(--serif);font-size:18px;color:var(--text);background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:10px;padding:11px 14px;outline:none;transition:border-color .3s ease,background .3s ease;}
+  .ei-input::placeholder{color:var(--text-faint);font-style:italic;}
+  .ei-input:focus{border-color:var(--gold-dim);background:rgba(201,161,74,0.04);}
+  .ei-submit{width:100%;font-family:var(--mono);font-size:9px;letter-spacing:0.4em;text-transform:uppercase;color:var(--bg);background:linear-gradient(180deg,var(--gold-bright),var(--gold));border:none;border-radius:11px;padding:15px;cursor:pointer;transition:opacity .3s ease,filter .3s ease;}
+  .ei-submit:disabled{opacity:0.32;cursor:not-allowed;filter:grayscale(0.5);}
+  .ei-submit:not(:disabled):hover{filter:brightness(1.08);}
+  .ei-cancel{display:block;margin:12px auto 0;font-family:var(--mono);font-size:7.5px;letter-spacing:0.24em;text-transform:uppercase;color:var(--text-faint);background:none;border:none;cursor:pointer;transition:color .3s ease;}
+  .ei-cancel:hover{color:var(--text-dim);}
+  .ei-done{display:none;flex-direction:column;align-items:center;text-align:center;}
+  .ei-box.done .ei-ritual{display:none;}
+  .ei-box.done .ei-done{display:flex;}
+  .ei-eyebrow-done{color:var(--green-bright);text-shadow:0 0 12px var(--green-glow);}
+  .ei-seal-wrap{margin:16px 0 4px;}
+  .ei-seal{width:100px;height:100px;}
+  .ei-done.ei-reveal .fc-seal-ring{stroke-dashoffset:0;}
+  .ei-done.ei-reveal .fc-seal-check{stroke-dashoffset:0;}
+  .ei-done.ei-reveal .ei-seal{animation:fcSealPulse 3s ease-in-out 1.5s infinite;}
+  .ei-done-title{font-family:var(--serif);font-size:30px;color:var(--green-bright);margin-top:6px;}
+  .ei-done-sub{font-family:var(--mono);font-size:8px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-faint);margin-top:8px;}
+  .ei-recap{width:100%;margin:20px 0 6px;display:flex;flex-direction:column;gap:9px;}
+  .ei-recap-row{display:flex;flex-direction:column;gap:3px;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:rgba(255,255,255,0.015);text-align:left;}
+  .ei-recap-lab{font-family:var(--mono);font-size:6.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold-dim);}
+  .ei-recap-val{font-family:var(--serif);font-size:16px;color:var(--text);}
+  .ei-unlock{margin:14px 0 20px;width:100%;}
+  .ei-unlock-btn{display:flex;align-items:center;gap:14px;padding:14px 18px;border:1px solid var(--gold);border-radius:13px;background:linear-gradient(180deg,rgba(201,161,74,0.18),rgba(201,161,74,0.06));box-shadow:0 0 20px rgba(201,161,74,0.12);animation:fcUnlockGlow 3.2s ease-in-out infinite;}
+  .ei-unlock-ico{display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;background:rgba(201,161,74,0.14);border:1px solid var(--gold-dim);color:var(--gold-bright);flex:0 0 auto;}
+  .ei-unlock-text{display:flex;flex-direction:column;gap:4px;text-align:left;}
+  .ei-unlock-hd{font-family:var(--mono);font-size:7.5px;letter-spacing:0.42em;text-transform:uppercase;color:var(--gold-bright);}
+  .ei-unlock-name{font-family:var(--serif);font-size:20px;color:var(--gold-bright);}
+  .ei-ack{width:100%;font-family:var(--mono);font-size:8.5px;letter-spacing:0.45em;text-transform:uppercase;color:var(--green-bright);background:transparent;border:none;border-top:1px solid var(--border);padding:17px;cursor:pointer;transition:background .3s ease;animation:fcAckGlow 2.6s ease-in-out infinite;}
+  .ei-ack:hover{background:rgba(67,181,124,0.09);}
   .oc-next-lock{color:var(--gold-bright);}
   @media(prefers-reduced-motion:reduce){.fc-left,.fc-right,.fc-unlock,.fc-unlock-btn,.fc-lock,.fc-lock .fc-shackle,.fc-seal-ring,.fc-seal-check,.fc-bar-fill,.oc-bar-fill,.cons-ring-arc,.oc-body,.oc-status-chev{transition:none!important;animation:none!important;}.fc-box,.oc-panel,.fc-left.sealed .fc-seal{animation:none!important;}}
 
@@ -1953,6 +2044,43 @@
   @media (max-width: 480px) {
     .domain-rings-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
   }
+  /* ===== DESKS ===== */
+  .desks-tagline{font-family:var(--mono);font-size:8px;letter-spacing:0.24em;text-transform:uppercase;color:var(--text-faint);margin-top:10px;}
+  .desks-row{display:flex;gap:16px;align-items:stretch;margin-top:30px;}
+  @media(max-width:900px){ .desks-row{flex-wrap:wrap;} .desks-row .desk-tile{flex:1 1 44%;min-height:44vh;} }
+  .desk-tile{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:64vh;padding:30px 18px 26px;border:1px solid var(--border);border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,0.018),rgba(255,255,255,0.004));transition:border-color .3s ease,transform .3s ease,box-shadow .3s ease;text-align:center;}
+  .desk-tile:hover{border-color:var(--gold-dim);transform:translateY(-3px);box-shadow:0 14px 44px rgba(0,0,0,0.32);}
+  .desk-tile .domain-label{order:0;font-family:var(--mono);font-size:11px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold-bright);}
+  .desk-tile .domain-ring-wrap{order:1;width:152px;height:152px;margin-top:auto;}
+  .desk-tile .domain-ring-wrap svg{width:152px;height:152px;}
+  .desk-tile .domain-ring-pct{font-size:22px;}
+  .desk-tile .domain-progressing{order:2;margin-top:12px;}
+  .desk-tile .domain-btns{order:3;margin-top:auto;padding-top:22px;display:flex;flex-direction:column;gap:9px;width:100%;max-width:180px;}
+  .desk-tile .domain-btn{width:100%;text-align:center;}
+  /* Professional gateway tile */
+  .desk-pro{cursor:pointer;justify-content:center;gap:16px;background:linear-gradient(180deg,rgba(201,161,74,0.12),rgba(201,161,74,0.03));border-color:var(--gold-dim);animation:ocEiPulse 3.4s ease-in-out infinite;}
+  .desk-pro:hover{border-color:var(--gold);transform:translateY(-3px);}
+  .desk-pro-label{color:var(--gold-bright);}
+  .desk-pro-ico{color:var(--gold-bright);display:inline-flex;filter:drop-shadow(0 0 8px rgba(201,161,74,0.35));margin-top:8px;}
+  .desk-pro-sub{font-family:var(--serif);font-size:26px;color:var(--gold-bright);line-height:1;}
+  .desk-pro-count{font-family:var(--mono);font-size:7.5px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-faint);}
+  .desk-pro-enter{margin-top:auto;font-family:var(--mono);font-size:9px;letter-spacing:0.32em;text-transform:uppercase;color:var(--gold-bright);border:1px solid var(--gold-dim);border-radius:100px;padding:11px 22px;background:rgba(201,161,74,0.06);transition:background .3s ease;}
+  .desk-pro:hover .desk-pro-enter{background:rgba(201,161,74,0.16);}
+  /* PRO DESKS sub-section */
+  .prodesks-back{font-family:var(--mono);font-size:8px;letter-spacing:0.3em;text-transform:uppercase;color:var(--text-dim);background:none;border:1px solid var(--border);border-radius:100px;padding:8px 16px;cursor:pointer;margin-bottom:20px;transition:color .3s ease,border-color .3s ease;}
+  .prodesks-back:hover{color:var(--gold-bright);border-color:var(--gold-dim);}
+  .prodesks-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:26px;}
+  .prodesk-tile{display:flex;flex-direction:column;gap:12px;min-height:200px;padding:22px 22px 20px;border:1px solid var(--border);border-radius:14px;background:rgba(255,255,255,0.015);transition:border-color .3s ease,transform .3s ease;}
+  .prodesk-tile:hover{border-color:var(--gold-dim);transform:translateY(-2px);}
+  .prodesk-head{display:flex;align-items:baseline;justify-content:space-between;}
+  .prodesk-name{font-family:var(--serif);font-size:22px;color:var(--text);}
+  .prodesk-status{font-family:var(--mono);font-size:6.5px;letter-spacing:0.24em;text-transform:uppercase;color:var(--text-faint);border:1px solid var(--border);border-radius:100px;padding:3px 9px;}
+  .prodesk-body{flex:1;font-family:var(--mono);font-size:9px;letter-spacing:0.06em;line-height:1.7;color:var(--text-dim);}
+  .prodesk-foot{display:flex;}
+  .prodesk-add{cursor:pointer;align-items:center;justify-content:center;flex-direction:row;gap:10px;border-style:dashed;color:var(--text-faint);background:transparent;}
+  .prodesk-add:hover{color:var(--gold-bright);border-color:var(--gold-dim);}
+  .prodesk-add-plus{font-size:22px;font-family:var(--serif);line-height:1;}
+  .prodesk-add-txt{font-family:var(--mono);font-size:9px;letter-spacing:0.28em;text-transform:uppercase;}
   .domain-card {
     display: flex;
     flex-direction: column;
@@ -2416,7 +2544,7 @@
   <ul class="nav-links" aria-label="Primary navigation">
     <li><a href="#splash"     data-nav>Home</a></li>
     <li><a href="#office"     data-nav id="officeNavLink">Office<span class="office-notif" id="officeNotif"></span></a></li>
-    <li><a href="#weekly"     data-nav>Weekly</a></li>
+    <li><a href="#weekly"     data-nav id="desksNavLink" class="nav-locked" aria-disabled="true">Desks<svg class="nav-lock" viewBox="0 0 24 24" width="9" height="9" aria-hidden="true"><path d="M8 11 V8 a4 4 0 0 1 8 0 V11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><rect x="6" y="11" width="12" height="9" rx="1.6" fill="currentColor"/></svg></a></li>
     <li><a href="#statistics" data-nav id="statsNavLink">Statistics<span class="stats-notif" id="statsNotif"></span></a></li>
   </ul>
 </div>
@@ -2701,9 +2829,9 @@
     <!-- In-place completion overlay: replaces task lists once the day is set -->
     <div class="oc-panel" id="officeCompletePanel" aria-live="polite">
       <button class="oc-status" id="ocStatusBtn" type="button">
-        <span class="oc-status-check">&#10003;</span>
-        <span class="oc-status-txt">Daily Routine Complete</span>
-        <span class="oc-status-chev" id="ocChev">&#9650;</span>
+        <span class="oc-status-check"><svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path d="M5 12.5 L10 17 L19 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="oc-status-txt"><span class="oc-status-part">Part I</span> &middot; Daily Routine Complete</span>
+        <span class="oc-status-chev" id="ocChev"><svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path d="M4 6 L8 10.5 L12 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       </button>
       <div class="oc-body" id="ocBody">
         <div class="oc-sec-head"><span>Statistics</span><span class="oc-rule"></span><button class="oc-replay" id="ocReplayBtn" type="button">&#8635; Summary</button></div>
@@ -2718,13 +2846,33 @@
               <div class="cons-ring-inner"><span class="cons-ring-lv" id="ocRingLevel">0</span></div>
             </div>
             <div class="oc-cons-title" id="ocRingTitle">Level 0</div>
+            <div class="fc-cons-next" id="ocRingNext"></div>
           </div>
           <div class="fc-stats-tile oc-stats-tile">
-            <div class="fc-stat-row"><span class="fc-stat-lab">Days Complete</span><span class="fc-stat-val" id="ocTotal">0</span></div>
-            <div class="fc-stat-row"><span class="fc-stat-lab">Phase Days</span><span class="fc-stat-val" id="ocPhaseDays">0 / 84</span></div>
-            <div class="fc-stat-row"><span class="fc-stat-lab">Current Streak</span><span class="fc-stat-val" id="ocStreak">0</span></div>
-            <div class="fc-stat-row"><span class="fc-stat-lab">Best Streak</span><span class="fc-stat-val" id="ocLongest">0</span></div>
-            <div class="fc-stat-row"><span class="fc-stat-lab">Phase Streak</span><span class="fc-stat-val" id="ocPhaseStreak">0</span></div>
+            <div class="fc-stats-col">
+              <div class="fc-stats-colhead">Lifetime</div>
+              <div class="fc-stat-row"><span class="fc-stat-lab">Days</span><span class="fc-stat-val" id="ocTotal">0</span></div>
+              <div class="fc-stat-row" id="ocStreakRow"><span class="fc-stat-lab">Streak</span><span class="fc-stat-val" id="ocStreak">0</span></div>
+              <div class="fc-stat-row"><span class="fc-stat-lab">Longest</span><span class="fc-stat-val" id="ocLongest">0</span></div>
+              <div class="fc-stat-row"><span class="fc-stat-lab">Rate</span><span class="fc-stat-val" id="ocRate">0%</span></div>
+            </div>
+            <div class="fc-stats-col">
+              <div class="fc-stats-colhead">Phase</div>
+              <div class="fc-stat-row"><span class="fc-stat-lab">Days</span><span class="fc-stat-val" id="ocPhaseDays">0 / 84</span></div>
+              <div class="fc-stat-row"><span class="fc-stat-lab">Longest</span><span class="fc-stat-val" id="ocPhaseStreak">0</span></div>
+              <div class="fc-stat-row"><span class="fc-stat-lab">Week</span><span class="fc-stat-val" id="ocWeekStat">0 / 12</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="oc-phys-card">
+          <div class="fc-heat-title">Physique &middot; 12-Week Cut</div>
+          <div class="fc-phys-strip">
+            <div class="fc-phys"><span class="fc-phys-lab">Start</span><span class="fc-phys-val" id="ocPhysStart">&mdash;</span></div>
+            <div class="fc-phys"><span class="fc-phys-lab">Now</span><span class="fc-phys-val hl" id="ocPhysNow">&mdash;</span></div>
+            <div class="fc-phys"><span class="fc-phys-lab">Goal</span><span class="fc-phys-val" id="ocPhysGoal">&mdash;</span></div>
+            <div class="fc-phys"><span class="fc-phys-lab">Proj</span><span class="fc-phys-val" id="ocPhysProj">&mdash;</span></div>
+            <div class="fc-phys"><span class="fc-phys-lab">Lost</span><span class="fc-phys-val" id="ocPhysLost">&mdash;</span></div>
+            <div class="fc-phys"><span class="fc-phys-lab">To Go</span><span class="fc-phys-val" id="ocPhysToGo">&mdash;</span></div>
           </div>
         </div>
         <div class="oc-phase-card">
@@ -2732,31 +2880,65 @@
           <div class="oc-bar-track"><div class="oc-bar-fill" id="ocCycleFill"></div><span class="bar-marker" id="ocCycleMarker"></span></div>
         </div>
         <div class="oc-heat-card"><div id="ocHeatmap"></div></div>
-        <div class="oc-next-card"><span class="oc-next-lock">&#10003;</span> Emotional Intentionality unlocked</div>
       </div>
+      <button class="oc-ei-btn" id="ocEiBtn" type="button"></button>
     </div>
 
   </div>
 </section>
 
 <!-- ========== WEEKLY ========== -->
-<section id="weekly" class="section" aria-labelledby="weekly-title">
+<section id="weekly" class="section" aria-labelledby="weekly-title" style="display:none">
   <div class="section-inner">
-    <p class="section-eyebrow">II &middot; The Week Ahead</p>
-    <div class="week-grid" id="weekGrid"><!-- populated by JS --></div>
-
-    <!-- DOMAIN HEALTH RINGS -->
-    <div class="domain-rings-section reveal" style="--reveal-delay:0.15s">
-      <p class="masters-checklists-label">The Master's Checklists</p>
-      <p class="domain-rings-eyebrow">Domain Health</p>
-      <div class="domain-rings-grid" id="domainRingsGrid">
-        <div class="domain-card" id="dr-health"></div>
-        <div class="domain-card" id="dr-finances"></div>
-        <div class="domain-card" id="dr-home"></div>
-        <div class="domain-card" id="dr-logistics"></div>
-      </div>
+    <p class="section-eyebrow">III &middot; Desks</p>
+    <p class="desks-tagline">Your standing desks &mdash; one per domain of the practice.</p>
+    <div class="week-grid" id="weekGrid" style="display:none"></div>
+    <div class="desks-row" id="domainRingsGrid">
+      <div class="desk-tile domain-card" id="dr-finances"></div>
+      <div class="desk-tile domain-card" id="dr-home"></div>
+      <div class="desk-tile domain-card" id="dr-health"></div>
+      <div class="desk-tile domain-card" id="dr-logistics"></div>
+      <button class="desk-tile desk-pro" id="deskProfessional" type="button" aria-label="Open Professional desks">
+        <span class="desk-label desk-pro-label">Professional</span>
+        <span class="desk-pro-ico">
+          <svg viewBox="0 0 48 48" width="46" height="46" aria-hidden="true">
+            <rect x="7" y="12" width="34" height="8" rx="2" fill="currentColor"/>
+            <rect x="7" y="22" width="34" height="8" rx="2" fill="currentColor" opacity="0.62"/>
+            <rect x="7" y="32" width="34" height="8" rx="2" fill="currentColor" opacity="0.32"/>
+          </svg>
+        </span>
+        <span class="desk-pro-sub">Pro Desks</span>
+        <span class="desk-pro-count" id="deskProCount">Individual work desks</span>
+        <span class="desk-pro-enter">Enter &rarr;</span>
+      </button>
     </div>
+  </div>
+</section>
 
+<!-- ========== PRO DESKS (hidden sub-section) ========== -->
+<section id="proDesks" class="section" aria-label="Professional Desks" style="display:none">
+  <div class="section-inner">
+    <button class="prodesks-back" id="proDesksBack" type="button">&larr; Desks</button>
+    <p class="section-eyebrow">Professional &middot; Pro Desks</p>
+    <p class="desks-tagline">Individual desks for professional work.</p>
+    <div class="prodesks-grid" id="proDesksGrid">
+      <div class="prodesk-tile">
+        <div class="prodesk-head"><span class="prodesk-name">Desk I</span><span class="prodesk-status">Placeholder</span></div>
+        <div class="prodesk-body">Configure this desk for a professional workstream.</div>
+        <div class="prodesk-foot"><span class="domain-btn">Set Up</span></div>
+      </div>
+      <div class="prodesk-tile">
+        <div class="prodesk-head"><span class="prodesk-name">Desk II</span><span class="prodesk-status">Placeholder</span></div>
+        <div class="prodesk-body">Configure this desk for a professional workstream.</div>
+        <div class="prodesk-foot"><span class="domain-btn">Set Up</span></div>
+      </div>
+      <div class="prodesk-tile">
+        <div class="prodesk-head"><span class="prodesk-name">Desk III</span><span class="prodesk-status">Placeholder</span></div>
+        <div class="prodesk-body">Configure this desk for a professional workstream.</div>
+        <div class="prodesk-foot"><span class="domain-btn">Set Up</span></div>
+      </div>
+      <button class="prodesk-tile prodesk-add" type="button"><span class="prodesk-add-plus">+</span><span class="prodesk-add-txt">New Desk</span></button>
+    </div>
   </div>
 </section>
 
@@ -2888,6 +3070,53 @@
 </section>
 
 <!-- CORE DAILY ACTIONS - completion -->
+<div class="ei-overlay" id="eiModal" role="dialog" aria-modal="true" aria-label="Daily Disposition">
+  <div class="ei-box">
+    <div class="ei-ritual" id="eiRitual">
+      <div class="ei-eyebrow">Part II</div>
+      <div class="ei-title">Daily Disposition</div>
+      <div class="ei-sub">A brief ritual to set how you show up today</div>
+      <div class="ei-fields">
+        <div class="ei-field">
+          <label class="ei-label" for="eiIntent">Today I intend to embody</label>
+          <input class="ei-input" id="eiIntent" type="text" maxlength="120" placeholder="grounded &middot; focused &middot; present" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="ei-field">
+          <label class="ei-label" for="eiAffirm">Affirmation</label>
+          <input class="ei-input" id="eiAffirm" type="text" maxlength="160" placeholder="I am&hellip;" autocomplete="off" spellcheck="false">
+        </div>
+        <div class="ei-field">
+          <label class="ei-label" for="eiGrat">Gratitude</label>
+          <input class="ei-input" id="eiGrat" type="text" maxlength="160" placeholder="Today I&rsquo;m grateful for&hellip;" autocomplete="off" spellcheck="false">
+        </div>
+      </div>
+      <button class="ei-submit" id="eiSubmit" type="button" disabled>Complete Ritual</button>
+      <button class="ei-cancel" id="eiCancel" type="button">Not now</button>
+    </div>
+    <div class="ei-done" id="eiDone">
+      <div class="ei-eyebrow ei-eyebrow-done">Part II Complete</div>
+      <div class="ei-seal-wrap">
+        <svg class="fc-seal ei-seal" viewBox="0 0 100 100" aria-hidden="true">
+          <circle class="fc-seal-track" cx="50" cy="50" r="44" fill="none" stroke-width="3.5"/>
+          <circle class="fc-seal-ring" cx="50" cy="50" r="44" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="276.5" transform="rotate(-90 50 50)"/>
+          <path class="fc-seal-check" d="M35 51 L45 61 L66 39" fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="60"/>
+        </svg>
+      </div>
+      <div class="ei-done-title">Disposition Set</div>
+      <div class="ei-done-sub">Your disposition is set for the day</div>
+      <div class="ei-recap" id="eiRecap"></div>
+      <div class="ei-unlock">
+        <div class="fc-unlock-eyebrow">New Function Unlocked</div>
+        <div class="ei-unlock-btn">
+          <span class="ei-unlock-ico"><svg viewBox="0 0 48 48" width="22" height="22" aria-hidden="true"><rect x="8" y="13" width="32" height="9" rx="2" fill="currentColor"/><rect x="8" y="26" width="32" height="9" rx="2" fill="currentColor" opacity="0.55"/></svg></span>
+          <span class="ei-unlock-text"><span class="ei-unlock-hd">Part III</span><span class="ei-unlock-name">Desks</span></span>
+        </div>
+      </div>
+      <button class="ei-ack" id="eiAck" type="button">Acknowledged</button>
+    </div>
+  </div>
+</div>
+
 <div class="fc-overlay" id="completionModal" role="dialog" aria-modal="true" aria-label="Core Daily Actions complete">
   <div class="fc-box">
 
@@ -2898,7 +3127,7 @@
       <svg class="fc-seal" viewBox="0 0 100 100" aria-hidden="true">
         <circle class="fc-seal-track" cx="50" cy="50" r="44" fill="none" stroke-width="3.5"/>
         <circle class="fc-seal-ring" cx="50" cy="50" r="44" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="276.5" transform="rotate(-90 50 50)"/>
-        <path class="fc-seal-check" d="M32 51 L44 63 L69 37" fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="60"/>
+        <path class="fc-seal-check" d="M35 51 L45 61 L66 39" fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="60"/>
       </svg>
       </div>
       <div class="fc-complete">Complete</div>
@@ -2924,19 +3153,35 @@
             <div class="cons-ring-inner"><span class="cons-ring-lv" id="fcRingLevel">0</span></div>
           </div>
           <div class="fc-cons-title" id="fcRingTitle">Level 0</div>
+          <div class="fc-cons-next" id="fcRingNext"></div>
         </div>
         <div class="fc-stats-tile">
-          <div class="fc-stat-row"><span class="fc-stat-lab">Days Complete</span><span class="fc-stat-val" id="fcTotal">0</span></div>
-          <div class="fc-stat-row"><span class="fc-stat-lab">Phase Days</span><span class="fc-stat-val" id="fcPhaseDays">0</span></div>
-          <div class="fc-stat-row"><span class="fc-stat-lab">Current Streak</span><span class="fc-stat-val" id="fcStreak">0</span></div>
-          <div class="fc-stat-row"><span class="fc-stat-lab">Best Streak</span><span class="fc-stat-val" id="fcLongest">0</span></div>
-          <div class="fc-stat-row"><span class="fc-stat-lab">Phase Streak</span><span class="fc-stat-val" id="fcPhaseStreak">0</span></div>
+          <div class="fc-stats-col">
+            <div class="fc-stats-colhead">Lifetime</div>
+            <div class="fc-stat-row"><span class="fc-stat-lab">Days</span><span class="fc-stat-val" id="fcTotal">0</span></div>
+            <div class="fc-stat-row" id="fcStreakRow"><span class="fc-stat-lab">Streak</span><span class="fc-stat-val" id="fcStreak">0</span></div>
+            <div class="fc-stat-row"><span class="fc-stat-lab">Longest</span><span class="fc-stat-val" id="fcLongest">0</span></div>
+            <div class="fc-stat-row"><span class="fc-stat-lab">Rate</span><span class="fc-stat-val" id="fcRate">0%</span></div>
+          </div>
+          <div class="fc-stats-col">
+            <div class="fc-stats-colhead">Phase</div>
+            <div class="fc-stat-row"><span class="fc-stat-lab">Days</span><span class="fc-stat-val" id="fcPhaseDays">0 / 84</span></div>
+            <div class="fc-stat-row"><span class="fc-stat-lab">Longest</span><span class="fc-stat-val" id="fcPhaseStreak">0</span></div>
+            <div class="fc-stat-row"><span class="fc-stat-lab">Week</span><span class="fc-stat-val" id="fcWeekStat">0 / 12</span></div>
+          </div>
         </div>
       </div>
       <div class="fc-graphs-row">
         <div class="fc-weight-card">
           <div class="fc-weight-head"><span class="fc-weight-title">Body Weight &middot; 12-Week Cut</span><span class="fc-weight-cur" id="fcWeightCur">&mdash;</span></div>
           <div id="fcWeightGraph"></div>
+          <div class="fc-phys-strip">
+            <div class="fc-phys"><span class="fc-phys-lab">Start</span><span class="fc-phys-val" id="fcPhysStart">&mdash;</span></div>
+            <div class="fc-phys"><span class="fc-phys-lab">Now</span><span class="fc-phys-val hl" id="fcPhysNow">&mdash;</span></div>
+            <div class="fc-phys"><span class="fc-phys-lab">Goal</span><span class="fc-phys-val" id="fcPhysGoal">&mdash;</span></div>
+            <div class="fc-phys"><span class="fc-phys-lab">Proj</span><span class="fc-phys-val" id="fcPhysProj">&mdash;</span></div>
+            <div class="fc-phys"><span class="fc-phys-lab">Lost</span><span class="fc-phys-val" id="fcPhysLost">&mdash;</span></div>
+          </div>
         </div>
         <div class="fc-heat-card"><div class="fc-heat-title">This Month</div><div id="fcHeatmap"></div></div>
       </div>
@@ -2957,7 +3202,7 @@
             <rect class="fc-lock-hole" x="22.9" y="29" width="2.2" height="6" rx="1.1"/>
           </svg>
         </span>
-        <span class="fc-unlock-name">Emotional Intentionality</span>
+        <span class="fc-unlock-name">Daily Disposition</span>
       </div>
     </div>
 
@@ -3908,12 +4153,14 @@
     document.body.classList.toggle('scrolled', window.scrollY > 40);
     const y = window.scrollY + window.innerHeight * 0.35;
     let activeId = 'splash';
-    sections.forEach(s => { if (s && s.offsetTop <= y) activeId = s.id; });
+    sections.forEach(s => { if (s && s.offsetParent !== null && s.offsetTop <= y) activeId = s.id; });
     links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + activeId));
   }
   window.addEventListener('scroll', onScroll, { passive: true });
   links.forEach(a => {
     a.addEventListener('click', (e) => {
+      if (a.classList.contains('nav-locked')) { e.preventDefault(); return; }
+      if (a.getAttribute('href') === '#weekly') { const pd = document.getElementById('proDesks'); if (pd) pd.style.display = 'none'; if (typeof renderAllDomainRings === 'function' && _domainData) renderAllDomainRings(); }
       const targetId = a.getAttribute('href').slice(1);
       const target = document.getElementById(targetId);
       if (!target) return;
@@ -3921,6 +4168,17 @@
       target.scrollIntoView({ behavior:'smooth', block:'start' });
     });
   });
+  function updateDesksNav(){
+    const link = document.getElementById('desksNavLink'); if (!link) return;
+    const unlocked = (typeof eiDoneToday === 'function') && eiDoneToday();
+    link.classList.toggle('nav-locked', !unlocked);
+    link.setAttribute('aria-disabled', unlocked ? 'false' : 'true');
+    const wk = document.getElementById('weekly'); if (wk) wk.style.display = unlocked ? '' : 'none';
+  }
+  updateDesksNav();
+  function openProDesks(){ const s = document.getElementById('proDesks'); if (!s) return; s.style.display = 'block'; requestAnimationFrame(function(){ s.scrollIntoView({ behavior:'smooth', block:'start' }); }); }
+  function closeProDesks(){ const s = document.getElementById('proDesks'); const w = document.getElementById('weekly'); if (w) w.scrollIntoView({ behavior:'smooth', block:'start' }); if (s) setTimeout(function(){ s.style.display = 'none'; }, 550); }
+  (function wireDesks(){ var pro = document.getElementById('deskProfessional'); if (pro) pro.addEventListener('click', openProDesks); var back = document.getElementById('proDesksBack'); if (back) back.addEventListener('click', closeProDesks); })();
 
   // ============================================================
   // CHECKBOX + LOCALSTORAGE
@@ -4267,8 +4525,8 @@
       else if (iso < DAY_ONE) { cls += ' pre'; status = ''; }
       else if (iso < todayStr) { cls += ' missed'; status = 'Missed'; }
       if (iso === todayStr) { cls += ' today'; if (status !== 'Complete') status = 'Today'; }
-      const tip = _mAbbr + ' ' + day + (status ? '  ' + status : '');
-      html += '<div class="' + cls + '" title="' + tip + '"></div>';
+      const tip = _mAbbr + ' ' + day + (status ? ' \u00b7 ' + status : '');
+      html += '<div class="' + cls + '" data-tip="' + tip + '"></div>';
     }
     html += '</div>';
     wrap.innerHTML = html;
@@ -4345,6 +4603,72 @@
   }
   function initCompletionState() { maybeShowCompleteOnLoad(); }
 
+  // ---- Part II: Emotional Intentionality ----
+  const EI_LEDGER_KEY = 'stewlab-ei-ledger';
+  function loadEILedger(){ try { const a = JSON.parse(localStorage.getItem(EI_LEDGER_KEY) || '[]'); return Array.isArray(a) ? a : []; } catch(_) { return []; } }
+  function saveEILedger(arr){ try { localStorage.setItem(EI_LEDGER_KEY, JSON.stringify(Array.from(new Set(arr)))); } catch(_) {} }
+  function eiDoneToday(){ return loadEILedger().indexOf(todayISO()) !== -1; }
+  function eiDataToday(){ try { return JSON.parse(localStorage.getItem('stewlab-ei-' + todayISO()) || '{}'); } catch(_) { return {}; } }
+  function recordEICompletion(){ const t = todayISO(); const l = loadEILedger(); if (l.indexOf(t) === -1){ l.push(t); saveEILedger(l); } }
+  function _eiEsc(x){ return String(x).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function updateEiButton(){
+    const btn = document.getElementById('ocEiBtn'); if (!btn) return;
+    if (eiDoneToday()){
+      btn.classList.add('done');
+      btn.innerHTML = '<span class="oc-ei-check"><svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path d="M5 12.5 L10 17 L19 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="oc-ei-txt"><span class="oc-ei-part">Part II</span> \u00b7 Daily Disposition Complete</span>';
+    } else {
+      btn.classList.remove('done');
+      btn.innerHTML = '<span class="oc-ei-icon"><svg viewBox="0 0 48 48" width="15" height="15" aria-hidden="true" style="overflow:visible"><path d="M15 22 V16 a9 9 0 0 1 18 0" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/><rect x="11" y="22" width="26" height="17" rx="4" fill="currentColor"/></svg></span><span class="oc-ei-txt"><span class="oc-ei-part">Part II</span> \u00b7 Daily Disposition</span><span class="oc-ei-go">Begin \u2192</span>';
+    }
+  }
+  function _eiValidate(){
+    const a = (document.getElementById('eiAffirm') || {}).value || '';
+    const g = (document.getElementById('eiGrat') || {}).value || '';
+    const btn = document.getElementById('eiSubmit');
+    if (btn) btn.disabled = !(a.trim() && g.trim());
+  }
+  function _eiShowDone(data, animate){
+    const box = document.querySelector('.ei-box'); const dn = document.getElementById('eiDone'); if (!box || !dn) return;
+    const recap = document.getElementById('eiRecap');
+    if (recap){
+      let h = '';
+      if (data.intent) h += '<div class="ei-recap-row"><span class="ei-recap-lab">Intention</span><span class="ei-recap-val">' + _eiEsc(data.intent) + '</span></div>';
+      if (data.affirm) h += '<div class="ei-recap-row"><span class="ei-recap-lab">Affirmation</span><span class="ei-recap-val">' + _eiEsc(data.affirm) + '</span></div>';
+      if (data.grat)   h += '<div class="ei-recap-row"><span class="ei-recap-lab">Gratitude</span><span class="ei-recap-val">' + _eiEsc(data.grat) + '</span></div>';
+      recap.innerHTML = h;
+    }
+    box.classList.add('done');
+    dn.classList.remove('ei-reveal');
+    if (animate === false){ dn.classList.add('ei-reveal'); }
+    else { requestAnimationFrame(function(){ requestAnimationFrame(function(){ dn.classList.add('ei-reveal'); }); }); }
+  }
+  function openEIModal(mode){
+    const modal = document.getElementById('eiModal'); const box = modal ? modal.querySelector('.ei-box') : null; if (!modal || !box) return;
+    if (mode === 'done' || eiDoneToday()){
+      _eiShowDone(eiDataToday(), false);
+    } else {
+      box.classList.remove('done');
+      const dn = document.getElementById('eiDone'); if (dn) dn.classList.remove('ei-reveal');
+      ['eiIntent','eiAffirm','eiGrat'].forEach(function(id){ const el = document.getElementById(id); if (el) el.value = ''; });
+      _eiValidate();
+    }
+    modal.classList.add('open');
+    if (!box.classList.contains('done')){ const f = document.getElementById('eiIntent'); if (f) setTimeout(function(){ try { f.focus(); } catch(_){} }, 300); }
+  }
+  function closeEIModal(){ const modal = document.getElementById('eiModal'); if (modal) modal.classList.remove('open'); }
+  function completeEIRitual(){
+    const data = {
+      intent: (document.getElementById('eiIntent') || {}).value || '',
+      affirm: (document.getElementById('eiAffirm') || {}).value || '',
+      grat:   (document.getElementById('eiGrat') || {}).value || ''
+    };
+    if (!(data.affirm.trim() && data.grat.trim())) return;
+    recordEICompletion(data);
+    _eiShowDone(data, true);
+    updateEiButton();
+    updateDesksNav();
+  }
+
   // ---- staged completion modal ----
   // ---- staged completion modal (wall-clock driven -> background-safe, never bricks) ----
   let _fcStart = 0, _fcMetrics = null, _fcRAF = 0, _fcAnimated = false;
@@ -4366,10 +4690,31 @@
     requestAnimationFrame(step);
   }
   // ---- physique weight trend graph (completion modal) ----
+  function physiqueStats() {
+    const pd = window._physiqueData;
+    if (!pd || pd.startW == null || isNaN(pd.startW)) return null;
+    const startW = pd.startW, goalW = (pd.goalW != null && !isNaN(pd.goalW)) ? pd.goalW : 140;
+    const acts = (pd.actual || []).map(function(v,i){ return { v:v, i:i }; }).filter(function(o){ return o.v != null && !isNaN(o.v); });
+    const currentW = acts.length ? acts[acts.length-1].v : startW;
+    const weeksIn = acts.length ? (acts[acts.length-1].i + 1) : 0;
+    const lost = startW - currentW, toGo = currentW - goalW;
+    const avgWk = weeksIn > 0 ? lost / weeksIn : 0;
+    const dayNum = (window._splashData && window._splashData.dayNum) || 1;
+    const weeksLeft = Math.max(0, (84 - dayNum) / 7);
+    const projected = weeksIn > 0 ? (currentW - avgWk * weeksLeft) : null;
+    return { startW:startW, goalW:goalW, currentW:currentW, lost:lost, toGo:toGo, avgWk:avgWk, projected:projected, weeksIn:weeksIn };
+  }
+  function fillPhysStrip(prefix) {
+    const ps = physiqueStats();
+    const set1 = function(id, val, dp){ setText(prefix + id, (val==null||isNaN(val)) ? '\u2014' : val.toFixed(dp==null?1:dp)); };
+    if (!ps) { ['Start','Now','Goal','Proj','Lost','ToGo'].forEach(function(k){ setText(prefix + 'Phys' + k, '\u2014'); }); return; }
+    set1('PhysStart', ps.startW); set1('PhysNow', ps.currentW); set1('PhysGoal', ps.goalW, 0);
+    set1('PhysProj', ps.projected); set1('PhysLost', ps.lost); set1('PhysToGo', ps.toGo);
+  }
   function renderWeightGraph(elId) {
     const wrap = document.getElementById(elId); if (!wrap) return;
     const pd = window._physiqueData;
-    const W = 460, H = 140, padL = 34, padR = 42, padT = 12, padB = 20;
+    const W = 460, H = 108, padL = 34, padR = 42, padT = 10, padB = 17;
     const plotW = W - padL - padR, plotH = H - padT - padB;
     if (!pd || pd.startW == null || isNaN(pd.startW)) { wrap.innerHTML = '<div class="wg-empty">Weight data loading</div>'; setText('fcWeightCur', ''); return; }
     const startW = pd.startW, goalW = (pd.goalW != null && !isNaN(pd.goalW)) ? pd.goalW : 140;
@@ -4405,18 +4750,18 @@
       let d = 'M' + X(aPts[0].i).toFixed(1) + ' ' + Y(aPts[0].w).toFixed(1);
       for (let j = 1; j < aPts.length; j++) d += ' L' + X(aPts[j].i).toFixed(1) + ' ' + Y(aPts[j].w).toFixed(1);
       svg += '<path class="wg-line" d="' + d + '"/>';
-      aPts.forEach(function(p){ svg += '<circle class="' + (p.i===0 ? 'wg-dot-start' : 'wg-dot') + '" cx="' + X(p.i).toFixed(1) + '" cy="' + Y(p.w).toFixed(1) + '" r="' + (p.i===0?3.2:2.6) + '"/>'; });
+      aPts.forEach(function(p){ const lab = (p.i===0 ? 'Start' : 'Week ' + p.i); svg += '<circle class="' + (p.i===0 ? 'wg-dot-start' : 'wg-dot') + '" cx="' + X(p.i).toFixed(1) + '" cy="' + Y(p.w).toFixed(1) + '" r="' + (p.i===0?3.2:2.6) + '"><title>' + lab + ': ' + p.w.toFixed(1) + ' lb</title></circle>'; });
       const cp = aPts[aPts.length-1];
       svg += '<circle class="wg-halo" cx="' + X(cp.i).toFixed(1) + '" cy="' + Y(cp.w).toFixed(1) + '" r="7"/>';
-      svg += '<circle class="wg-dot-cur" cx="' + X(cp.i).toFixed(1) + '" cy="' + Y(cp.w).toFixed(1) + '" r="4"/>';
+      var _ps = physiqueStats();
+      if (_ps && _ps.projected != null) { svg += '<path class="wg-proj" d="M' + X(cp.i).toFixed(1) + ' ' + Y(cp.w).toFixed(1) + ' L' + X(12).toFixed(1) + ' ' + Y(_ps.projected).toFixed(1) + '"/>'; svg += '<circle class="wg-proj-dot" cx="' + X(12).toFixed(1) + '" cy="' + Y(_ps.projected).toFixed(1) + '" r="2.6"><title>Projected: ' + _ps.projected.toFixed(1) + ' lb</title></circle>'; }
+      svg += '<circle class="wg-dot-cur" cx="' + X(cp.i).toFixed(1) + '" cy="' + Y(cp.w).toFixed(1) + '" r="4"><title>Current: ' + cp.w.toFixed(1) + ' lb</title></circle>';
     } else {
       const sx = X(0), sy = Y(startW);
       svg += '<circle class="wg-halo" cx="' + sx.toFixed(1) + '" cy="' + sy.toFixed(1) + '" r="8"/>';
-      svg += '<circle class="wg-dot-cur" cx="' + sx.toFixed(1) + '" cy="' + sy.toFixed(1) + '" r="4.5"/>';
-      svg += '<text class="wg-start-lab" x="' + (sx+11) + '" y="' + (sy-6).toFixed(1) + '" text-anchor="start">' + startW.toFixed(1) + ' lb</text>';
-      svg += '<text class="wg-start-sub" x="' + (sx+11) + '" y="' + (sy+7).toFixed(1) + '" text-anchor="start">Awaiting Week 1</text>';
+      svg += '<circle class="wg-dot-cur" cx="' + sx.toFixed(1) + '" cy="' + sy.toFixed(1) + '" r="4.5"><title>Start: ' + startW.toFixed(1) + ' lb &middot; awaiting Week 1</title></circle>';
     }
-    svg += '</svg><div class="wg-legend"><span class="wg-leg wg-leg-line">Actual</span><span class="wg-leg wg-leg-target">Target</span></div>';
+    svg += '</svg><div class="wg-legend"><span class="wg-leg wg-leg-line">Actual</span><span class="wg-leg wg-leg-target">Target</span><span class="wg-leg wg-leg-proj">Proj</span></div>';
     wrap.innerHTML = svg;
   }
   function animateWeightGraph(elId) {
@@ -4439,6 +4784,10 @@
     setText('fcDayPill', 'Day ' + m.dayNum);
     setText('fcWeekPill', 'Week ' + m.weekNum + ' / 12');
     setText('fcTotal', 0); setText('fcPhaseDays', '0 / 84'); setText('fcStreak', 0); setText('fcLongest', 0); setText('fcPhaseStreak', 0);
+    setText('fcRate', '0%'); setText('fcWeekStat', m.weekNum + ' / 12');
+    setText('fcRingNext', (m.toNext - m.inLv) + ' to Level ' + (m.lv + 1));
+    var _sr = document.getElementById('fcStreakRow'); if (_sr) _sr.classList.toggle('ablaze', m.streak > 1 && m.streak === m.longest);
+    fillPhysStrip('fc');
     setText('fcRingLevel', m.lv);
     setText('fcRingTitle', m.title);
     var _cc = document.getElementById('fcConsCard'); if (_cc) _cc.classList.remove('leveled');
@@ -4452,7 +4801,7 @@
     renderHeatmapInto('fcHeatmap');
   }
   function animateCompletionRight(m) {
-    _countUp('fcTotal', m.total); _countUp('fcPhaseDays', m.inCycle, ' / 84'); _countUp('fcStreak', m.streak); _countUp('fcLongest', m.longest); _countUp('fcPhaseStreak', m.phaseStreak);
+    _countUp('fcTotal', m.total); _countUp('fcPhaseDays', m.inCycle, ' / 84'); _countUp('fcStreak', m.streak); _countUp('fcLongest', m.longest); _countUp('fcRate', m.rate, '%'); _countUp('fcPhaseStreak', m.phaseStreak);
     const ringPct = m.leveledUp ? 100 : m.lvPct;
     requestAnimationFrame(function(){
       const arc = document.getElementById('fcRingArc'); if (arc) arc.setAttribute('stroke-dashoffset', (FC_RING_C * (1 - ringPct / 100)).toFixed(1));
@@ -4503,6 +4852,10 @@
   function renderOfficeCompletePanel() {
     const m = ledgerMetrics();
     setText('ocTotal', m.total); setText('ocPhaseDays', m.inCycle + ' / 84'); setText('ocStreak', m.streak); setText('ocLongest', m.longest); setText('ocPhaseStreak', m.phaseStreak);
+    setText('ocRate', m.rate + '%'); setText('ocWeekStat', m.weekNum + ' / 12');
+    setText('ocRingNext', (m.toNext - m.inLv) + ' to Level ' + (m.lv + 1));
+    var _osr = document.getElementById('ocStreakRow'); if (_osr) _osr.classList.toggle('ablaze', m.streak > 1 && m.streak === m.longest);
+    fillPhysStrip('oc');
     setText('ocRingLevel', m.lv);
     setText('ocRingTitle', m.title || ('Level ' + m.lv));
     setText('ocCycleLab', 'Cycle \u00b7 Week ' + m.weekNum + ' of 12');
@@ -4520,9 +4873,10 @@
     if (!office || !panel) return;
     office.querySelectorAll('.routine[data-window]').forEach(function(r){ r.style.display = 'none'; });
     const steward = document.getElementById('stewardBtn'); if (steward) steward.style.display = 'none';
-    panel.classList.remove('collapsed');
+    panel.classList.add('collapsed');
     panel.classList.add('shown');
     renderOfficeCompletePanel();
+    updateEiButton();
   }
 
   (function wireCompletionModal(){
@@ -4533,6 +4887,12 @@
     if (_st) _st.addEventListener('click', function(){ var pnl = document.getElementById('officeCompletePanel'); if (pnl) pnl.classList.toggle('collapsed'); });
     var _rp = document.getElementById('ocReplayBtn');
     if (_rp) _rp.addEventListener('click', function(){ showCompletionModal(); });
+    var _ei = document.getElementById('ocEiBtn');
+    if (_ei) _ei.addEventListener('click', function(){ if (!eiDoneToday()) openEIModal('ritual'); });
+    ['eiIntent','eiAffirm','eiGrat'].forEach(function(id){ var el = document.getElementById(id); if (el) el.addEventListener('input', _eiValidate); });
+    var _eis = document.getElementById('eiSubmit'); if (_eis) _eis.addEventListener('click', completeEIRitual);
+    var _eia = document.getElementById('eiAck'); if (_eia) _eia.addEventListener('click', closeEIModal);
+    var _eic = document.getElementById('eiCancel'); if (_eic) _eic.addEventListener('click', closeEIModal);
     // Escape closes ONLY after the sequence has completed (same gate as the button)
     document.addEventListener('keydown', function(e){
       if (e.key === 'Escape' && modal && modal.classList.contains('open') && modal.classList.contains('ready')) _fcClose();
