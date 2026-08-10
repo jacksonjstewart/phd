@@ -1524,7 +1524,8 @@
   .fc-stat-row{display:flex;align-items:baseline;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);}
   .fc-stat-row:last-child{border-bottom:none;}
   .fc-stat-lab{font-family:var(--mono);font-size:7px;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-dim);}
-  .fc-stat-val{font-family:var(--sans);font-weight:600;font-size:18px;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:-0.01em;}
+  .fc-stat-val{font-family:var(--sans);font-weight:600;font-size:18px;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:-0.01em;white-space:nowrap;}
+  .fc-stat-row{flex-wrap:nowrap;gap:8px;}
   .fc-weight-card{padding:12px 14px 8px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,0.015);}
   .fc-weight-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
   .fc-weight-title{font-family:var(--mono);font-size:7.5px;letter-spacing:0.26em;text-transform:uppercase;color:var(--gold-dim);}
@@ -1601,13 +1602,13 @@
   /* Office - in-place completion overlay (replaces task lists) */
   .oc-panel{display:none;animation:fcBoxIn 0.7s cubic-bezier(0.16,1,0.3,1) forwards;padding-top:6px;}
   .oc-panel.shown{display:block;}
-  .oc-status{display:flex;align-items:center;gap:14px;width:100%;text-align:left;font-family:var(--mono);font-size:9.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--green-bright);background:linear-gradient(180deg,rgba(67,181,124,0.14),rgba(67,181,124,0.045));border:1px solid rgba(67,181,124,0.4);border-radius:13px;padding:16px 16px 16px 18px;cursor:pointer;transition:background .3s ease,border-color .3s ease,box-shadow .3s ease;box-shadow:0 0 18px rgba(67,181,124,0.08),inset 0 1px 0 rgba(255,255,255,0.04);}
-  .oc-status:hover{background:linear-gradient(180deg,rgba(67,181,124,0.20),rgba(67,181,124,0.07));border-color:rgba(67,181,124,0.6);box-shadow:0 0 28px rgba(67,181,124,0.16),inset 0 1px 0 rgba(255,255,255,0.05);}
-  .oc-status-check{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:rgba(67,181,124,0.22);border:1px solid rgba(67,181,124,0.4);color:var(--green-bright);flex:0 0 auto;}
+  .oc-status{display:flex;align-items:center;gap:14px;width:100%;text-align:left;font-family:var(--mono);font-size:9.5px;letter-spacing:0.3em;text-transform:uppercase;color:var(--green-bright);background:linear-gradient(180deg,rgba(50,130,88,0.20),rgba(40,105,72,0.085));border:1px solid rgba(67,181,124,0.36);border-radius:13px;padding:16px 16px 16px 18px;cursor:pointer;transition:background .3s ease,border-color .3s ease,box-shadow .3s ease;box-shadow:0 0 15px rgba(67,181,124,0.07);animation:ocDonePulse 4.5s ease-in-out infinite;}
+  .oc-status:hover{background:linear-gradient(180deg,rgba(50,130,88,0.20),rgba(40,105,72,0.085));border-color:rgba(67,181,124,0.5);box-shadow:0 0 20px rgba(67,181,124,0.11);}
+  .oc-status-check{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:rgba(67,181,124,0.18);border:1px solid rgba(67,181,124,0.36);color:var(--green-bright);flex:0 0 auto;}
   .oc-status-txt{flex:1;min-width:0;color:var(--green-bright);display:flex;align-items:baseline;flex-wrap:wrap;row-gap:3px;}
-  .oc-status-part{color:var(--green-bright);font-weight:500;padding:2px 7px;border:1px solid rgba(67,181,124,0.4);border-radius:5px;background:rgba(67,181,124,0.08);margin-right:2px;}
-  .oc-status-chev{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;border:1px solid rgba(67,181,124,0.4);background:rgba(67,181,124,0.10);color:var(--green-bright);transition:transform .45s cubic-bezier(0.16,1,0.3,1),background .3s ease;}
-  .oc-status:hover .oc-status-chev{background:rgba(67,181,124,0.18);}
+  .oc-status-part{color:var(--green-bright);font-weight:500;padding:2px 7px;border:1px solid currentColor;border-radius:5px;background:rgba(255,255,255,0.04);opacity:0.85;margin-right:2px;}
+  .oc-status-chev{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;border:1px solid rgba(67,181,124,0.36);background:rgba(67,181,124,0.08);color:var(--green-bright);transition:transform .45s cubic-bezier(0.16,1,0.3,1),background .3s ease;}
+  .oc-status:hover .oc-status-chev{background:rgba(67,181,124,0.14);}
   .oc-panel:not(.collapsed) .oc-status-chev{transform:rotate(180deg);}
   .oc-body{overflow:hidden;transition:max-height .55s cubic-bezier(0.16,1,0.3,1),opacity .4s ease,margin-top .45s ease;max-height:1400px;opacity:1;margin-top:26px;}
   .oc-panel.collapsed .oc-body{max-height:0;opacity:0;margin-top:0;}
@@ -1629,11 +1630,12 @@
   .oc-ei-btn{display:flex;align-items:center;gap:13px;width:100%;text-align:left;font-family:var(--mono);font-size:9.5px;letter-spacing:0.3em;text-transform:uppercase;border-radius:13px;padding:16px 18px;cursor:pointer;margin-top:14px;transition:background .3s ease,border-color .3s ease,box-shadow .3s ease;color:var(--gold-bright);background:linear-gradient(180deg,rgba(201,161,74,0.15),rgba(201,161,74,0.05));border:1px solid var(--gold-dim);box-shadow:0 0 18px rgba(201,161,74,0.08),inset 0 1px 0 rgba(255,255,255,0.04);animation:ocEiPulse 3s ease-in-out infinite;}
   .oc-ei-btn:hover{background:linear-gradient(180deg,rgba(201,161,74,0.22),rgba(201,161,74,0.07));border-color:var(--gold);box-shadow:0 0 26px rgba(201,161,74,0.18);}
   @keyframes ocEiPulse{0%,100%{box-shadow:0 0 14px rgba(201,161,74,0.08),inset 0 1px 0 rgba(255,255,255,0.03)}50%{box-shadow:0 0 26px rgba(201,161,74,0.2),inset 0 1px 0 rgba(255,255,255,0.05)}}
-  .oc-ei-btn.done{color:var(--green-bright);background:linear-gradient(180deg,rgba(50,130,88,0.28),rgba(40,105,72,0.12));border:1px solid rgba(67,181,124,0.42);box-shadow:0 0 18px rgba(67,181,124,0.1);cursor:default;animation:none;}
-  .oc-ei-btn.done:hover{background:linear-gradient(180deg,rgba(50,130,88,0.28),rgba(40,105,72,0.12));border-color:rgba(67,181,124,0.42);box-shadow:0 0 18px rgba(67,181,124,0.1);}
+  @keyframes ocDonePulse{0%,100%{box-shadow:0 0 15px rgba(67,181,124,0.07)}50%{box-shadow:0 0 20px rgba(67,181,124,0.11)}}
+  .oc-ei-btn.done{color:var(--green-bright);background:linear-gradient(180deg,rgba(50,130,88,0.20),rgba(40,105,72,0.085));border:1px solid rgba(67,181,124,0.36);box-shadow:0 0 15px rgba(67,181,124,0.07);cursor:default;animation:ocDonePulse 4.5s ease-in-out infinite;}
+  .oc-ei-btn.done:hover{background:linear-gradient(180deg,rgba(50,130,88,0.20),rgba(40,105,72,0.085));border-color:rgba(67,181,124,0.42);box-shadow:0 0 15px rgba(67,181,124,0.07);}
   .oc-ei-icon,.oc-ei-check{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;flex:0 0 auto;}
   .oc-ei-icon{background:rgba(201,161,74,0.14);border:1px solid var(--gold-dim);color:var(--gold-bright);overflow:visible;}
-  .oc-ei-check{background:rgba(67,181,124,0.22);border:1px solid rgba(67,181,124,0.4);color:var(--green-bright);}
+  .oc-ei-check{background:rgba(67,181,124,0.18);border:1px solid rgba(67,181,124,0.36);color:var(--green-bright);}
   .oc-ei-txt{flex:1;min-width:0;display:flex;align-items:baseline;flex-wrap:wrap;row-gap:3px;}
   .oc-ei-part{padding:2px 7px;border:1px solid currentColor;border-radius:5px;background:rgba(255,255,255,0.04);opacity:0.85;flex:0 0 auto;}
   .oc-status-part{flex:0 0 auto;}
@@ -1929,6 +1931,7 @@
     transition: border-color 260ms;
   }
   .pp-tile:hover { border-color: var(--gold-dim); }
+  .pp-tile:last-child:nth-child(3n+1) { grid-column: 1 / -1; max-width: 260px; margin: 0 auto; }
   .pp-tile-val {
     font-family: var(--mono);
     font-size: 15px;
@@ -2043,17 +2046,24 @@
   }
   /* ===== DESKS ===== */
   .desks-tagline{font-family:var(--mono);font-size:8px;letter-spacing:0.24em;text-transform:uppercase;color:var(--text-faint);margin-top:10px;}
-  .desks-row{display:flex;gap:16px;align-items:stretch;margin-top:30px;}
-  @media(max-width:900px){ .desks-row{flex-wrap:wrap;} .desks-row .desk-tile{flex:1 1 44%;min-height:44vh;} }
-  .desk-tile{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:64vh;padding:30px 18px 26px;border:1px solid var(--border);border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,0.018),rgba(255,255,255,0.004));transition:border-color .3s ease,transform .3s ease,box-shadow .3s ease;text-align:center;}
-  .desk-tile:hover{border-color:var(--gold-dim);transform:translateY(-3px);box-shadow:0 14px 44px rgba(0,0,0,0.32);}
+  .desks-row{display:flex;flex-wrap:wrap;justify-content:center;gap:18px;margin:30px auto 0;max-width:1000px;}
+  .desk-tile{flex:0 1 236px;max-width:236px;min-width:200px;min-height:440px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:28px 18px 24px;border:1px solid var(--border);border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,0.024),rgba(255,255,255,0.005));transition:border-color .3s ease,transform .3s ease,box-shadow .3s ease;text-align:center;}
+  .desk-tile.domain-card{border-color:rgba(201,161,74,0.15);background:linear-gradient(180deg,rgba(201,161,74,0.045),rgba(255,255,255,0.006));}
+  @media(max-width:900px){ .desks-row{gap:16px;} .desk-tile{flex-basis:44%;max-width:320px;min-height:400px;} }
+  @media(max-width:520px){ .desk-tile{flex-basis:100%;max-width:340px;} }
+  .desk-tile:hover{border-color:var(--gold-dim);transform:translateY(-4px);box-shadow:0 16px 46px rgba(0,0,0,0.34);}
+  .desk-tile .domain-icon{order:-1;color:var(--gold-bright);display:inline-flex;filter:drop-shadow(0 0 7px rgba(201,161,74,0.3));margin-bottom:2px;}
   .desk-tile .domain-label{order:0;font-family:var(--mono);font-size:11px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold-bright);}
   .desk-tile .domain-ring-wrap{order:1;width:152px;height:152px;margin-top:auto;}
   .desk-tile .domain-ring-wrap svg{width:152px;height:152px;}
   .desk-tile .domain-ring-pct{font-size:22px;}
   .desk-tile .domain-progressing{order:2;margin-top:12px;}
-  .desk-tile .domain-btns{order:3;margin-top:auto;padding-top:22px;display:flex;flex-direction:column;gap:9px;width:100%;max-width:180px;}
-  .desk-tile .domain-btn{width:100%;text-align:center;}
+  .desk-tile .domain-btns{order:3;margin-top:auto;padding-top:22px;display:flex;flex-direction:column;gap:8px;width:100%;max-width:180px;}
+  .desk-tile .domain-btn{width:100%;text-align:center;border-radius:100px;padding:9px 14px;background:rgba(201,161,74,0.05);}
+  .desk-tile .domain-btn:hover{background:rgba(201,161,74,0.12);}
+  .desk-tile .domain-btn.checkin-disabled{background:transparent;}
+  .desk-tile .domain-btn.checkin-active{background:rgba(34,211,238,0.07);}
+  .desk-tile .domain-btn.checkin-active:hover{background:rgba(34,211,238,0.14);}
   /* Professional gateway tile */
   .desk-pro{cursor:pointer;justify-content:center;gap:16px;background:linear-gradient(180deg,rgba(201,161,74,0.12),rgba(201,161,74,0.03));border-color:var(--gold-dim);animation:ocEiPulse 3.4s ease-in-out infinite;}
   .desk-pro:hover{border-color:var(--gold);transform:translateY(-3px);}
@@ -3059,6 +3069,7 @@
           <div class="pp-bar-sub" id="phRemaining">&mdash; days remaining</div>
         </div>
         <div class="pp-tiles">
+          <div class="pp-tile"><div class="pp-tile-val" id="psStartWeight">&mdash;</div><div class="pp-tile-sub" id="psStartDate">&mdash;</div><div class="pp-tile-label">Starting Weight</div></div>
           <div class="pp-tile"><div class="pp-tile-val" id="psTotalLost">&mdash;</div><div class="pp-tile-label">Total Lost</div></div>
           <div class="pp-tile"><div class="pp-tile-val" id="psAvgWeek">&mdash;</div><div class="pp-tile-label">Avg / Week</div></div>
           <div class="pp-tile"><div class="pp-tile-val" id="psNextCheckin">&mdash;</div><div class="pp-tile-label">Next Check-in</div></div>
@@ -3331,10 +3342,30 @@
     } catch(e) {}
   }
 
+  const REVIEW_LOG_KEY = 'stewlab-review-log';
+  const REVIEW_BONUS_POINTS = 2; // consistency points awarded toward Level per completed review (tunable)
+
+  function loadReviewLog() {
+    try { const a = JSON.parse(localStorage.getItem(REVIEW_LOG_KEY) || '[]'); return Array.isArray(a) ? a : []; } catch(e) { return []; }
+  }
+  function logReviewCompletion(reviewId) {
+    try {
+      const log = loadReviewLog();
+      log.push({ id: reviewId, date: todayISO() });
+      localStorage.setItem(REVIEW_LOG_KEY, JSON.stringify(log));
+    } catch(e) {}
+  }
+  function reviewBonusPoints() {
+    // Lifetime consistency-point contribution from completed reviews (feeds the Level ring only;
+    // does NOT affect Days Complete / Streak / Rate, which stay a pure record of core daily actions).
+    return loadReviewLog().length * REVIEW_BONUS_POINTS;
+  }
   function awardReviewBonus(reviewId) {
-    // Records the domain review as done for today (local only). No points system.
+    // Records the domain review as done for today (local only) and logs a lifetime
+    // consistency-point contribution toward the Level ring.
     if (reviewBonusEarnedToday(reviewId)) return;
     markReviewBonusEarned(reviewId);
+    logReviewCompletion(reviewId);
   }
 
   function makeTile(reviewId, title, clickFn) {
@@ -3478,10 +3509,9 @@
       awardReviewBonus('finances');
 
       // Mark tile as completed
-      var tile = document.getElementById('reviewTile');
+      var tile = document.getElementById('reviewTile-finances');
       if (tile) {
         tile.classList.add('completed');
-        tile.querySelector('.review-tile-title') && null;
         var sub = tile.querySelector('.review-tile-sub');
         if (sub) sub.textContent = '✓ Completed';
       }
@@ -3903,13 +3933,20 @@
     set('ppDateEnd',   _fmt(PROG_END));
     set('phRemaining', daysLeft + ' DAYS REMAINING');
     setH('psNextCheckin', '<span style="color:var(--text)">' + wedLabel + '</span>  <span style="color:var(--gold)">(' + daysToNext + 'd)</span>');
+    const startW_val = isNaN(startW) ? null : startW;
+    if (startW_val !== null) {
+      set('psStartWeight', startW_val.toFixed(1) + ' lb');
+      set('psStartDate', _fmt(PROG_START));
+    } else {
+      set('psStartWeight', '\u2014');
+      set('psStartDate', '\u2014');
+    }
     let lastIdx = -1, lastVal = null;
     for (let i = weekRows.length - 1; i >= 0; i--) {
       const v = num(weekRows[i][5]);
       if (v !== null) { lastIdx = i; lastVal = v; break; }
     }
     if (lastVal === null) return;
-    const startW_val   = isNaN(startW) ? null : startW;
     if (startW_val === null) return;
     const totalLost    = startW_val - lastVal;
     const totalLostPct = totalLost / startW_val * 100;
@@ -4426,20 +4463,24 @@
     dates.forEach(function(iso){ const dd = new Date(iso + 'T00:00:00'); if (dd >= day1 && dd < cycleEnd) { if (_pprev) { const _pd = new Date(_pprev + 'T00:00:00'); _pd.setDate(_pd.getDate()+1); _prun = (iso === isoFromDate(_pd)) ? _prun + 1 : 1; } else _prun = 1; if (_prun > phaseStreak) phaseStreak = _prun; _pprev = iso; } });
 
     // consistency progression (today may cross a level and/or a rank)
-    const lv        = consLevel(total);
-    const prevLv    = consLevel(total - 1);
-    const title     = consTitle(total);
+    // Completed reviews (Finances/Health/etc.) contribute bonus points toward the Level ring only 
+    // -- Days Complete / Streak / Rate above remain a pure record of core daily actions.
+    const rvBonus    = reviewBonusPoints();
+    const lvTotal    = total + rvBonus;
+    const lv        = consLevel(lvTotal);
+    const prevLv    = consLevel(lvTotal - 1);
+    const title     = consTitle(lvTotal);
     const cur       = consFloor(lv), nxt = consFloor(lv + 1);
-    const inLv      = total - cur;
+    const inLv      = lvTotal - cur;
     const toNext    = nxt - cur;
     const lvPct     = toNext > 0 ? Math.round(inLv / toNext * 100) : 100;
     const leveledUp = lv > prevLv;
-    const newRank   = title !== consTitle(Math.max(0, total - 1));
+    const newRank   = title !== consTitle(Math.max(0, lvTotal - 1));
 
     return { total:total, streak:streak, longest:longest, rate:rate, daysSince:daysSince,
              weekNum:weekNum, dayNum:dayNum, inCycle:inCycle, cyclePct:cyclePct, phaseStreak:phaseStreak,
              lv:lv, title:title, inLv:inLv, toNext:toNext, lvPct:lvPct,
-             leveledUp:leveledUp, newRank:newRank };
+             leveledUp:leveledUp, newRank:newRank, reviewBonus:rvBonus };
   }
 
   // ---- month heatmap (fed by the ledger) ----
@@ -4711,7 +4752,9 @@
   }
   function applyStatMeta(prefix, m){
     setText(prefix + 'WeekStat', m.weekNum + ' / 12');
-    setText(prefix + 'RingNext', (m.toNext - m.inLv) + ' to Level ' + (m.lv + 1));
+    var ringNextTxt = (m.toNext - m.inLv) + ' to Level ' + (m.lv + 1);
+    if (m.reviewBonus > 0) ringNextTxt += '  (+' + m.reviewBonus + ' from reviews)';
+    setText(prefix + 'RingNext', ringNextTxt);
     var sr = document.getElementById(prefix + 'StreakRow'); if (sr) sr.classList.toggle('ablaze', m.streak > 1 && m.streak === m.longest);
     fillPhysStrip(prefix);
   }
@@ -4845,6 +4888,12 @@
   const DOMAINS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSm6d7HdIKw7iYXdo1B5-IUBc6e33FO3wxKp3FmnGGChnqk_MmPl1593rv5XJ3F4Sweg-HyBVwSQGgK/pub?gid=863378788&single=true&output=csv';
   const DOMAINS_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1My6fWDsy8EiCZ9qc_0O0yvAcdVTC-V4hTFQm7E_I07c/edit#gid=863378788';
 
+  const DOMAIN_ICONS = {
+    finances: '<svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><circle cx="12" cy="12" r="8.4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 7.2v9.6M14.6 9.4c0-1.1-1.1-1.9-2.6-1.9-1.6 0-2.7.9-2.7 2s.9 1.6 2.7 2c1.8.4 2.7.9 2.7 2s-1.1 2-2.7 2c-1.5 0-2.6-.8-2.6-1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+    home: '<svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="M4 11.5 12 4l8 7.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.2 10v8.3h11.6V10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M10 18.3v-5h4v5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
+    health: '<svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="M3.4 12.2h4l1.8-4.4 2.6 8.8 2-6.4 1.4 2h5.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    logistics: '<svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><rect x="5" y="4.4" width="14" height="16.2" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9 3.6h6v2.6H9z" fill="currentColor" opacity="0.85"/><path d="M8.2 12.4l2 2 4.2-4.6M8.2 17l2 2 4.2-4.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+  };
   const DOMAIN_CONFIG = {
     health:    { id:'health',    label:'Health & Fitness', cardId:'dr-health',    segments:5, biweekly:true,  reviewDOW:6, reviewRef:new Date(2026,4,23) },
     finances:  { id:'finances',  label:'Finances',          cardId:'dr-finances',  segments:5, biweekly:true,  reviewDOW:3, reviewRef:new Date(2026,4,27) },
@@ -5001,6 +5050,7 @@
     const inner=document.createElement('div'); inner.className='domain-ring-inner';
     inner.innerHTML=`<span class="domain-ring-pct">${pct}%</span><span class="domain-ring-sub">complete</span>`;
     ringWrap.appendChild(inner); card.appendChild(ringWrap);
+    const icon=document.createElement('span'); icon.className='domain-icon'; icon.innerHTML=DOMAIN_ICONS[cfg.id]||''; card.appendChild(icon);
     const label=document.createElement('div'); label.className='domain-label'; label.textContent=cfg.label; card.appendChild(label);
     const btns=document.createElement('div'); btns.className='domain-btns';
     const reviewBtn=document.createElement('button'); reviewBtn.className='domain-btn'; reviewBtn.type='button'; reviewBtn.textContent='Review';
