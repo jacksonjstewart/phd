@@ -598,9 +598,9 @@
     50%       { box-shadow: 0 0 22px 2px rgba(201,161,74,0.18); border-color: var(--gold-bright); }
   }
 
-  /* MORNING RITUAL gate tile — collapses Part I's Morning Routine behind one tap */
+  /* MORNING RITUAL gate tile — collapses Part I (Morning Routine + Office Hours) behind one tap */
   .ritual-gate {
-    width: 100%; margin: 0 0 18px; padding: 14px 20px;
+    width: 100%; margin: 24px 0 18px; padding: 14px 20px;
     border: 1px solid var(--cyan);
     background: linear-gradient(135deg, rgba(79,214,214,0.16) 0%, rgba(79,214,214,0.06) 100%);
     cursor: pointer;
@@ -634,7 +634,16 @@
     transition: transform 320ms ease, color 200ms;
   }
   .ritual-gate.open .ritual-gate-chevron { transform: rotate(45deg); color: var(--cyan-bright); }
-  #office .routine[data-window="morning"] > .routine-head { display: none; }
+  #office .routine[data-window="morning"] > .routine-head,
+  #office .routine[data-window="office"] > .routine-head { display: none; }
+  .routine-divider {
+    font-family: var(--mono); font-size: 9px; letter-spacing: 0.4em;
+    text-transform: uppercase; color: var(--cyan-bright);
+    padding: 4px 4px 10px; cursor: default;
+  }
+  #officeHoursList li.routine-divider:first-child {
+    border-top: 1px solid var(--border); margin-top: 6px; padding-top: 18px;
+  }
   @keyframes pulse-cyan {
     0%, 100% { box-shadow: 0 0 0 0 rgba(79,214,214,0.3); border-color: var(--cyan); }
     50%       { box-shadow: 0 0 22px 2px rgba(79,214,214,0.18); border-color: var(--cyan-bright); }
@@ -2763,7 +2772,7 @@
     </div>
 
     <!-- I. MORNING ROUTINE -->
-    <button type="button" class="ritual-gate" id="morningRitualGate" onclick="toggleMorningRitual()" aria-expanded="false" aria-controls="morningList">
+    <button type="button" class="ritual-gate" id="morningRitualGate" onclick="toggleMorningRitual()" aria-expanded="false" aria-controls="morningList officeHoursList">
       <div>
         <div class="ritual-gate-title">Morning Ritual</div>
         <div class="ritual-gate-sub">Fitness &amp; Self-Care</div>
@@ -2776,6 +2785,7 @@
         <span class="rh-toggle" aria-hidden="true">+</span>
       </button>
       <ul class="routine-list" id="morningList">
+        <li class="routine-divider" aria-hidden="true"><span class="rh-label">I &middot; Morning Routine</span></li>
         <li class="r-row" data-cond="always" data-task="wake-up" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
@@ -2856,6 +2866,7 @@
         <span class="rh-toggle" aria-hidden="true">+</span>
       </button>
       <ul class="routine-list" id="officeHoursList">
+        <li class="routine-divider" aria-hidden="true"><span class="rh-label">II &middot; Office Hours <span class="head-sub">08:00 &mdash; 16:00</span></span></li>
         <li class="r-row placeholder" id="calPlaceholder">
           <div class="label-stack">
             <div class="r-note">Loading calendar&hellip;</div>
@@ -4176,22 +4187,47 @@
     headEl.setAttribute('aria-expanded', r.classList.contains('open') ? 'true' : 'false');
   }
 
-  // MORNING RITUAL gate — proxies the (visually hidden) Morning Routine head so the
-  // whole section reads as one small, collapsible first step rather than an open-ended list.
+  // MORNING RITUAL gate — proxies the (visually hidden) Morning Routine + Office Hours heads so
+  // the whole of Part I reads as one small, collapsible first step rather than an open-ended list.
+  const RITUAL_WINDOWS = ['morning', 'office'];
+  function ritualRoutines() {
+    return RITUAL_WINDOWS.map(w => document.querySelector('.routine[data-window="' + w + '"]')).filter(Boolean);
+  }
+  function checkMorningGateVisibility() {
+    const gate = document.getElementById('morningRitualGate');
+    if (!gate) return;
+    const routines = ritualRoutines();
+    const allDone = routines.length > 0 && routines.every(r => r.classList.contains('section-complete'));
+    gate.style.display = allDone ? 'none' : '';
+  }
   function syncMorningGate() {
     const gate = document.getElementById('morningRitualGate');
-    const routine = document.querySelector('.routine[data-window="morning"]');
-    if (!gate || !routine) return;
-    const isOpen = routine.classList.contains('open');
-    gate.classList.toggle('open', isOpen);
-    gate.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    const routines = ritualRoutines();
+    if (!gate || !routines.length) return;
+    checkMorningGateVisibility();
+    const incomplete = routines.filter(r => !r.classList.contains('section-complete'));
+    if (!incomplete.length) return;
+    const anyOpen = incomplete.some(r => r.classList.contains('open'));
+    incomplete.forEach(r => {
+      r.classList.toggle('open', anyOpen);
+      const head = r.querySelector('.routine-head');
+      if (head) head.setAttribute('aria-expanded', anyOpen ? 'true' : 'false');
+    });
+    gate.classList.toggle('open', anyOpen);
+    gate.setAttribute('aria-expanded', anyOpen ? 'true' : 'false');
   }
   function toggleMorningRitual() {
-    const routine = document.querySelector('.routine[data-window="morning"]');
-    if (!routine || routine.classList.contains('section-complete')) return;
-    const head = routine.querySelector('.routine-head');
-    if (head) toggleRoutine(head);
-    syncMorningGate();
+    const gate = document.getElementById('morningRitualGate');
+    const incomplete = ritualRoutines().filter(r => !r.classList.contains('section-complete'));
+    if (!gate || !incomplete.length) return;
+    const willOpen = !gate.classList.contains('open');
+    incomplete.forEach(r => {
+      r.classList.toggle('open', willOpen);
+      const head = r.querySelector('.routine-head');
+      if (head) head.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+    });
+    gate.classList.toggle('open', willOpen);
+    gate.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
   }
 
   // ============================================================
@@ -4321,9 +4357,8 @@
       const tog = head.querySelector('.rh-toggle');
       if (tog) tog.textContent = '+';
     }
-    if (windowKey === 'morning') {
-      const gate = document.getElementById('morningRitualGate');
-      if (gate) gate.style.display = 'none';
+    if (RITUAL_WINDOWS.indexOf(windowKey) !== -1) {
+      checkMorningGateVisibility();
     }
     checkDayComplete();
     updateOfficeNotif();
