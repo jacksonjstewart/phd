@@ -39,6 +39,8 @@
     --text-faint:   rgba(232, 226, 208, 0.28);
     --gold:         #c9a14a;
     --gold-bright:  #d9b25a;
+    --cyan:         #4fd6d6;
+    --cyan-bright:  #6fe6e6;
     --gold-dim:     rgba(201, 161, 74, 0.45);
     --gold-faint:   rgba(201, 161, 74, 0.15);
     --green:        #43b57c;
@@ -594,6 +596,48 @@
   @keyframes pulse-gold {
     0%, 100% { box-shadow: 0 0 0 0 rgba(201,161,74,0.32); border-color: var(--gold); }
     50%       { box-shadow: 0 0 22px 2px rgba(201,161,74,0.18); border-color: var(--gold-bright); }
+  }
+
+  /* MORNING RITUAL gate tile — collapses Part I's Morning Routine behind one tap */
+  .ritual-gate {
+    width: 100%; margin: 0 0 18px; padding: 14px 20px;
+    border: 1px solid var(--cyan);
+    background: linear-gradient(135deg, rgba(79,214,214,0.16) 0%, rgba(79,214,214,0.06) 100%);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between; gap: 14px;
+    box-shadow: 0 0 0 0 rgba(79,214,214,0.4);
+    animation: pulse-cyan 2.6s ease-in-out infinite;
+    transition: background 300ms, border-color 300ms;
+    -webkit-tap-highlight-color: transparent;
+    font-family: inherit; text-align: left;
+  }
+  .ritual-gate:hover {
+    background: linear-gradient(135deg, rgba(79,214,214,0.26) 0%, rgba(79,214,214,0.12) 100%);
+  }
+  .ritual-gate.open {
+    animation: none;
+    box-shadow: 0 0 14px rgba(79,214,214,0.1);
+  }
+  .ritual-gate-title {
+    font-family: var(--mono); font-size: 9px;
+    letter-spacing: 0.4em; color: var(--cyan-bright);
+    text-transform: uppercase;
+  }
+  .ritual-gate-sub {
+    font-family: var(--mono); font-size: 7.5px;
+    letter-spacing: 0.32em; text-transform: uppercase;
+    color: rgba(79,214,214,0.75); margin-top: 4px;
+  }
+  .ritual-gate-chevron {
+    font-family: var(--mono); font-size: 16px;
+    color: var(--cyan); flex: 0 0 auto;
+    transition: transform 320ms ease, color 200ms;
+  }
+  .ritual-gate.open .ritual-gate-chevron { transform: rotate(45deg); color: var(--cyan-bright); }
+  #office .routine[data-window="morning"] > .routine-head { display: none; }
+  @keyframes pulse-cyan {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(79,214,214,0.3); border-color: var(--cyan); }
+    50%       { box-shadow: 0 0 22px 2px rgba(79,214,214,0.18); border-color: var(--cyan-bright); }
   }
 
   /* PROGRESSING indicator below finances domain ring */
@@ -2719,6 +2763,13 @@
     </div>
 
     <!-- I. MORNING ROUTINE -->
+    <button type="button" class="ritual-gate" id="morningRitualGate" onclick="toggleMorningRitual()" aria-expanded="false" aria-controls="morningList">
+      <div>
+        <div class="ritual-gate-title">Morning Ritual</div>
+        <div class="ritual-gate-sub">Fitness &amp; Self-Care</div>
+      </div>
+      <span class="ritual-gate-chevron" aria-hidden="true">+</span>
+    </button>
     <div class="routine" data-window="morning">
       <button class="routine-head" type="button" onclick="toggleRoutine(this)" aria-expanded="false">
         <span class="rh-label">I &middot; Morning Routine</span>
@@ -4125,6 +4176,24 @@
     headEl.setAttribute('aria-expanded', r.classList.contains('open') ? 'true' : 'false');
   }
 
+  // MORNING RITUAL gate — proxies the (visually hidden) Morning Routine head so the
+  // whole section reads as one small, collapsible first step rather than an open-ended list.
+  function syncMorningGate() {
+    const gate = document.getElementById('morningRitualGate');
+    const routine = document.querySelector('.routine[data-window="morning"]');
+    if (!gate || !routine) return;
+    const isOpen = routine.classList.contains('open');
+    gate.classList.toggle('open', isOpen);
+    gate.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  }
+  function toggleMorningRitual() {
+    const routine = document.querySelector('.routine[data-window="morning"]');
+    if (!routine || routine.classList.contains('section-complete')) return;
+    const head = routine.querySelector('.routine-head');
+    if (head) toggleRoutine(head);
+    syncMorningGate();
+  }
+
   // ============================================================
   // SCROLL
   // ============================================================
@@ -4252,6 +4321,10 @@
       const tog = head.querySelector('.rh-toggle');
       if (tog) tog.textContent = '+';
     }
+    if (windowKey === 'morning') {
+      const gate = document.getElementById('morningRitualGate');
+      if (gate) gate.style.display = 'none';
+    }
     checkDayComplete();
     updateOfficeNotif();
   }
@@ -4311,20 +4384,12 @@
   function updateOfficeNotif() {
     const dot = document.getElementById('officeNotif');
     if (!dot) return;
-    const offSec = document.getElementById('office');
-    let hasUnchecked = false;
-    if (offSec) {
-      const routines = Array.from(offSec.querySelectorAll('.routine'));
-      hasUnchecked = routines.some(routine => {
-        // section-complete is the authoritative done state — trust it fully
-        if (routine.classList.contains('section-complete')) return false;
-        // Otherwise check visible rows individually
-        const rows = Array.from(routine.querySelectorAll('.r-row:not(.placeholder)'))
-                          .filter(r => !r.hasAttribute('hidden'));
-        if (rows.length === 0) return false; // no visible rows = not pending
-        return rows.some(r => !r.classList.contains('done'));
-      });
-    }
+    // Authoritative signal: the gold dot reflects whether today's Part I (Core Daily Actions)
+    // AND Part II (Daily Disposition) are BOTH complete — matching the green states in the
+    // Office overlay. It clears only once both are done.
+    const coreDone = loadLedger().indexOf(todayISO()) !== -1;
+    const eiDone   = (typeof eiDoneToday === 'function') ? eiDoneToday() : false;
+    const hasUnchecked = !(coreDone && eiDone);
     const stewardBusy = _stewardActionCount !== null && _stewardActionCount > 0;
     if (hasUnchecked || stewardBusy) { dot.classList.add('visible'); }
     else { dot.classList.remove('visible'); }
@@ -4638,6 +4703,7 @@
     _eiShowDone(true);
     updateEiButton();
     updateDesksNav();
+    updateOfficeNotif();
   }
 
   // ---- staged completion modal ----
@@ -5209,6 +5275,7 @@
   setInterval(tick, 30 * 1000);
   onScroll();
   initRoutines();
+  syncMorningGate();
   restoreCheckState();
   updateOfficeNotif();
   initScrollReveal();
