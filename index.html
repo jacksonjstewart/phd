@@ -4207,14 +4207,16 @@
     checkMorningGateVisibility();
     const incomplete = routines.filter(r => !r.classList.contains('section-complete'));
     if (!incomplete.length) return;
-    const anyOpen = incomplete.some(r => r.classList.contains('open'));
+    // Always start collapsed on load/app-open, regardless of the time-of-day auto-open that
+    // initRoutines() applies elsewhere. Does not touch checkbox state, section-complete state,
+    // ledger recording, or stats — purely the initial expand/collapse presentation.
     incomplete.forEach(r => {
-      r.classList.toggle('open', anyOpen);
+      r.classList.remove('open');
       const head = r.querySelector('.routine-head');
-      if (head) head.setAttribute('aria-expanded', anyOpen ? 'true' : 'false');
+      if (head) head.setAttribute('aria-expanded', 'false');
     });
-    gate.classList.toggle('open', anyOpen);
-    gate.setAttribute('aria-expanded', anyOpen ? 'true' : 'false');
+    gate.classList.remove('open');
+    gate.setAttribute('aria-expanded', 'false');
   }
   function toggleMorningRitual() {
     const gate = document.getElementById('morningRitualGate');
