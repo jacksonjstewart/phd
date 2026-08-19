@@ -4948,6 +4948,7 @@
     const panel  = document.getElementById('officeCompletePanel');
     if (!office || !panel) return;
     office.querySelectorAll('.routine[data-window]').forEach(function(r){ r.style.display = 'none'; });
+    const gate = document.getElementById('morningRitualGate'); if (gate) gate.style.display = 'none';
     const steward = document.getElementById('stewardBtn'); if (steward) steward.style.display = 'none';
     panel.classList.add('collapsed');
     panel.classList.add('shown');
