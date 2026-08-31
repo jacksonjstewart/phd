@@ -289,7 +289,7 @@
   }
   .tm-main { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
   .tm-day {
-    font-family: var(--serif); font-style: italic; font-weight: 300;
+    font-family: var(--serif); font-style: normal; font-weight: 300;
     font-size: clamp(46px, 7vw, 76px);
     line-height: 0.95; letter-spacing: 0.005em;
     color: var(--text);
@@ -902,6 +902,49 @@
   }
   .r-row.done .r-note { color: rgba(180,200,180,0.5); }
   .r-row.done .r-meta { color: rgba(42, 157, 110, 0.7); }
+
+  /* ── Partial completion (e.g. "Rest Day") — distinct gold tone, never punishing ── */
+  .r-partial-btn {
+    flex: 0 0 auto; align-self: center;
+    font-family: var(--mono); font-size: 9px; letter-spacing: 0.15em;
+    text-transform: uppercase; color: rgba(201,161,74,0.55);
+    background: none; border: 1px solid rgba(201,161,74,0.35);
+    border-radius: 3px; padding: 7px 11px; cursor: pointer;
+    white-space: nowrap;
+    transition: color 200ms ease, border-color 200ms ease, background 200ms ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .r-partial-btn:hover {
+    color: var(--gold-bright); border-color: var(--gold); background: rgba(201,161,74,0.08);
+  }
+  .r-partial-btn.resolved {
+    cursor: default; color: rgba(201,161,74,0.9);
+    border-color: rgba(201,161,74,0.55); background: rgba(201,161,74,0.1);
+  }
+  .r-row.done:not(.partial) .r-partial-btn { display: none; }
+  .r-row.partial {
+    background: linear-gradient(135deg, #241a08 0%, #180f08 100%);
+    border-color: rgba(201, 161, 74, 0.55);
+  }
+  .r-row.partial .box {
+    background: var(--gold);
+    border-color: var(--gold);
+    transform: scale(1.05);
+  }
+  .r-row.partial .box::after {
+    content: ''; position: absolute;
+    left: 3px; top: 0px; width: 5px; height: 9px;
+    border-right: 1.5px solid #0a0806;
+    border-bottom: 1.5px solid #0a0806;
+    transform: rotate(45deg);
+  }
+  .r-row.partial .r-title {
+    color: rgba(217, 178, 90, 0.9);
+    text-decoration: line-through;
+    text-decoration-color: rgba(217,178,90,0.35);
+  }
+  .r-row.partial .r-note { color: rgba(217,178,90,0.55); }
+  .r-row.partial .r-meta { color: rgba(201, 161, 74, 0.75); }
   .r-row[hidden] { display: none; }
 
   /* ============================================================
@@ -1215,6 +1258,10 @@
   .r-row.done {
     background:
       linear-gradient(135deg, rgba(10, 30, 20, 0.95) 0%, rgba(6, 20, 12, 0.97) 100%) !important;
+  }
+  .r-row.done.partial {
+    background:
+      linear-gradient(135deg, rgba(36, 26, 8, 0.95) 0%, rgba(24, 15, 8, 0.97) 100%) !important;
   }
   .review-banner {
     background-color: rgba(30, 22, 6, 0.93) !important;
@@ -2569,6 +2616,80 @@
     background: rgba(201,161,74,0.06);
   }
 
+  /* ── Daily splash: second screen (four pillars) ── */
+  .splash-screen { display: none; flex-direction: column; align-items: center; }
+  .splash-screen.active { display: flex; }
+  #splashScreenPillars { width: min(86vw, 420px); }
+  .splash-pillars-head {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.4em;
+    text-transform: uppercase; color: rgba(201,161,74,0.55);
+    margin-bottom: 26px; text-align: center;
+  }
+  .splash-pillars-list {
+    list-style: none; margin: 0 0 8px; padding: 0;
+    display: flex; flex-direction: column; gap: 4px; width: 100%;
+  }
+  .splash-pillar-row {
+    display: flex; align-items: center; gap: 16px;
+    padding: 14px 6px;
+    border-bottom: 1px solid rgba(201,161,74,0.14);
+  }
+  .splash-pillar-row:last-child { border-bottom: none; }
+  .sp-num {
+    font-family: var(--mono); font-size: 12px; color: rgba(201,161,74,0.5);
+    flex: 0 0 auto; width: 18px;
+  }
+  .sp-label {
+    font-family: var(--serif); font-size: 20px; font-weight: 300;
+    color: rgba(232,226,208,0.92); flex: 1;
+  }
+  .sp-info-btn {
+    flex: 0 0 auto;
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 1px solid rgba(201,161,74,0.4);
+    background: none; color: rgba(201,161,74,0.7);
+    font-family: var(--serif); font-style: italic; font-size: 13px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: border-color 200ms, color 200ms, background 200ms;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .sp-info-btn:hover, .sp-info-btn:active {
+    border-color: var(--gold); color: var(--gold-bright); background: rgba(201,161,74,0.08);
+  }
+
+  /* ── Pillar info modal (opened from the second splash screen) ── */
+  .pillar-info-modal {
+    display: none;
+    position: fixed; inset: 0; z-index: 10001;
+    background: rgba(0,0,0,0.72);
+    align-items: center; justify-content: center;
+    backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+  }
+  .pillar-info-modal.visible { display: flex; }
+  .pillar-info-card {
+    position: relative;
+    width: min(88vw, 380px);
+    background: linear-gradient(160deg, #14100a 0%, #0c0906 100%);
+    border: 1px solid rgba(201,161,74,0.32);
+    padding: 30px 26px 26px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
+  .pillar-info-close {
+    position: absolute; top: 8px; right: 10px;
+    background: none; border: none; color: rgba(201,161,74,0.6);
+    font-size: 22px; line-height: 1; cursor: pointer; padding: 6px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .pillar-info-close:hover { color: var(--gold-bright); }
+  .pillar-info-title {
+    font-family: var(--serif); font-size: 22px; font-weight: 300;
+    color: var(--gold-bright); margin-bottom: 12px;
+  }
+  .pillar-info-body {
+    font-family: var(--serif); font-style: italic; font-size: 15px; line-height: 1.55;
+    color: rgba(232,226,208,0.82);
+  }
+
   /* ── Tenure streak display ── */
 </style>
 </head>
@@ -2597,22 +2718,59 @@
 
 <!-- Daily Splash — first open each day -->
 <div id="dailySplash" role="dialog" aria-modal="true" aria-label="Daily Progress">
-  <div class="splash-ring-wrap">
-    <svg class="splash-svg" id="splashSvg" viewBox="0 0 200 200">
-      <circle class="splash-ring-track" cx="100" cy="100" r="88" stroke-width="6"/>
-      <circle class="splash-ring-fill" id="splashRingFill" cx="100" cy="100" r="88" stroke-width="6"/>
-    </svg>
-    <div class="splash-center">
-      <div class="splash-day" id="dspDay">—</div>
-      <div class="splash-day-label">Day of Program</div>
-      <div class="splash-week" id="dspWeek">—</div>
-      <div class="splash-inner-meta">
-        <div class="splash-meta-line" id="dspCheckin">—</div>
-        <div class="splash-meta-line" id="dspRemaining">—</div>
+  <div class="splash-screen active" id="splashScreenRing">
+    <div class="splash-ring-wrap">
+      <svg class="splash-svg" id="splashSvg" viewBox="0 0 200 200">
+        <circle class="splash-ring-track" cx="100" cy="100" r="88" stroke-width="6"/>
+        <circle class="splash-ring-fill" id="splashRingFill" cx="100" cy="100" r="88" stroke-width="6"/>
+      </svg>
+      <div class="splash-center">
+        <div class="splash-day" id="dspDay">—</div>
+        <div class="splash-day-label">Day of Program</div>
+        <div class="splash-week" id="dspWeek">—</div>
+        <div class="splash-inner-meta">
+          <div class="splash-meta-line" id="dspCheckin">—</div>
+          <div class="splash-meta-line" id="dspRemaining">—</div>
+        </div>
       </div>
     </div>
+    <button class="splash-ack" id="splashAck">Acknowledged</button>
   </div>
-  <button class="splash-ack" id="splashAck">Acknowledged</button>
+
+  <div class="splash-screen" id="splashScreenPillars">
+    <div class="splash-pillars-head">What This Requires</div>
+    <ol class="splash-pillars-list">
+      <li class="splash-pillar-row">
+        <span class="sp-num">1</span>
+        <span class="sp-label">Grit</span>
+        <button class="sp-info-btn" type="button" data-pillar="grit" aria-label="About Grit">i</button>
+      </li>
+      <li class="splash-pillar-row">
+        <span class="sp-num">2</span>
+        <span class="sp-label">Vision</span>
+        <button class="sp-info-btn" type="button" data-pillar="vision" aria-label="About Vision">i</button>
+      </li>
+      <li class="splash-pillar-row">
+        <span class="sp-num">3</span>
+        <span class="sp-label">Plan</span>
+        <button class="sp-info-btn" type="button" data-pillar="plan" aria-label="About Plan">i</button>
+      </li>
+      <li class="splash-pillar-row">
+        <span class="sp-num">4</span>
+        <span class="sp-label">Resilience</span>
+        <button class="sp-info-btn" type="button" data-pillar="resilience" aria-label="About Resilience">i</button>
+      </li>
+    </ol>
+    <button class="splash-ack" id="splashBegin">Begin</button>
+  </div>
+
+  <div class="pillar-info-modal" id="pillarInfoModal" aria-hidden="true">
+    <div class="pillar-info-card">
+      <button class="pillar-info-close" id="pillarInfoClose" type="button" aria-label="Close">&times;</button>
+      <div class="pillar-info-title" id="pillarInfoTitle"></div>
+      <div class="pillar-info-body" id="pillarInfoBody"></div>
+    </div>
+  </div>
 </div>
 
 <!-- Top-left fixed — nav links only -->
@@ -2792,6 +2950,7 @@
             <div class="r-title">Wake Up On Time &mdash; 04:30</div>
             <div class="r-note">Start the day properly. Wake up &amp; get out of bed early to start your day intentionally.</div>
           </div>
+          <button class="r-partial-btn" type="button" onclick="markPartial(event,'wake-up')">Late Start</button>
         </li>
         <li class="r-row" data-cond="always" data-task="weigh" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
@@ -2827,6 +2986,7 @@
             <div class="r-title">Morning Training</div>
             <div class="r-note">Resistance training. Hit the programmed lifts for today.</div>
           </div>
+          <button class="r-partial-btn" type="button" onclick="markPartial(event,'training')">Rest Day</button>
         </li>
         <li class="r-row" data-cond="not-mon" data-task="steam" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
@@ -2834,6 +2994,7 @@
             <div class="r-title">Steam / Sauna &mdash; 10&ndash;15 min</div>
             <div class="r-note">A short steam or sauna session.</div>
           </div>
+          <button class="r-partial-btn" type="button" onclick="markPartial(event,'steam')">Skipped</button>
         </li>
         <li class="r-row" data-cond="always" data-task="hygiene" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
@@ -4280,7 +4441,9 @@
   }
   function saveCheckState(taskId, checked) {
     const state = loadCheckState();
-    if (checked) state[taskId] = true; else delete state[taskId];
+    // checked can be true (full), 'partial' (rest day / late start / skipped), or falsy (unchecked).
+    // Preserve whichever value was passed so partial state survives a reload.
+    if (checked) state[taskId] = checked; else delete state[taskId];
     try { localStorage.setItem(getTodayKey(), JSON.stringify(state)); } catch (e) {}
   }
   function saveSectionComplete(windowKey) {
@@ -4294,8 +4457,31 @@
     if (row.classList.contains('placeholder')) return;
     const isChecked = !row.classList.contains('done');
     row.classList.toggle('done', isChecked);
+    if (!isChecked) row.classList.remove('partial'); // unchecking always clears a partial mark too
     if (row.hasAttribute('role')) row.setAttribute('aria-checked', isChecked ? 'true' : 'false');
     if (row.dataset.task) saveCheckState(row.dataset.task, isChecked);
+    const pBtn = row.querySelector('.r-partial-btn');
+    if (pBtn) {
+      pBtn.disabled = isChecked;
+      pBtn.classList.toggle('resolved', isChecked);
+    }
+    const routine = row.closest('.routine');
+    if (routine) checkSectionCompletion(routine);
+    updateOfficeNotif();
+  }
+
+  // Partial completion (e.g. "Rest Day" / "Late Start" / "Skipped") — still contributes to
+  // day completion exactly like a full check, but is visually distinct and logged separately
+  // so the honest record persists even though the day still reads as done.
+  function markPartial(e, taskId) {
+    e.stopPropagation(); // don't also trigger the row's own toggleRow click handler
+    const row = document.querySelector('.r-row[data-task="' + taskId + '"]');
+    if (!row || row.classList.contains('done')) return; // already resolved one way or another
+    row.classList.add('done', 'partial');
+    if (row.hasAttribute('role')) row.setAttribute('aria-checked', 'true');
+    saveCheckState(taskId, 'partial');
+    const btn = row.querySelector('.r-partial-btn');
+    if (btn) { btn.disabled = true; btn.classList.add('resolved'); }
     const routine = row.closest('.routine');
     if (routine) checkSectionCompletion(routine);
     updateOfficeNotif();
@@ -4311,9 +4497,13 @@
   function restoreCheckState() {
     const state = loadCheckState();
     document.querySelectorAll('.r-row[data-task]').forEach(row => {
-      if (state[row.dataset.task]) {
+      const v = state[row.dataset.task];
+      if (v) {
         row.classList.add('done');
+        if (v === 'partial') row.classList.add('partial');
         if (row.hasAttribute('role')) row.setAttribute('aria-checked', 'true');
+        const btn = row.querySelector('.r-partial-btn');
+        if (btn) { btn.disabled = true; btn.classList.add('resolved'); }
       }
     });
     document.querySelectorAll('.routine[data-window]').forEach(r => {
@@ -5446,7 +5636,17 @@
       }, 520);
     }
 
-    ack.addEventListener('click', dismissSplash);
+    // Screen 1 (ring) -> Screen 2 (four pillars). Both screens together count as
+    // "the splash" and only ever appear once, on the first open of the day.
+    const screenRing    = document.getElementById('splashScreenRing');
+    const screenPillars = document.getElementById('splashScreenPillars');
+    const beginBtn       = document.getElementById('splashBegin');
+    function showPillarScreen() {
+      if (screenRing) screenRing.classList.remove('active');
+      if (screenPillars) screenPillars.classList.add('active');
+    }
+    ack.addEventListener('click', showPillarScreen);
+    if (beginBtn) beginBtn.addEventListener('click', dismissSplash);
     // Also dismiss on tap anywhere outside the content (belt-and-suspenders for mobile)
     splash.addEventListener('click', function(e) {
       if (e.target === splash) dismissSplash();
@@ -5454,6 +5654,59 @@
 
     // Show after a very brief delay so the page has a moment to render behind it
     setTimeout(showSplash, 120);
+  })();
+
+  // ============================================================
+  // PILLAR INFO MODAL — opened from the second splash screen
+  // ============================================================
+  (function initPillarInfo() {
+    const PILLAR_INFO = {
+      grit: {
+        title: 'Grit',
+        body: "Doing what you told yourself you'd do, especially when you don't feel like it. This is the discipline to act on your own commitments."
+      },
+      vision: {
+        title: 'Vision',
+        body: "A clear, specific picture of where you're headed. Not a vague aspiration &mdash; an actual destination you can call to mind and measure progress against."
+      },
+      plan: {
+        title: 'Plan',
+        body: "The structure that turns vision into daily action: the ritual, the desks, the order of operations. Removes the need to decide what matters each morning."
+      },
+      resilience: {
+        title: 'Resilience',
+        body: "The ability to keep moving on a bad day without it derailing the whole effort. Progress doesn't require perfect conditions, only that you keep showing up."
+      }
+    };
+    const modal    = document.getElementById('pillarInfoModal');
+    const titleEl  = document.getElementById('pillarInfoTitle');
+    const bodyEl   = document.getElementById('pillarInfoBody');
+    const closeBtn = document.getElementById('pillarInfoClose');
+    if (!modal || !titleEl || !bodyEl) return;
+
+    function openPillarInfo(key) {
+      const info = PILLAR_INFO[key];
+      if (!info) return;
+      titleEl.textContent  = info.title;
+      bodyEl.innerHTML     = info.body;
+      modal.classList.add('visible');
+      modal.setAttribute('aria-hidden', 'false');
+    }
+    function closePillarInfo() {
+      modal.classList.remove('visible');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+
+    document.querySelectorAll('.sp-info-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        openPillarInfo(btn.dataset.pillar);
+      });
+    });
+    if (closeBtn) closeBtn.addEventListener('click', closePillarInfo);
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) closePillarInfo();
+    });
   })();
 
   // ============================================================
