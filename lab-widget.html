@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PhD Pro© · Desktop Widget</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+:root{
+  /* — aged-paper doctoral palette — */
+  --text:#ece4d2; --text-dim:rgba(236,228,210,0.56); --text-faint:rgba(236,228,210,0.30);
+  --gold:#c9a14a; --gold-bright:#e3c072; --gold-deep:#a8842f;
+  --gold-dim:rgba(201,161,74,0.45); --gold-faint:rgba(201,161,74,0.14);
+  --jade:#57c493; --jade-bright:#7ad9ab; --jade-dim:rgba(87,196,147,0.5);
+  --amber:#e0a94a; --amber-dim:rgba(224,169,74,0.5);
+  --red:#c0503b;
+  /* frosted instrument panel */
+  --panel:linear-gradient(180deg,rgba(19,16,11,0.60),rgba(9,8,6,0.52));
+  --panel-line:rgba(201,161,74,0.17);
+  --serif:'Cormorant Garamond','Cormorant',Georgia,serif;
+  --mono:'DM Mono','SFMono-Regular',Menlo,Consolas,monospace;
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:22px;
+  --r:15px;
+}
+html,body{margin:0;padding:0;background:transparent;}
+*{box-sizing:border-box;-webkit-user-select:none;user-select:none;}
+::-webkit-scrollbar{width:0;height:0;background:transparent;}
+body{font-family:var(--serif);color:var(--text);line-height:1.25;overflow:hidden;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  font-variant-numeric:tabular-nums;
+  text-shadow:0 1px 5px rgba(0,0,0,0.8),0 0 2px rgba(0,0,0,0.85);}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+
+.widget{width:100%;max-width:344px;min-width:196px;margin:0 auto;padding:16px;
+  display:flex;flex-direction:column;gap:12px;}
+
+/* frosted instrument panel */
+.panel{position:relative;background:var(--panel);border:1px solid var(--panel-line);
+  border-radius:var(--r);padding:14px 15px 13px;
+  -webkit-backdrop-filter:blur(10px) saturate(122%);backdrop-filter:blur(10px) saturate(122%);
+  box-shadow:0 10px 28px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,241,208,0.055);}
+
+/* eyebrow / kicker */
+.eyebrow{font-family:var(--mono);font-size:8px;font-weight:400;letter-spacing:0.34em;
+  text-transform:uppercase;color:var(--gold);display:flex;align-items:center;justify-content:center;
+  gap:8px;margin:0 0 11px 0;}
+.eyebrow::before,.eyebrow::after{content:'';height:1px;flex:1;max-width:34px;
+  background:linear-gradient(90deg,transparent,var(--gold-faint));}
+.eyebrow::after{background:linear-gradient(90deg,var(--gold-faint),transparent);}
+.eyebrow .sync{width:4px;height:4px;border-radius:50%;background:var(--jade-bright);
+  box-shadow:0 0 6px var(--jade-dim);flex:none;}
+.eyebrow .sync.stale{background:var(--amber);box-shadow:0 0 6px var(--amber-dim);}
+.eyebrow .sync.down{background:var(--red);box-shadow:0 0 6px rgba(192,80,59,0.6);}
+
+/* ── header ── */
+.masthead{display:flex;justify-content:space-between;align-items:flex-start;
+  padding:2px 3px 0;gap:10px;}
+.brand{display:flex;flex-direction:column;gap:4px;}
+.brand .word{font-family:var(--serif);font-weight:600;font-size:19px;line-height:1;
+  letter-spacing:0.015em;color:var(--gold-bright);}
+.brand .word sup{font-size:8px;font-weight:400;opacity:0.7;top:-0.9em;}
+.brand .rule{height:1px;width:34px;background:linear-gradient(90deg,var(--gold),transparent);}
+.status{text-align:right;display:flex;flex-direction:column;gap:2px;padding-top:1px;}
+.status .clk{font-family:var(--mono);font-size:8.5px;letter-spacing:0.06em;color:var(--text-dim);}
+.status .wx{font-family:var(--mono);font-size:8.5px;letter-spacing:0.04em;color:var(--gold-dim);}
+
+/* ── physique instrument (signature) ── */
+.phase-name{font-family:var(--serif);font-style:italic;font-weight:400;font-size:13px;
+  text-align:center;color:var(--text-dim);margin:-6px 0 9px;letter-spacing:0.02em;}
+.chart-wrap{width:100%;height:96px;}
+.chart-wrap svg{width:100%;height:100%;display:block;}
+.track{position:relative;width:100%;height:3px;border-radius:2px;background:var(--gold-faint);
+  overflow:hidden;margin:11px 0 6px;}
+.track>i{position:absolute;left:0;top:0;bottom:0;border-radius:2px;
+  background:linear-gradient(90deg,var(--gold-deep),var(--gold-bright));transition:width .6s ease;}
+.axis{display:flex;justify-content:space-between;align-items:baseline;
+  font-family:var(--mono);font-size:8.5px;letter-spacing:0.05em;color:var(--text-dim);}
+.axis .mid{color:var(--text-faint);font-size:8px;letter-spacing:0.12em;text-transform:uppercase;}
+.axis b{color:var(--text);font-weight:500;}
+.stats{display:flex;justify-content:space-between;gap:6px;margin-top:12px;
+  padding-top:11px;border-top:1px solid var(--gold-faint);}
+.stat{flex:1;text-align:center;}
+.stat .l{font-family:var(--mono);font-size:7px;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--text-faint);margin-bottom:3px;}
+.stat .v{font-family:var(--serif);font-size:19px;font-weight:300;line-height:1;color:var(--text);}
+.stat .v small{font-size:9px;color:var(--text-dim);margin-left:1px;}
+.stat.hl .v{color:var(--jade-bright);}
+
+/* ── three Parts ── */
+.parts{display:flex;}
+.part{flex:1;text-align:center;padding:2px 4px;position:relative;
+  display:flex;flex-direction:column;align-items:center;gap:5px;}
+.part+.part::before{content:'';position:absolute;left:0;top:12%;bottom:12%;width:1px;
+  background:var(--gold-faint);}
+.part .num{font-family:var(--serif);font-weight:500;font-size:23px;line-height:1;
+  color:var(--text-faint);transition:color .3s;}
+.part .nm{font-family:var(--mono);font-size:7.5px;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--text-faint);transition:color .3s;}
+.part .pip{width:6px;height:6px;border-radius:50%;background:var(--text-faint);opacity:.6;transition:all .3s;}
+.part.green .num{color:var(--jade-bright);}
+.part.green .nm{color:var(--text-dim);}
+.part.green .pip{background:var(--jade-bright);box-shadow:0 0 7px var(--jade-dim);opacity:1;}
+.part.yellow .num{color:var(--amber);}
+.part.yellow .nm{color:var(--text-dim);}
+.part.yellow .pip{background:var(--amber);box-shadow:0 0 7px var(--amber-dim);opacity:1;}
+.part.locked{opacity:0.42;}
+
+/* ── Steward tasks ── */
+.steward{display:flex;align-items:stretch;}
+.ring-col{flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  padding-right:15px;margin-right:15px;border-right:1px solid var(--gold-faint);}
+.ring-col .today{font-family:var(--mono);font-size:7px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-faint);}
+.ring-wrap{position:relative;width:64px;height:64px;flex:none;}
+.ring-wrap svg{width:100%;height:100%;transform:rotate(-90deg);
+  filter:drop-shadow(0 0 4px rgba(201,161,74,0.28));}
+.ring-track{fill:none;stroke:var(--gold-faint);stroke-width:4;}
+.ring-arc{fill:none;stroke:var(--gold);stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset .6s ease;}
+.ring-arc.full{stroke:var(--jade-bright);}
+.ring-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.ring-pct{font-family:var(--serif);font-weight:300;font-size:19px;line-height:1;color:var(--text);}
+.ring-frac{font-family:var(--mono);font-size:7px;letter-spacing:.08em;color:var(--text-dim);margin-top:2px;}
+.task-list{flex:1;min-width:0;display:flex;flex-direction:column;}
+.task{display:flex;align-items:center;gap:9px;padding:5.5px 0;}
+.task+.task{border-top:1px solid rgba(201,161,74,0.08);}
+.task .emoji{font-size:12px;flex:none;line-height:1;width:15px;text-align:center;opacity:.9;filter:saturate(.85);}
+.task .body{min-width:0;flex:1;}
+.task .nm{font-family:var(--serif);font-size:14.5px;font-weight:400;color:var(--text);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2;}
+.task .fq{font-family:var(--mono);font-size:7px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--text-faint);margin-top:2px;}
+.task .cbx{width:16px;height:16px;flex:none;border-radius:5px;border:1.5px solid var(--gold-dim);
+  display:flex;align-items:center;justify-content:center;font-size:10px;color:transparent;transition:all .25s;}
+.task.done .cbx{background:var(--jade-bright);border-color:var(--jade-bright);color:#0b0a07;}
+.task.done .nm{color:var(--text-faint);}
+.task.done .emoji{opacity:.4;}
+.task-more{font-family:var(--mono);font-size:8px;letter-spacing:.2em;color:var(--text-faint);
+  text-align:center;margin-top:8px;}
+.empty{font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;color:var(--text-faint);text-align:center;padding:8px 0;}
+
+/* ── footer ── */
+.links{display:flex;gap:11px;justify-content:center;align-items:center;padding:1px 0 2px;}
+.links a{font-family:var(--mono);font-size:8.5px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--text-dim);text-decoration:none;transition:color .2s;
+  -webkit-user-select:auto;user-select:auto;}
+.links a:hover{color:var(--gold-bright);}
+.links .sep{width:3px;height:3px;border-radius:50%;background:var(--gold-dim);flex:none;}
+</style>
+</head>
+<body>
+<div class="widget">
+
+  <!-- header -->
+  <div class="masthead">
+    <div class="brand">
+      <div class="word">PhD&nbsp;Pro<sup>&copy;</sup></div>
+      <div class="rule"></div>
+    </div>
+    <div class="status">
+      <div class="clk" id="clk">&mdash;</div>
+      <div class="wx" id="wx">Edmonton</div>
+    </div>
+  </div>
+
+  <!-- physique instrument -->
+  <section class="panel" id="physique">
+    <p class="eyebrow" id="phaseEyebrow">12-Week Phase <span class="sync" id="physSync"></span></p>
+    <div class="phase-name" id="phaseName" style="display:none"></div>
+    <div class="chart-wrap" id="chartWrap"></div>
+    <div class="track"><i id="physFill" style="width:0%"></i></div>
+    <div class="axis">
+      <span class="d" id="phStart">&mdash;</span>
+      <span class="mid" id="phMid">&mdash;</span>
+      <span class="d" id="phEnd">&mdash;</span>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="l">Now</div><div class="v" id="pNow">&mdash;</div></div>
+      <div class="stat hl"><div class="l">Lost</div><div class="v" id="pLost">&mdash;</div></div>
+      <div class="stat"><div class="l">Goal</div><div class="v" id="pGoal">&mdash;</div></div>
+      <div class="stat"><div class="l">Proj</div><div class="v" id="pProj">&mdash;</div></div>
+    </div>
+  </section>
+
+  <!-- three Parts -->
+  <section class="panel">
+    <p class="eyebrow">Parts of the Day</p>
+    <div class="parts" id="parts">
+      <div class="part locked" id="part1"><div class="num">I</div><div class="nm">Routine</div><div class="pip"></div></div>
+      <div class="part locked" id="part2"><div class="num">II</div><div class="nm">Disposition</div><div class="pip"></div></div>
+      <div class="part locked" id="part3"><div class="num">III</div><div class="nm">Desks</div><div class="pip"></div></div>
+    </div>
+  </section>
+
+  <!-- Steward tasks -->
+  <section class="panel" id="steward">
+    <p class="eyebrow">Steward &middot; Tasks <span class="sync" id="choresSync"></span></p>
+    <div class="steward">
+      <div class="ring-col">
+        <div class="ring-wrap">
+          <svg viewBox="0 0 64 64" aria-hidden="true">
+            <circle class="ring-track" cx="32" cy="32" r="28"></circle>
+            <circle class="ring-arc" id="choresArc" cx="32" cy="32" r="28"
+                    stroke-dasharray="175.93" stroke-dashoffset="175.93"></circle>
+          </svg>
+          <div class="ring-inner">
+            <div class="ring-pct" id="choresPct">&mdash;</div>
+            <div class="ring-frac" id="choresFrac">&middot;/&middot;</div>
+          </div>
+        </div>
+        <div class="today">Today</div>
+      </div>
+      <div class="task-list" id="taskList"><div class="empty">Loading&hellip;</div></div>
+    </div>
+    <div class="task-more" id="taskMore" style="display:none"></div>
+  </section>
+
+  <!-- footer -->
+  <nav class="links">
+    <a id="linkApp" href="#" target="_blank" rel="noopener">Dashboard</a>
+    <span class="sep"></span>
+    <a id="linkSheet" href="#" target="_blank" rel="noopener">Tracker</a>
+  </nav>
+</div>
+
+<script>
+"use strict";
+const CFG = {
+  PHD_CSV:     "https://docs.google.com/spreadsheets/d/e/2PACX-1vSm6d7HdIKw7iYXdo1B5-IUBc6e33FO3wxKp3FmnGGChnqk_MmPl1593rv5XJ3F4Sweg-HyBVwSQGgK/pub?output=csv",
+  STEWARD_CSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSStX24zLoqGqB_8YYURQbdQsTwEzdwWb6Cduc2McST8ODF3zDSwVH6fHuUaaBAS-U2OizAybtReL12/pub?gid=0&single=true&output=csv",
+  STEWARD_API: "https://script.google.com/macros/s/AKfycbxxbAYzXNlJDxJYFiqBHg5XJvsJn8odS1g5VQPG0Ekkp7No9Y6scysk3whX-QwLBcNJ/exec",
+  PHD_API:     "https://script.google.com/macros/s/AKfycbxLidrQWlzMhobF3vNt17ILd5wPbcjOvJI4fc50GWso-ahWbf2D6jDQH2h9ClMjcF86Cw/exec",
+  P1_TOKENS: ["routine","part1","part-i","dayComplete"],
+  P2_TOKENS: ["disposition","ei","part2","part-ii"],
+  WX_LAT: 53.5461, WX_LON: -113.4938, TZ: "America/Edmonton",
+  APP_URL:   "https://jacksonjstewart.github.io/phd/",
+  SHEET_URL: "https://docs.google.com/spreadsheets/d/1My6fWDsy8EiCZ9qc_0O0yvAcdVTC-V4hTFQm7E_I07c/edit",
+  REFRESH_MIN: 10, MAX_CHORES: 5
+};
+const $ = id => document.getElementById(id);
+const num = v => { const n=parseFloat(String(v).replace(/[^0-9.\-]/g,"")); return isFinite(n)?n:null; };
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt = n => (Math.round(n*10)/10).toFixed(1);
+function setSync(el,s){ if(el) el.className="sync"+(s?" "+s:""); }
+const MON={jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+const MONS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function todayKey(){
+  const p={};
+  new Intl.DateTimeFormat("en-CA",{timeZone:CFG.TZ,year:"numeric",month:"2-digit",day:"2-digit"})
+    .formatToParts(new Date()).forEach(x=>p[x.type]=x.value);
+  return `${p.year}-${p.month}-${p.day}`;
+}
+function parseMonthDay(s,y){
+  const m=String(s||"").match(/(\d{1,2})[-\s]*([A-Za-z]{3})/); if(!m) return null;
+  let d=new Date(y,MON[m[2].toLowerCase()],parseInt(m[1]));
+  if(MON[m[2].toLowerCase()]<6 && d<new Date(y,7,1)) d.setFullYear(y+1);
+  return d;
+}
+const fmtDM = d => d ? d.getDate()+" "+MONS[d.getMonth()] : "—";
+function parseCSVLine(line){const f=[];let cur="",q=false;
+  for(let i=0;i<line.length;i++){const c=line[i];
+    if(c==='"'&&q&&line[i+1]==='"'){cur+='"';i++;}
+    else if(c==='"'){q=!q;}
+    else if(c===','&&!q){f.push(cur.trim());cur="";}
+    else cur+=c;} f.push(cur.trim()); return f;}
+function parseGrid(t){return t.replace(/\r/g,"").split("\n").map(parseCSVLine);}
+function parseKeyed(t){
+  const lines=t.replace(/\r/g,"").split("\n").filter(l=>l.trim());
+  if(lines.length<2) return [];
+  const h=parseCSVLine(lines[0]).map(x=>x.toLowerCase().replace(/\s+/g,""));
+  return lines.slice(1).map(line=>{const v=parseCSVLine(line),o={};h.forEach((k,i)=>o[k]=(v[i]||"").trim());return o;})
+    .filter(r=>r.id&&r.name);
+}
+
+/* clock + weather */
+function tickClock(){
+  const now=new Date();
+  const dt=new Intl.DateTimeFormat("en-CA",{timeZone:CFG.TZ,weekday:"short",month:"short",day:"numeric"}).format(now);
+  const tm=new Intl.DateTimeFormat("en-US",{timeZone:CFG.TZ,hour:"numeric",minute:"2-digit"}).format(now);
+  $("clk").textContent = dt+"  "+tm;
+}
+const WX={0:"Clear",1:"Clear",2:"Partly cloudy",3:"Overcast",45:"Fog",48:"Fog",51:"Drizzle",53:"Drizzle",
+  55:"Drizzle",61:"Rain",63:"Rain",65:"Heavy rain",66:"Freezing rain",67:"Freezing rain",71:"Snow",73:"Snow",
+  75:"Heavy snow",77:"Snow",80:"Showers",81:"Showers",82:"Showers",85:"Snow showers",86:"Snow showers",
+  95:"Thunderstorm",96:"Storm w/ hail",99:"Severe storm"};
+function refreshWeather(){
+  fetch(`https://api.open-meteo.com/v1/forecast?latitude=${CFG.WX_LAT}&longitude=${CFG.WX_LON}&current=temperature_2m,weather_code&temperature_unit=celsius&timezone=auto`,{cache:"no-store"})
+    .then(r=>r.ok?r.json():Promise.reject()).then(d=>{
+      const t=Math.round(d.current.temperature_2m);
+      $("wx").textContent=t+"°C · "+(WX[d.current.weather_code]||"Edmonton");
+    }).catch(()=>{});
+}
+
+/* physique */
+async function loadPhysique(){
+  let rows;
+  try{ rows=parseGrid(await (await fetch(CFG.PHD_CSV,{cache:"no-store"})).text()); }
+  catch(_){ setSync($("physSync"),"down"); return; }
+  const startW=num(rows[1]&&rows[1][2]);
+  const startDateStr=rows[1]&&rows[1][1];
+  const weekRows=rows.slice(3,15);
+  const mins=weekRows.map(r=>num(r[2])), tgts=weekRows.map(r=>num(r[3])),
+        maxs=weekRows.map(r=>num(r[4])), acts=weekRows.map(r=>num(r[5])), dates=weekRows.map(r=>r[1]);
+  const goalW=(()=>{for(let i=tgts.length-1;i>=0;i--)if(tgts[i]!=null)return tgts[i];return null;})();
+  const rxName=(()=>{for(const r of weekRows){if(r[11]&&r[11].trim())return r[11].trim();}return "";})();
+
+  let cur=startW, idx=-1;
+  for(let i=0;i<acts.length;i++) if(acts[i]!=null){cur=acts[i];idx=i;}
+  const lost=(startW!=null&&cur!=null)?(startW-cur):null;
+
+  const now=new Date(todayKey()+"T00:00:00"), yr=now.getFullYear();
+  const startD=parseMonthDay(startDateStr,yr), endD=parseMonthDay(dates[dates.length-1],yr);
+  let wk=0; dates.forEach(s=>{const d=parseMonthDay(s,yr); if(d&&d<=now) wk++;});
+  const daysLeft=endD?Math.max(0,Math.ceil((endD-now)/86400000)):null;
+  let timeFrac=0; if(startD&&endD&&endD>startD) timeFrac=Math.max(0,Math.min(1,(now-startD)/(endD-startD)));
+
+  let proj=goalW;
+  if(idx>=1){const slope=(acts[idx]-acts[0])/idx; proj=acts[idx]+slope*(11-idx);}
+
+  if(rxName){ const pn=$("phaseName"); pn.style.display=""; pn.textContent=rxName; }
+  $("phStart").textContent=fmtDM(startD);
+  $("phEnd").textContent=fmtDM(endD);
+  $("physFill").style.width=(timeFrac*100).toFixed(1)+"%";
+  $("phMid").innerHTML="Wk <b>"+wk+"</b>/12 &middot; "+(daysLeft!=null?daysLeft+"d left":"—");
+  $("pNow").innerHTML=cur!=null?fmt(cur):"—";
+  $("pLost").innerHTML=lost!=null?fmt(Math.abs(lost)):"—";
+  $("pGoal").innerHTML=goalW!=null?fmt(goalW):"—";
+  $("pProj").innerHTML=proj!=null?fmt(proj):"—";
+  $("chartWrap").innerHTML=buildChart(startW,mins,tgts,maxs,acts,goalW,timeFrac);
+  setSync($("physSync"),"");
+}
+// Signature chart: gold target trajectory with soft area-fill, faint min/max
+// envelope, goal reference line, green actual overlay, and a sweeping "today" marker.
+function buildChart(startW,mins,tgts,maxs,acts,goalW,timeFrac){
+  const W=340,H=96,pT=9,pB=9,pL=3,pR=3,n=tgts.length;
+  const all=[startW,goalW].concat(mins,tgts,maxs,acts).filter(v=>v!=null);
+  if(all.length<2) return "";
+  let lo=Math.min(...all), hi=Math.max(...all); const padY=(hi-lo)*0.12||1; lo-=padY; hi+=padY;
+  const X=i=>pL+(i/(n-1))*(W-pL-pR);
+  const Y=v=>pT+((hi-v)/(hi-lo))*(H-pT-pB);
+  const pathOf=arr=>{let d="",go=false;
+    for(let i=0;i<arr.length;i++){ if(arr[i]==null){go=false;continue;}
+      d+=(go?" L":" M")+X(i).toFixed(1)+" "+Y(arr[i]).toFixed(1); go=true;} return d.trim();};
+  const line=(arr,st,w,dash)=>{const d=pathOf(arr); if(!d) return "";
+    return `<path d="${d}" fill="none" stroke="${st}" stroke-width="${w}" vector-effect="non-scaling-stroke"`+
+      (dash?` stroke-dasharray="${dash}"`:"")+` stroke-linejoin="round" stroke-linecap="round"/>`;};
+  // area fill under target
+  let areaTgt="";{ let d="",first=null,last=null;
+    for(let i=0;i<tgts.length;i++) if(tgts[i]!=null){ if(first==null)first=i; last=i;
+      d+=(first===i?"M":"L")+X(i).toFixed(1)+" "+Y(tgts[i]).toFixed(1)+" ";}
+    if(first!=null){ d+="L"+X(last).toFixed(1)+" "+(H-pB)+" L"+X(first).toFixed(1)+" "+(H-pB)+" Z";
+      areaTgt=`<path d="${d}" fill="url(#gTgt)"/>`;} }
+  // area under actual
+  let areaAct="";{ let d="",first=null,last=null;
+    for(let i=0;i<acts.length;i++) if(acts[i]!=null){ if(first==null)first=i; last=i;
+      d+=(first===i?"M":"L")+X(i).toFixed(1)+" "+Y(acts[i]).toFixed(1)+" ";}
+    if(first!=null&&last>first){ d+="L"+X(last).toFixed(1)+" "+(H-pB)+" L"+X(first).toFixed(1)+" "+(H-pB)+" Z";
+      areaAct=`<path d="${d}" fill="url(#gAct)"/>`;} }
+  let pts=""; for(let i=0;i<acts.length;i++) if(acts[i]!=null)
+    pts+=`<circle cx="${X(i).toFixed(1)}" cy="${Y(acts[i]).toFixed(1)}" r="2.8" fill="#7ad9ab" stroke="#0b0a07" stroke-width="0.8"/>`;
+  const gy=goalW!=null?Y(goalW).toFixed(1):null;
+  const goalLine=gy?`<line x1="${pL}" y1="${gy}" x2="${W-pR}" y2="${gy}" stroke="rgba(201,161,74,0.22)" stroke-width="1" stroke-dasharray="1 4" vector-effect="non-scaling-stroke"/>`:"";
+  // today marker
+  let today="";
+  if(timeFrac>0 && timeFrac<1){ const tx=(pL+timeFrac*(W-pL-pR)).toFixed(1);
+    today=`<line x1="${tx}" y1="${pT-2}" x2="${tx}" y2="${H-pB}" stroke="rgba(227,192,114,0.55)" stroke-width="1" vector-effect="non-scaling-stroke"/>`+
+          `<circle cx="${tx}" cy="${pT-2}" r="2" fill="#e3c072"/>`;}
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Weight over the phase">
+    <defs>
+      <linearGradient id="gTgt" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="rgba(201,161,74,0.20)"/><stop offset="1" stop-color="rgba(201,161,74,0)"/></linearGradient>
+      <linearGradient id="gAct" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="rgba(122,217,171,0.22)"/><stop offset="1" stop-color="rgba(122,217,171,0)"/></linearGradient>
+    </defs>
+    ${areaTgt}${areaAct}${goalLine}
+    ${line(mins,"rgba(236,228,210,0.16)",1,"2 4")}
+    ${line(maxs,"rgba(236,228,210,0.22)",1,"2 4")}
+    ${line(tgts,"rgba(201,161,74,0.9)",1.6,null)}
+    ${line(acts,"#7ad9ab",2.4,null)}
+    ${today}${pts}
+  </svg>`;
+}
+
+/* parts */
+function tokenHit(list,tokens,tISO){
+  const low=list.map(x=>String(x).toLowerCase());
+  if(low.includes(tISO)) return true;
+  return tokens.some(tk=>low.some(x=>x.indexOf(tk.toLowerCase())>=0));
+}
+async function loadParts(){
+  const tISO=todayKey(); let list=null;
+  try{
+    const data=await (await fetch(CFG.PHD_API+"?action=getCompletions&_="+Date.now(),{cache:"no-store"})).json();
+    list=Array.isArray(data.completions)?data.completions
+        :(data.completions?String(data.completions).split(","):[]);
+  }catch(_){ list=null; }
+  let p1=false,p2=false;
+  if(list){ p1=tokenHit(list,CFG.P1_TOKENS,tISO); p2=tokenHit(list,CFG.P2_TOKENS,tISO); }
+  setPart($("part1"), p1?"green":"yellow");
+  setPart($("part2"), !p1?"locked":(p2?"green":"yellow"));
+  setPart($("part3"), p2?"green":"locked");
+}
+function setPart(el,s){ el.className="part "+s; }
+
+/* tasks */
+function normalizeTask(raw){
+  const g=k=>raw[k]??raw[k.toLowerCase()]??"";
+  const dow=String(g("dow")).split(",").map(s=>parseInt(s.trim())).filter(n=>!isNaN(n));
+  return {id:raw.id,name:raw.name,emoji:raw.emoji||"\u2705",
+    section:(g("section")||"home").toLowerCase(),
+    freq:(raw.frequency||raw.freq||"daily").toLowerCase(),
+    type:(raw.type||"recurring").toLowerCase(),dow,
+    dotm:parseInt(g("dotm"))||0,dotwOrd:parseInt(g("dotword"))||0,
+    anchorDate:g("anchordate"),targetDate:g("targetdate"),
+    yearMonth:parseInt(g("yearmonth"))||0,seasonStart:g("seasonstart"),seasonEnd:g("seasonend")};
+}
+function inSeason(t,dk){ if(!t.seasonStart||!t.seasonEnd) return true;
+  const[,m,d]=dk.split("-").map(Number); const md=String(m).padStart(2,"0")+"-"+String(d).padStart(2,"0");
+  return t.seasonStart>t.seasonEnd?(md>=t.seasonStart||md<=t.seasonEnd):(md>=t.seasonStart&&md<=t.seasonEnd);}
+function isDueOn(t,dk){
+  if(!inSeason(t,dk)) return false;
+  const[y,m,d]=dk.split("-").map(Number); const date=new Date(y,m-1,d),dow=date.getDay();
+  if(t.type==="once"){ if(!t.targetDate) return false; return t.targetDate==="always"?true:dk===t.targetDate; }
+  switch(t.freq){
+    case"daily":return true;
+    case"weekly":return t.dow.length?t.dow.includes(dow):false;
+    case"biweekly":{ if(!t.anchorDate) return false;
+      const a=new Date(t.anchorDate+"T00:00:00"),diff=Math.round((date-a)/86400000),td=t.dow.length?t.dow[0]:dow;
+      return dow===td&&diff%14===0;}
+    case"monthly":{ if(t.dotm===0){const last=new Date(y,m,0).getDate();return d===last;}
+      if(t.dotm)return d===t.dotm;
+      if(t.dotwOrd&&t.dow.length)return dow===t.dow[0]&&Math.ceil(d/7)===t.dotwOrd; return false;}
+    case"yearly":{ if(t.yearMonth&&m!==t.yearMonth)return false; if(t.dotm)return d===t.dotm; return false;}
+    default:return true;
+  }
+}
+async function loadTasks(){
+  const dk=todayKey(); let active=[];
+  try{
+    const rows=parseKeyed(await (await fetch(CFG.STEWARD_CSV,{cache:"no-store"})).text());
+    active=rows.map(normalizeTask).filter(t=>{try{return isDueOn(t,dk);}catch(_){return false;}});
+  }catch(_){
+    $("taskList").innerHTML='<div class="empty">Tasks unavailable</div>';
+    setSync($("choresSync"),"down"); return;
+  }
+  const done=new Set(); let synced=false;
+  try{
+    const data=await (await fetch(CFG.STEWARD_API+"?action=getTodayState&dateKey="+dk,{cache:"no-store"})).json();
+    if(data&&Array.isArray(data.entries)){
+      data.entries.forEach(e=>{if(e.taskId&&e.completedAt)done.add(String(e.taskId));}); synced=true;}
+  }catch(_){}
+  const total=active.length, ndone=active.filter(t=>done.has(String(t.id))).length;
+  renderTasks(active,done,ndone,total); setSync($("choresSync"),synced?"":"stale");
+}
+function renderTasks(active,done,ndone,total){
+  const frac=total?ndone/total:0, C=2*Math.PI*28;
+  $("choresPct").textContent=total?Math.round(frac*100)+"%":"—";
+  $("choresFrac").textContent=ndone+"/"+total;
+  const arc=$("choresArc"); arc.style.strokeDashoffset=C*(1-frac);
+  arc.classList.toggle("full",total>0&&ndone===total);
+  const ordered=active.slice().sort((a,b)=>(done.has(String(a.id))?1:0)-(done.has(String(b.id))?1:0));
+  const shown=ordered.slice(0,CFG.MAX_CHORES);
+  if(!shown.length){ $("taskList").innerHTML='<div class="empty">Nothing due today</div>'; }
+  else $("taskList").innerHTML=shown.map(t=>{
+    const d=done.has(String(t.id));
+    return `<div class="task ${d?"done":""}"><span class="emoji">${esc(t.emoji)}</span>`+
+      `<div class="body"><div class="nm">${esc(t.name)}</div><div class="fq">${esc(t.freq)}</div></div>`+
+      `<span class="cbx">\u2713</span></div>`;
+  }).join("");
+  const more=total-shown.length, el=$("taskMore");
+  if(more>0){el.style.display="";el.textContent="+ "+more+" more";} else el.style.display="none";
+}
+
+/* boot */
+function refreshAll(){ loadPhysique(); loadParts(); loadTasks(); refreshWeather(); }
+$("linkApp").href=CFG.APP_URL; $("linkSheet").href=CFG.SHEET_URL;
+tickClock(); setInterval(tickClock,30000);
+refreshAll(); setInterval(refreshAll,CFG.REFRESH_MIN*60*1000);
+</script>
+</body>
+</html>
