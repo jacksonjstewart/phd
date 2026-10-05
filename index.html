@@ -2616,80 +2616,6 @@
     background: rgba(201,161,74,0.06);
   }
 
-  /* ── Daily splash: second screen (four pillars) ── */
-  .splash-screen { display: none; flex-direction: column; align-items: center; }
-  .splash-screen.active { display: flex; }
-  #splashScreenPillars { width: min(86vw, 420px); }
-  .splash-pillars-head {
-    font-family: var(--mono); font-size: 10px; letter-spacing: 0.4em;
-    text-transform: uppercase; color: rgba(201,161,74,0.55);
-    margin-bottom: 26px; text-align: center;
-  }
-  .splash-pillars-list {
-    list-style: none; margin: 0 0 8px; padding: 0;
-    display: flex; flex-direction: column; gap: 4px; width: 100%;
-  }
-  .splash-pillar-row {
-    display: flex; align-items: center; gap: 16px;
-    padding: 14px 6px;
-    border-bottom: 1px solid rgba(201,161,74,0.14);
-  }
-  .splash-pillar-row:last-child { border-bottom: none; }
-  .sp-num {
-    font-family: var(--mono); font-size: 12px; color: rgba(201,161,74,0.5);
-    flex: 0 0 auto; width: 18px;
-  }
-  .sp-label {
-    font-family: var(--serif); font-size: 20px; font-weight: 300;
-    color: rgba(232,226,208,0.92); flex: 1;
-  }
-  .sp-info-btn {
-    flex: 0 0 auto;
-    width: 22px; height: 22px; border-radius: 50%;
-    border: 1px solid rgba(201,161,74,0.4);
-    background: none; color: rgba(201,161,74,0.7);
-    font-family: var(--serif); font-style: italic; font-size: 13px;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: border-color 200ms, color 200ms, background 200ms;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .sp-info-btn:hover, .sp-info-btn:active {
-    border-color: var(--gold); color: var(--gold-bright); background: rgba(201,161,74,0.08);
-  }
-
-  /* ── Pillar info modal (opened from the second splash screen) ── */
-  .pillar-info-modal {
-    display: none;
-    position: fixed; inset: 0; z-index: 10001;
-    background: rgba(0,0,0,0.72);
-    align-items: center; justify-content: center;
-    backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
-  }
-  .pillar-info-modal.visible { display: flex; }
-  .pillar-info-card {
-    position: relative;
-    width: min(88vw, 380px);
-    background: linear-gradient(160deg, #14100a 0%, #0c0906 100%);
-    border: 1px solid rgba(201,161,74,0.32);
-    padding: 30px 26px 26px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-  }
-  .pillar-info-close {
-    position: absolute; top: 8px; right: 10px;
-    background: none; border: none; color: rgba(201,161,74,0.6);
-    font-size: 22px; line-height: 1; cursor: pointer; padding: 6px;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .pillar-info-close:hover { color: var(--gold-bright); }
-  .pillar-info-title {
-    font-family: var(--serif); font-size: 22px; font-weight: 300;
-    color: var(--gold-bright); margin-bottom: 12px;
-  }
-  .pillar-info-body {
-    font-family: var(--serif); font-style: italic; font-size: 15px; line-height: 1.55;
-    color: rgba(232,226,208,0.82);
-  }
-
   /* ── Tenure streak display ── */
 </style>
 </head>
@@ -2718,59 +2644,22 @@
 
 <!-- Daily Splash — first open each day -->
 <div id="dailySplash" role="dialog" aria-modal="true" aria-label="Daily Progress">
-  <div class="splash-screen active" id="splashScreenRing">
-    <div class="splash-ring-wrap">
-      <svg class="splash-svg" id="splashSvg" viewBox="0 0 200 200">
-        <circle class="splash-ring-track" cx="100" cy="100" r="88" stroke-width="6"/>
-        <circle class="splash-ring-fill" id="splashRingFill" cx="100" cy="100" r="88" stroke-width="6"/>
-      </svg>
-      <div class="splash-center">
-        <div class="splash-day" id="dspDay">—</div>
-        <div class="splash-day-label">Day of Program</div>
-        <div class="splash-week" id="dspWeek">—</div>
-        <div class="splash-inner-meta">
-          <div class="splash-meta-line" id="dspCheckin">—</div>
-          <div class="splash-meta-line" id="dspRemaining">—</div>
-        </div>
+  <div class="splash-ring-wrap">
+    <svg class="splash-svg" id="splashSvg" viewBox="0 0 200 200">
+      <circle class="splash-ring-track" cx="100" cy="100" r="88" stroke-width="6"/>
+      <circle class="splash-ring-fill" id="splashRingFill" cx="100" cy="100" r="88" stroke-width="6"/>
+    </svg>
+    <div class="splash-center">
+      <div class="splash-day" id="dspDay">—</div>
+      <div class="splash-day-label">Day of Program</div>
+      <div class="splash-week" id="dspWeek">—</div>
+      <div class="splash-inner-meta">
+        <div class="splash-meta-line" id="dspCheckin">—</div>
+        <div class="splash-meta-line" id="dspRemaining">—</div>
       </div>
     </div>
-    <button class="splash-ack" id="splashAck">Acknowledged</button>
   </div>
-
-  <div class="splash-screen" id="splashScreenPillars">
-    <div class="splash-pillars-head">What This Requires</div>
-    <ol class="splash-pillars-list">
-      <li class="splash-pillar-row">
-        <span class="sp-num">1</span>
-        <span class="sp-label">Grit</span>
-        <button class="sp-info-btn" type="button" data-pillar="grit" aria-label="About Grit">i</button>
-      </li>
-      <li class="splash-pillar-row">
-        <span class="sp-num">2</span>
-        <span class="sp-label">Vision</span>
-        <button class="sp-info-btn" type="button" data-pillar="vision" aria-label="About Vision">i</button>
-      </li>
-      <li class="splash-pillar-row">
-        <span class="sp-num">3</span>
-        <span class="sp-label">Plan</span>
-        <button class="sp-info-btn" type="button" data-pillar="plan" aria-label="About Plan">i</button>
-      </li>
-      <li class="splash-pillar-row">
-        <span class="sp-num">4</span>
-        <span class="sp-label">Resilience</span>
-        <button class="sp-info-btn" type="button" data-pillar="resilience" aria-label="About Resilience">i</button>
-      </li>
-    </ol>
-    <button class="splash-ack" id="splashBegin">Begin</button>
-  </div>
-
-  <div class="pillar-info-modal" id="pillarInfoModal" aria-hidden="true">
-    <div class="pillar-info-card">
-      <button class="pillar-info-close" id="pillarInfoClose" type="button" aria-label="Close">&times;</button>
-      <div class="pillar-info-title" id="pillarInfoTitle"></div>
-      <div class="pillar-info-body" id="pillarInfoBody"></div>
-    </div>
-  </div>
+  <button class="splash-ack" id="splashAck">Acknowledged</button>
 </div>
 
 <!-- Top-left fixed — nav links only -->
@@ -5636,17 +5525,7 @@
       }, 520);
     }
 
-    // Screen 1 (ring) -> Screen 2 (four pillars). Both screens together count as
-    // "the splash" and only ever appear once, on the first open of the day.
-    const screenRing    = document.getElementById('splashScreenRing');
-    const screenPillars = document.getElementById('splashScreenPillars');
-    const beginBtn       = document.getElementById('splashBegin');
-    function showPillarScreen() {
-      if (screenRing) screenRing.classList.remove('active');
-      if (screenPillars) screenPillars.classList.add('active');
-    }
-    ack.addEventListener('click', showPillarScreen);
-    if (beginBtn) beginBtn.addEventListener('click', dismissSplash);
+    ack.addEventListener('click', dismissSplash);
     // Also dismiss on tap anywhere outside the content (belt-and-suspenders for mobile)
     splash.addEventListener('click', function(e) {
       if (e.target === splash) dismissSplash();
@@ -5654,59 +5533,6 @@
 
     // Show after a very brief delay so the page has a moment to render behind it
     setTimeout(showSplash, 120);
-  })();
-
-  // ============================================================
-  // PILLAR INFO MODAL — opened from the second splash screen
-  // ============================================================
-  (function initPillarInfo() {
-    const PILLAR_INFO = {
-      grit: {
-        title: 'Grit',
-        body: "Doing what you told yourself you'd do, especially when you don't feel like it. This is the discipline to act on your own commitments."
-      },
-      vision: {
-        title: 'Vision',
-        body: "A clear, specific picture of where you're headed. Not a vague aspiration &mdash; an actual destination you can call to mind and measure progress against."
-      },
-      plan: {
-        title: 'Plan',
-        body: "The structure that turns vision into daily action: the ritual, the desks, the order of operations. Removes the need to decide what matters each morning."
-      },
-      resilience: {
-        title: 'Resilience',
-        body: "The ability to keep moving on a bad day without it derailing the whole effort. Progress doesn't require perfect conditions, only that you keep showing up."
-      }
-    };
-    const modal    = document.getElementById('pillarInfoModal');
-    const titleEl  = document.getElementById('pillarInfoTitle');
-    const bodyEl   = document.getElementById('pillarInfoBody');
-    const closeBtn = document.getElementById('pillarInfoClose');
-    if (!modal || !titleEl || !bodyEl) return;
-
-    function openPillarInfo(key) {
-      const info = PILLAR_INFO[key];
-      if (!info) return;
-      titleEl.textContent  = info.title;
-      bodyEl.innerHTML     = info.body;
-      modal.classList.add('visible');
-      modal.setAttribute('aria-hidden', 'false');
-    }
-    function closePillarInfo() {
-      modal.classList.remove('visible');
-      modal.setAttribute('aria-hidden', 'true');
-    }
-
-    document.querySelectorAll('.sp-info-btn').forEach(btn => {
-      btn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        openPillarInfo(btn.dataset.pillar);
-      });
-    });
-    if (closeBtn) closeBtn.addEventListener('click', closePillarInfo);
-    modal.addEventListener('click', function(e) {
-      if (e.target === modal) closePillarInfo();
-    });
   })();
 
   // ============================================================
