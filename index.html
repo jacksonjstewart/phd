@@ -337,7 +337,12 @@
     max-width: 820px;
     display: flex; flex-direction: column; align-items: center; gap: 16px;
   }
-  .sg-main { display: block; }
+  .sg-main {
+    display: block;
+    font-style: normal;
+    font-weight: 400;
+    color: var(--cyan-bright);
+  }
   .sg-sub {
     display: block;
     font-family: var(--mono); font-style: normal;
@@ -598,57 +603,41 @@
     50%       { box-shadow: 0 0 22px 2px rgba(201,161,74,0.18); border-color: var(--gold-bright); }
   }
 
-  /* MORNING RITUAL gate tile — collapses Part I (Morning Routine + Office Hours) behind one tap */
-  .ritual-gate {
-    width: 100%; margin: 24px 0 18px; padding: 14px 20px;
+  /* MORNING RITUAL nav button — collapses Part I (Morning Routine + Office Hours) behind one tap.
+     Sits in normal document flow directly under the date/time header (not fixed/sticky like the
+     top nav bar — it scrolls away with the page like any other content). */
+  .ritual-nav-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    margin: 18px 0 26px; padding: 9px 16px;
     border: 1px solid var(--cyan);
-    background: linear-gradient(135deg, rgba(79,214,214,0.16) 0%, rgba(79,214,214,0.06) 100%);
+    background: rgba(79,214,214,0.08);
     cursor: pointer;
-    display: flex; align-items: center; justify-content: space-between; gap: 14px;
-    box-shadow: 0 0 0 0 rgba(79,214,214,0.4);
-    animation: pulse-cyan 2.6s ease-in-out infinite;
-    transition: background 300ms, border-color 300ms;
+    font-family: var(--mono); font-size: 9px; letter-spacing: 0.32em;
+    text-transform: uppercase; color: var(--cyan-bright);
+    transition: background 220ms ease, border-color 220ms ease;
     -webkit-tap-highlight-color: transparent;
-    font-family: inherit; text-align: left;
   }
-  .ritual-gate:hover {
-    background: linear-gradient(135deg, rgba(79,214,214,0.26) 0%, rgba(79,214,214,0.12) 100%);
+  .ritual-nav-btn:hover,
+  .ritual-nav-btn.open {
+    background: rgba(79,214,214,0.15);
   }
-  .ritual-gate.open {
-    animation: none;
-    box-shadow: 0 0 14px rgba(79,214,214,0.1);
+  .ritual-nav-dot {
+    width: 6px; height: 6px; border-radius: 50%; flex: 0 0 auto;
+    background: var(--cyan-bright);
+    animation: pulse-cyan-dot 2.2s ease-in-out infinite;
   }
-  .ritual-gate-title {
-    font-family: var(--mono); font-size: 9px;
-    letter-spacing: 0.4em; color: var(--cyan-bright);
-    text-transform: uppercase;
-  }
-  .ritual-gate-sub {
-    font-family: var(--mono); font-size: 7.5px;
-    letter-spacing: 0.32em; text-transform: uppercase;
-    color: rgba(79,214,214,0.75); margin-top: 4px;
-  }
-  .ritual-gate-chevron {
-    font-family: var(--mono); font-size: 16px;
+  .ritual-nav-btn.open .ritual-nav-dot { animation: none; }
+  .ritual-nav-chevron {
+    font-family: var(--mono); font-size: 12px;
     color: var(--cyan); flex: 0 0 auto;
     transition: transform 320ms ease, color 200ms;
   }
-  .ritual-gate.open .ritual-gate-chevron { transform: rotate(45deg); color: var(--cyan-bright); }
-  #office .routine[data-window="morning"] > .routine-head,
-  #office .routine[data-window="office"] > .routine-head { display: none; }
-  .routine-divider {
-    font-family: var(--mono); font-size: 9px; letter-spacing: 0.4em;
-    text-transform: uppercase; color: var(--cyan-bright);
-    padding: 4px 4px 10px; cursor: default;
+  .ritual-nav-btn.open .ritual-nav-chevron { transform: rotate(45deg); color: var(--cyan-bright); }
+  @keyframes pulse-cyan-dot {
+    0%, 100% { opacity: 1;   box-shadow: 0 0 0 0 rgba(79,214,214,0.5); }
+    50%      { opacity: 0.55; box-shadow: 0 0 6px 2px rgba(79,214,214,0.28); }
   }
-  #officeHoursList li.routine-divider:first-child {
-    border-top: 1px solid var(--border); margin-top: 6px; padding-top: 18px;
-  }
-  @keyframes pulse-cyan {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(79,214,214,0.3); border-color: var(--cyan); }
-    50%       { box-shadow: 0 0 22px 2px rgba(79,214,214,0.18); border-color: var(--cyan-bright); }
-  }
-
+  #office .routine[data-window="morning"] > .routine-head { display: none; }
   /* PROGRESSING indicator below finances domain ring */
   .domain-progressing {
     font-family: var(--mono);
@@ -803,7 +792,7 @@
 
   .routine-list {
     list-style: none; margin: 0; padding: 0; max-width: 820px;
-    display: flex; flex-direction: column; gap: 8px;
+    display: flex; flex-direction: column; gap: 5px;
     max-height: 0; overflow: hidden;
     transition: max-height 460ms ease, padding-top 320ms ease;
   }
@@ -812,8 +801,8 @@
     padding-top: 14px;
   }
   .r-row {
-    display: flex; align-items: flex-start; gap: 14px;
-    padding: 16px 20px;
+    display: flex; align-items: center; gap: 12px;
+    padding: 9px 16px;
     border: 1px solid var(--border);
     background: linear-gradient(180deg, rgba(255,255,255,0.018) 0%, rgba(0,0,0,0.22) 100%);
     cursor: pointer;
@@ -854,22 +843,22 @@
   .r-row.cal-event:hover,
   .r-row.static-event:hover { border-color: rgba(201, 161, 74, 0.45) !important; }
   .r-row .box {
-    width: 14px; height: 14px;
+    width: 12px; height: 12px;
     border: 1px solid var(--gold-dim);
-    flex: 0 0 14px; margin-top: 6px;
+    flex: 0 0 12px;
     position: relative;
     transition: background 380ms ease, border-color 380ms ease, transform 220ms ease;
   }
-  .r-row .label-stack { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+  .r-row .label-stack { flex: 1; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
   .r-row .r-title {
     font-family: var(--serif); font-weight: 400;
-    font-size: 18px; color: var(--text); line-height: 1.3;
+    font-size: 14.5px; color: var(--text); line-height: 1.25;
     transition: color 380ms ease;
   }
   .r-row .r-note {
     font-family: var(--serif); font-style: italic;
-    font-size: 14px; color: var(--text-dim);
-    line-height: 1.4;
+    font-size: 11.5px; color: var(--text-dim);
+    line-height: 1.3;
     transition: color 380ms ease, opacity 380ms ease;
   }
   .r-row .r-meta {
@@ -877,7 +866,7 @@
     letter-spacing: 0.3em; color: var(--gold-dim);
     text-transform: uppercase;
     flex: 0 0 auto;
-    align-self: flex-start; padding-top: 6px;
+    align-self: center;
   }
   .r-row.done {
     background: linear-gradient(135deg, #0c2418 0%, #08180f 100%);
@@ -906,10 +895,10 @@
   /* ── Partial completion (e.g. "Rest Day") — distinct gold tone, never punishing ── */
   .r-partial-btn {
     flex: 0 0 auto; align-self: center;
-    font-family: var(--mono); font-size: 9px; letter-spacing: 0.15em;
+    font-family: var(--mono); font-size: 8px; letter-spacing: 0.12em;
     text-transform: uppercase; color: rgba(201,161,74,0.55);
     background: none; border: 1px solid rgba(201,161,74,0.35);
-    border-radius: 3px; padding: 7px 11px; cursor: pointer;
+    border-radius: 3px; padding: 5px 9px; cursor: pointer;
     white-space: nowrap;
     transition: color 200ms ease, border-color 200ms ease, background 200ms ease;
     -webkit-tap-highlight-color: transparent;
@@ -1435,124 +1424,6 @@
     letter-spacing: 0.42em;
   }
 
-  /* ── Chemistry Study Tracker ── */
-  .chem-tracker { width: 100%; }
-  .chem-tracker-head {
-    display: flex; align-items: baseline;
-    justify-content: space-between;
-    margin-bottom: 10px;
-  }
-  .chem-tracker-title {
-    font-family: var(--serif);
-    font-size: 1.31rem; font-weight: 400;
-    color: var(--text);
-  }
-  .chem-tracker-count {
-    font-family: var(--mono); font-size: 8px;
-    letter-spacing: 0.2em; text-transform: uppercase;
-    color: rgba(62,207,110,0.7);
-  }
-  .chem-progress-bar {
-    height: 3px; background: rgba(255,255,255,0.07);
-    border-radius: 2px; margin-bottom: 22px; overflow: hidden;
-  }
-  .chem-progress-fill {
-    height: 100%; border-radius: 2px;
-    background: linear-gradient(90deg, rgba(42,157,110,0.7), rgba(62,207,110,0.9));
-    width: 0%; transition: width 0.9s ease;
-  }
-  .chem-group { margin-bottom: 22px; }
-  .chem-group-header {
-    display: flex; align-items: baseline;
-    justify-content: space-between;
-    margin-bottom: 9px;
-    padding-bottom: 5px;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-  }
-  .chem-group-name {
-    font-family: var(--mono); font-size: 8.5px;
-    letter-spacing: 0.28em; text-transform: uppercase;
-    color: var(--grp-color); font-weight: 500;
-  }
-  .chem-group-stats {
-    font-family: var(--mono); font-size: 8px;
-    letter-spacing: 0.08em;
-    color: var(--grp-color);
-  }
-  .chem-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-  .chem-chip {
-    font-family: var(--mono); font-size: 8.5px;
-    letter-spacing: 0.06em;
-    padding: 4px 10px; border-radius: 2px;
-    border: 1px solid transparent;
-    white-space: nowrap;
-  }
-  .chem-chip.done {
-    background: rgba(42,157,110,0.14);
-    border-color: rgba(62,207,110,0.25);
-    color: rgba(62,207,110,0.85);
-  }
-  .chem-chip.todo {
-    background: rgba(255,255,255,0.03);
-    border-color: rgba(255,255,255,0.07);
-    color: rgba(255,255,255,0.22);
-  }
-  .chem-donut-wrap {
-    display: flex; flex-direction: column;
-    align-items: center;
-    margin-top: 32px; padding-top: 26px;
-    border-top: 1px solid var(--border-soft);
-  }
-  .chem-donut {
-    width: 255px; height: 255px;
-    border-radius: 50%;
-    position: relative;
-    background: conic-gradient(rgba(62,207,110,0.85) 0% 0%, rgba(255,255,255,0.07) 0% 100%);
-    transition: background 1s ease;
-  }
-  .chem-donut-hole {
-    position: absolute;
-    inset: 32px;
-    border-radius: 50%; background: var(--bg);
-  }
-  .chem-donut-pct {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--mono); font-size: 26px;
-    color: rgba(62,207,110,0.9);
-    z-index: 1;
-  }
-  .chem-donut-sub {
-    font-family: var(--mono); font-size: 7px;
-    letter-spacing: 0.3em; text-transform: uppercase;
-    color: var(--text-faint); margin-top: 14px; margin-bottom: 28px;
-  }
-  .chem-next {
-    width: 100%;
-    border-top: 1px solid var(--border-soft);
-    padding-top: 22px;
-    margin-top: 4px;
-  }
-  .chem-next-title {
-    font-family: var(--mono); font-size: 7px;
-    letter-spacing: 0.3em; text-transform: uppercase;
-    color: var(--text-faint); margin-bottom: 14px;
-  }
-  .chem-next-item {
-    display: flex; align-items: baseline; gap: 10px;
-    margin-bottom: 12px;
-  }
-  .chem-next-num {
-    font-family: var(--mono); font-size: 8px;
-    color: rgba(62,207,110,0.4);
-    flex-shrink: 0; width: 14px;
-  }
-  .chem-next-text {
-    font-family: var(--serif); font-style: italic;
-    font-size: 13px; color: var(--text-dim);
-    line-height: 1.5;
-  }
-
   /* ── Competence System ── */
   /* CORE DAILY ACTIONS - completion modal */
   .fc-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.93);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:9999;align-items:center;justify-content:center;padding:12px;overflow:hidden;}
@@ -1806,12 +1677,11 @@
 
   .stats-split {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
+    max-width: 680px;
     gap: 40px;
     align-items: start;
   }
-  @media (max-width: 900px) { .stats-split { grid-template-columns: 1fr; } }
-  .stats-left .scaffold-card { margin-top: 0; }
 
   /* ── Physique header ── */
   .physique-header {
@@ -1980,6 +1850,11 @@
     color: #3ecf6e;
     font-size: 10px;
     text-shadow: 0 0 8px rgba(62,207,110,0.45);
+  }
+  #phDayWeek.unresolved {
+    color: var(--gold-bright);
+    text-shadow: 0 0 8px rgba(201,161,74,0.4);
+    letter-spacing: 0.08em;
   }
   .pp-bar-track {
     position: relative;
@@ -2690,7 +2565,7 @@
     </div>
   </div>
   <h1 class="splash-greeting">
-    <span class="sg-main" id="splashGreeting">Good morning, Doctor.</span>
+    <span class="sg-main" id="splashGreeting">THE GREAT WINTER LOCK-IN OF 2026</span>
     <span class="sg-sub">Doctor of Philosophy &middot; Scientist &middot; Professor</span>
   </h1>
 </section>
@@ -2710,6 +2585,13 @@
         <div class="tm-weather-value" id="officeWeatherBig">&mdash;</div>
       </div>
     </header>
+
+    <!-- MORNING RITUAL toggle — static, scrolls with the page (not fixed like the top nav) -->
+    <button type="button" class="ritual-nav-btn" id="morningRitualGate" onclick="toggleMorningRitual()" aria-expanded="false" aria-controls="officeHoursList">
+      <span class="ritual-nav-dot" aria-hidden="true"></span>
+      Morning Ritual
+      <span class="ritual-nav-chevron" aria-hidden="true">+</span>
+    </button>
 
     <!-- Review tile — injected by updateReviewBanner -->
     <div id="reviewTileWrap"></div>
@@ -2819,20 +2701,12 @@
     </div>
 
     <!-- I. MORNING ROUTINE -->
-    <button type="button" class="ritual-gate" id="morningRitualGate" onclick="toggleMorningRitual()" aria-expanded="false" aria-controls="morningList officeHoursList">
-      <div>
-        <div class="ritual-gate-title">Morning Ritual</div>
-        <div class="ritual-gate-sub">Fitness &amp; Self-Care</div>
-      </div>
-      <span class="ritual-gate-chevron" aria-hidden="true">+</span>
-    </button>
     <div class="routine" data-window="morning">
       <button class="routine-head" type="button" onclick="toggleRoutine(this)" aria-expanded="false">
-        <span class="rh-label">I &middot; Morning Routine</span>
+        <span class="rh-label">Morning Ritual</span>
         <span class="rh-toggle" aria-hidden="true">+</span>
       </button>
-      <ul class="routine-list" id="morningList">
-        <li class="routine-divider" aria-hidden="true"><span class="rh-label">I &middot; Morning Routine</span></li>
+      <ul class="routine-list" id="officeHoursList">
         <li class="r-row" data-cond="always" data-task="wake-up" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
@@ -2848,11 +2722,11 @@
             <div class="r-note">Measure &amp; record an accurate post-void body-weight to track ongoing physique progress.</div>
           </div>
         </li>
-        <li class="r-row" data-cond="always" data-task="hydrate" tabindex="0" role="checkbox" aria-checked="false">
+        <li class="r-row" data-cond="always" data-task="hydration-supplements" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
-            <div class="r-title">Hydrate</div>
-            <div class="r-note">Drink a full glass of lemon / citrus water to properly hydrate first thing in the morning.</div>
+            <div class="r-title">Hydration &amp; Supplementation</div>
+            <div class="r-note">Lemon / citrus water, then Creatine &middot; Vitamin D &middot; Rosuvastatin &middot; Ezetimibe &middot; Ashwagandha. Every single day.</div>
           </div>
         </li>
         <li class="r-row" data-cond="always" data-task="coffee" tabindex="0" role="checkbox" aria-checked="false">
@@ -2862,20 +2736,12 @@
             <div class="r-note">Over a cup of coffee, review your schedule &amp; task list for the day.</div>
           </div>
         </li>
-        <li class="r-row" data-cond="always" data-task="supplements" tabindex="0" role="checkbox" aria-checked="false">
-          <span class="box"></span>
-          <div class="label-stack">
-            <div class="r-title">Full Supplement Stack</div>
-            <div class="r-note">Creatine &middot; Vitamin D &middot; Rosuvastatin &middot; Ezetimibe &middot; Ashwagandha. Every single day.</div>
-          </div>
-        </li>
         <li class="r-row" id="trainingRow" data-cond="always" data-task="training" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
             <div class="r-title">Morning Training</div>
-            <div class="r-note">Resistance training. Hit the programmed lifts for today.</div>
+            <div class="r-note">Resistance training. Hit the programmed lifts for today. Every single day.</div>
           </div>
-          <button class="r-partial-btn" type="button" onclick="markPartial(event,'training')">Rest Day</button>
         </li>
         <li class="r-row" data-cond="not-mon" data-task="steam" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
@@ -2906,30 +2772,19 @@
             <div class="r-note">Eat inside of a specific and deliberate calorie range, every single day.</div>
           </div>
         </li>
-      </ul>
-    </div>
-
-    <!-- II. OFFICE HOURS -->
-    <div class="routine" data-window="office">
-      <button class="routine-head" type="button" onclick="toggleRoutine(this)" aria-expanded="false">
-        <span class="rh-label">II &middot; Office Hours <span class="head-sub">08:00 &mdash; 16:00</span></span>
-        <span class="rh-toggle" aria-hidden="true">+</span>
-      </button>
-      <ul class="routine-list" id="officeHoursList">
-        <li class="routine-divider" aria-hidden="true"><span class="rh-label">II &middot; Office Hours <span class="head-sub">08:00 &mdash; 16:00</span></span></li>
         <li class="r-row placeholder" id="calPlaceholder">
           <div class="label-stack">
             <div class="r-note">Loading calendar&hellip;</div>
           </div>
         </li>
-        <li class="r-row" data-cond="always" data-task="email-inbox" tabindex="0" role="checkbox" aria-checked="false">
+        <li class="r-row office-row" data-cond="always" data-task="email-inbox" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
             <div class="r-title">Email &amp; Inbox Clear</div>
             <div class="r-note">Answer all emails within 24 hours, and clear your inbox for breathing room, daily.</div>
           </div>
         </li>
-        <li class="r-row" data-cond="tue-only" data-task="tue-planning" tabindex="0" role="checkbox" aria-checked="false">
+        <li class="r-row office-row" data-cond="tue-only" data-task="tue-planning" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
             <div class="r-title">Tuesday Activity Planning</div>
@@ -2937,7 +2792,7 @@
           </div>
           <span class="r-meta">ACE Coffee</span>
         </li>
-        <li class="r-row" data-cond="first-thu" data-task="thu-travel" tabindex="0" role="checkbox" aria-checked="false">
+        <li class="r-row office-row" data-cond="first-thu" data-task="thu-travel" tabindex="0" role="checkbox" aria-checked="false">
           <span class="box"></span>
           <div class="label-stack">
             <div class="r-title">Thursday Travel Planning</div>
@@ -3113,43 +2968,7 @@
     <p class="section-eyebrow">III &middot; Statistics</p>
     <div class="stats-split">
 
-      <!-- Left: Chemistry study tracker -->
-      <div class="stats-left">
-        <div class="chem-tracker reveal">
-          <div class="chem-tracker-head">
-            <span class="chem-tracker-title">Chemistry · Study Progress</span>
-            <span class="chem-tracker-count" id="chemCount">— / —</span>
-          </div>
-          <div class="chem-progress-bar">
-            <div class="chem-progress-fill" id="chemFill"></div>
-          </div>
-          <div id="chemGroups"><!-- populated by JS --></div>
-          <div class="chem-donut-wrap">
-            <div class="chem-donut" id="chemDonut">
-              <div class="chem-donut-hole"></div>
-              <div class="chem-donut-pct" id="chemDonutPct">—</div>
-            </div>
-            <div class="chem-donut-sub">Chemistry Completion</div>
-          <div class="chem-next">
-            <div class="chem-next-title">On completion</div>
-            <div class="chem-next-item">
-              <span class="chem-next-num">01</span>
-              <span class="chem-next-text">Compile written notes &amp; practice questions into a professional white paper</span>
-            </div>
-            <div class="chem-next-item">
-              <span class="chem-next-num">02</span>
-              <span class="chem-next-text">Finalize an equation sheet for each section</span>
-            </div>
-            <div class="chem-next-item">
-              <span class="chem-next-num">03</span>
-              <span class="chem-next-text">Craft and design a professional lecture for each chemistry section</span>
-            </div>
-          </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right: physique panel -->
+      <!-- Physique panel -->
       <div class="stats-right reveal">
         <div class="pp-top-bar">
           <div>
@@ -3356,11 +3175,7 @@
     setText('splashDay',      dayName);
     setText('splashDate',     dateLine.toUpperCase());
     setText('splashTime',     timeStr);
-    const _gr = h < 12 ? 'Good morning, Doctor.'
-              : h < 17 ? 'Good afternoon, Doctor.'
-              : h < 21 ? 'Good evening, Doctor.'
-              :           'Good night, Doctor.';
-    setText('splashGreeting', _gr);
+    setText('splashGreeting', 'THE GREAT WINTER LOCK-IN OF 2026');
     setText('officeDayBig',   dayName.charAt(0) + dayName.slice(1).toLowerCase());
     setText('officeDateBig',  dateLine);
     setText('officeTimeBig',  timeStr);
@@ -3424,10 +3239,7 @@
     const noteEl  = row.querySelector('.r-note');
     if (!titleEl || !noteEl) return;
     const dow = now.getDay();
-    if (dow === 1) {
-      titleEl.textContent = 'Rest Day';
-      noteEl.textContent  = 'Full rest from weightlifting & endurance. Recover completely.';
-    } else if (dow === 4) {
+    if (dow === 4) {
       titleEl.textContent = 'Morning Training — Endurance';
       noteEl.textContent  = 'Endurance session. Conversational pace, sustained effort.';
     } else {
@@ -3782,7 +3594,7 @@
       if (mdy) { const mo = MO[mdy[1].toLowerCase()]; if (mo !== undefined) return new Date(mdy[3] ? +mdy[3] : yr, mo, +mdy[2]); }
       const d = new Date(s); return (!isNaN(d) && d.getFullYear() > 2020) ? d : null;
     }
-    const phaseStart = (allRows && allRows[1] ? _pd(allRows[1][1]) : null) || new Date(2026, 4, 29);
+    const phaseStart = (allRows && allRows[1] ? _pd(allRows[1][1]) : null) || new Date(2026, 9, 13); // current 12-week phase start: Oct 13, 2026
     const msPerWeek = 7 * 24 * 3600 * 1000;
     const currentWeek = Math.max(0, Math.min(11, Math.floor((now - phaseStart) / msPerWeek)));
     let html = '';
@@ -3853,68 +3665,6 @@
     }
   }
 
-  function buildChemTracker(allRows) {
-    const countEl   = document.getElementById('chemCount');
-    const fillEl    = document.getElementById('chemFill');
-    const groupEl   = document.getElementById('chemGroups');
-    const donutEl   = document.getElementById('chemDonut');
-    const donutPct  = document.getElementById('chemDonutPct');
-    if (!groupEl) return;
-    const modules = [];
-    for (const row of allRows) {
-      const v = (row[15] || '').toString().trim().toUpperCase();
-      if (v !== 'TRUE' && v !== 'FALSE') continue;
-      for (let c = 15; c <= 23; c += 2) {
-        const boolVal = (row[c] || '').toString().trim().toUpperCase();
-        const name    = (row[c+1] || '').toString().trim();
-        if ((boolVal === 'TRUE' || boolVal === 'FALSE') && name) {
-          modules.push({ done: boolVal === 'TRUE', name });
-        }
-      }
-    }
-    if (!modules.length) return;
-    const total    = modules.length;
-    const complete = modules.filter(m => m.done).length;
-    const pct      = Math.round((complete / total) * 100);
-    if (countEl) countEl.textContent = complete + ' / ' + total + '  ·  ' + pct + '%';
-    if (fillEl)  fillEl.style.width  = pct + '%';
-    if (donutEl) donutEl.style.background =
-      'conic-gradient(rgba(62,207,110,0.85) 0% ' + pct + '%, rgba(255,255,255,0.07) ' + pct + '% 100%)';
-    if (donutPct) donutPct.textContent = pct + '%';
-    const groups = { 'CHEM': [], 'OC': [], 'BC': [] };
-    for (const m of modules) {
-      const key = m.name.startsWith('CHEM') ? 'CHEM'
-                : m.name.startsWith('OC')   ? 'OC'
-                : m.name.startsWith('BC')   ? 'BC' : 'CHEM';
-      groups[key].push(m);
-    }
-    const numOf = name => parseInt((name.match(/\d+/) || [0])[0]);
-    for (const k of Object.keys(groups)) groups[k].sort((a,b) => numOf(a.name) - numOf(b.name));
-    const GRP = {
-      CHEM: { label: 'General Chemistry',  color: 'rgba(96,165,250,0.85)',  bg: 'rgba(59,130,246,0.08)',  border: 'rgba(96,165,250,0.18)'  },
-      OC:   { label: 'Organic Chemistry',  color: 'rgba(251,146,60,0.9)',   bg: 'rgba(234,88,12,0.08)',   border: 'rgba(251,146,60,0.2)'   },
-      BC:   { label: 'Biochemistry',       color: 'rgba(167,139,250,0.9)',  bg: 'rgba(139,92,246,0.08)',  border: 'rgba(167,139,250,0.2)'  }
-    };
-    let html = '';
-    for (const [key, mods] of Object.entries(groups)) {
-      if (!mods.length) continue;
-      const g     = GRP[key];
-      const gDone = mods.filter(m => m.done).length;
-      const gPct  = Math.round((gDone / mods.length) * 100);
-      html += '<div class="chem-group">';
-      html += '<div class="chem-group-header" style="--grp-color:' + g.color + ';--grp-bg:' + g.bg + ';--grp-border:' + g.border + '">';
-      html += '<span class="chem-group-name">' + g.label + '</span>';
-      html += '<span class="chem-group-stats">' + gDone + ' / ' + mods.length + ' &nbsp;·&nbsp; ' + gPct + '%</span>';
-      html += '</div><div class="chem-chips">';
-      for (const m of mods) {
-        const short = m.name.replace(/\.\s.*$/, '');
-        html += '<span class="chem-chip ' + (m.done ? 'done' : 'todo') + '" title="' + m.name + '">' + short + '</span>';
-      }
-      html += '</div></div>';
-    }
-    groupEl.innerHTML = html;
-  }
-
   function updateProgramName(allRows) {
     const el = document.getElementById('ppProgramName');
     if (!el) return;
@@ -3942,7 +3692,6 @@
         updatePhysiqueStats(weekRows, rows);
         buildHeatmap12(weekRows, rows);
         updateSheetBtn(weekRows);
-        buildChemTracker(rows);
         updateProgramName(rows);
         const _sds = document.getElementById('syncDot');
         const _sls = document.getElementById('syncLabel');
@@ -4011,13 +3760,20 @@
       if (!isNaN(d) && d.getFullYear() > 2020 && d.getFullYear() < 2100) return d;
       return null;
     }
-    const PROG_START = (allRows && allRows[1] ? parseSheetDate(allRows[1][1]) : null) || new Date(2026, 5, 21);
+    const parsedStart = allRows && allRows[1] ? parseSheetDate(allRows[1][1]) : null;
+    const PROG_START = parsedStart || new Date(2026, 9, 13); // current 12-week phase start: Oct 13, 2026
     // Program is exactly 12 weeks (84 days) — compute end directly, don't rely on sheet cell
     const PROG_END   = new Date(PROG_START.getTime() + 84 * 24 * 3600 * 1000);
     const startW     = (allRows && allRows[1] ? parseFloat(allRows[1][2]) : NaN);
-    const dayNum   = Math.max(1, Math.floor((now - PROG_START) / MS_DAY) + 1);
-    const weekNum  = Math.ceil(dayNum / 7);
+    const dayNumRaw = Math.max(1, Math.floor((now - PROG_START) / MS_DAY) + 1);
+    // Clamp what's displayed to the 12-week window itself — a stale-but-valid start date
+    // (sheet not yet updated for a new cycle) should never read as "Week 16 of 12".
+    const dayNum   = Math.min(84, dayNumRaw);
+    const weekNum  = Math.min(12, Math.ceil(dayNum / 7));
     const daysLeft = Math.max(0, 84 - (dayNum - 1));
+    // If the start-date cell genuinely didn't parse, don't show confident-looking numbers
+    // built on a guessed fallback date — flag it plainly instead so it gets noticed and fixed.
+    const dateUnresolved = !parsedStart;
     _checkinDOW = PROG_START.getDay();
     // Re-evaluate stats dot now that we have the real check-in day
     if (typeof initStatsNotif === 'function') initStatsNotif();
@@ -4036,9 +3792,11 @@
     const marker = document.getElementById('ppBarMarker');
     if (fill)   fill.style.width = pct + '%';
     if (marker) marker.style.left = pct + '%';
-    set('phDayWeek',   'DAY ' + dayNum + ' · WEEK ' + weekNum + ' of 12');
+    set('phDayWeek', dateUnresolved ? 'RECALIBRATING — CHECK SHEET START DATE' : ('DAY ' + dayNum + ' · WEEK ' + weekNum + ' of 12'));
+    const phDayWeekEl = document.getElementById('phDayWeek');
+    if (phDayWeekEl) phDayWeekEl.classList.toggle('unresolved', dateUnresolved);
     // Cache for daily splash
-    window._splashData = { dayNum, weekNum, daysLeft, nextCheckin, daysToNext, loaded: true };
+    window._splashData = { dayNum, weekNum, daysLeft, nextCheckin, daysToNext, loaded: true, dateUnresolved };
     const _dm = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     const _fmt = d => _dm[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
     set('ppDateStart', _fmt(PROG_START));
@@ -4145,23 +3903,20 @@
       });
   }
 
+  // Every daily task — morning ritual, office hours, calendar events — lives in this one
+  // list and contributes to the single day-completion state. No separate evening/daily list.
   function renderCalendarEvents(events) {
     const officeList  = document.getElementById('officeHoursList');
-    const dailyList   = document.getElementById('dailyList');
     const placeholder = document.getElementById('calPlaceholder');
     _allCalEvents = Array.isArray(events) ? events : [];
     const _p2 = n => String(n).padStart(2, '0');
     const _td = new Date();
     const todayStr = _td.getFullYear() + '-' + _p2(_td.getMonth()+1) + '-' + _p2(_td.getDate());
     const todayTimed = _allCalEvents.filter(ev => ev.date === todayStr && !ev.allDay);
-    [officeList, dailyList].forEach(list => {
-      if (list) list.querySelectorAll('.cal-event').forEach(el => el.remove());
-    });
-    [officeList, dailyList].forEach(list => {
-      if (!list) return;
-      const routine = list.closest('.routine');
-      if (routine && !routine.classList.contains('section-complete')) checkSectionCompletion(routine);
-    });
+    if (!officeList) return;
+    officeList.querySelectorAll('.cal-event').forEach(el => el.remove());
+    const routine = officeList.closest('.routine');
+    if (routine && !routine.classList.contains('section-complete')) checkSectionCompletion(routine);
     if (todayTimed.length === 0) {
       if (placeholder) { const note = placeholder.querySelector('.r-note'); if (note) note.textContent = 'No events scheduled — calendar is clear for this window.'; }
       return;
@@ -4171,9 +3926,6 @@
     todayTimed.forEach(ev => {
       const start = ev.start && (ev.start.dateTime || ev.start.date);
       const end   = ev.end   && (ev.end.dateTime   || ev.end.date);
-      const startHour = start ? new Date(start).getHours() : 8;
-      const targetList = (startHour >= 16 && dailyList) ? dailyList : officeList;
-      if (!targetList) return;
       const li = document.createElement('li');
       li.className = 'r-row cal-event';
       li.setAttribute('tabindex', '0');
@@ -4190,23 +3942,15 @@
         '</div>';
       li.addEventListener('click', () => toggleRow(li));
       li.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleRow(li); } });
-      if (targetList === officeList) {
-        const firstStatic = officeList.querySelector('li[data-cond]');
-        if (firstStatic) officeList.insertBefore(li, firstStatic);
-        else officeList.appendChild(li);
-      } else {
-        dailyList.appendChild(li);
-      }
+      const firstStatic = officeList.querySelector('li.office-row');
+      if (firstStatic) officeList.insertBefore(li, firstStatic);
+      else officeList.appendChild(li);
     });
     const _calSaved = loadCheckState();
-    [officeList, dailyList].forEach(list => {
-      if (!list) return;
-      list.querySelectorAll('.cal-event[data-task]').forEach(row => {
-        if (_calSaved[row.dataset.task]) { row.classList.add('done'); row.setAttribute('aria-checked', 'true'); }
-      });
-      const routine = list.closest('.routine');
-      if (routine) checkSectionCompletion(routine);
+    officeList.querySelectorAll('.cal-event[data-task]').forEach(row => {
+      if (_calSaved[row.dataset.task]) { row.classList.add('done'); row.setAttribute('aria-checked', 'true'); }
     });
+    if (routine) checkSectionCompletion(routine);
     updateOfficeNotif();
   }
 
@@ -4239,7 +3983,7 @@
 
   // MORNING RITUAL gate — proxies the (visually hidden) Morning Routine + Office Hours heads so
   // the whole of Part I reads as one small, collapsible first step rather than an open-ended list.
-  const RITUAL_WINDOWS = ['morning', 'office'];
+  const RITUAL_WINDOWS = ['morning']; // Morning Routine + Office Hours are now one merged section
   function ritualRoutines() {
     return RITUAL_WINDOWS.map(w => document.querySelector('.routine[data-window="' + w + '"]')).filter(Boolean);
   }
