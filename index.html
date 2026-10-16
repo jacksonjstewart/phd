@@ -14,11 +14,11 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%230a0806'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Georgia,serif' font-size='24' fill='%23c9a14a'%3EDr.%3C/text%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Inter:wght@400;500;600;700&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet" />
 
-<!-- Library photograph — served from /lab/library.webp on GitHub Pages (CONFIRMED working).
+<!-- Library photograph — served from /lab/library.jpg on GitHub Pages. Bump ?v= in the preload + CSS url when the image changes.
      Wikimedia is NOT used (blocks hotlinks). Source: Long Room, Trinity College Dublin · CC BY-SA 3.0 -->
-<link rel="preload" as="image" fetchpriority="high" href="./library.webp" />
+<link rel="preload" as="image" fetchpriority="high" href="./library.jpg?v=2" />
 
 <!-- Chart.js loaded deferred — only used by Statistics section -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js" defer></script>
@@ -120,7 +120,7 @@
   .bg-photo {
     position: fixed; inset: 0; z-index: -3;
     pointer-events: none;
-    background-image: url('./library.webp');
+    background-image: url('./library.jpg?v=2');
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
@@ -339,10 +339,20 @@
   }
   .sg-main {
     display: block;
+    font-family: 'Cinzel Decorative', var(--serif);
     font-style: normal;
-    font-weight: 400;
-    color: var(--cyan-bright);
+    font-weight: 700;
+    font-size: 0.8em;
+    letter-spacing: 0.06em;
+    line-height: 1.25;
+    text-wrap: balance;
+    color: #8ff7ff;
+    text-shadow:
+      0 0 6px rgba(143,247,255,0.55),
+      0 0 18px rgba(79,214,214,0.4),
+      0 0 38px rgba(79,214,214,0.22);
   }
+  .sg-main .nb { white-space: nowrap; }
   .sg-sub {
     display: block;
     font-family: var(--mono); font-style: normal;
@@ -2565,7 +2575,7 @@
     </div>
   </div>
   <h1 class="splash-greeting">
-    <span class="sg-main" id="splashGreeting">THE GREAT WINTER LOCK-IN OF 2026</span>
+    <span class="sg-main" id="splashGreeting">THE GREAT WINTER <span class="nb">LOCK-IN</span> <span class="nb">OF 2026</span></span>
     <span class="sg-sub">Doctor of Philosophy &middot; Scientist &middot; Professor</span>
   </h1>
 </section>
@@ -2587,7 +2597,7 @@
     </header>
 
     <!-- MORNING RITUAL toggle — static, scrolls with the page (not fixed like the top nav) -->
-    <button type="button" class="ritual-nav-btn" id="morningRitualGate" onclick="toggleMorningRitual()" aria-expanded="false" aria-controls="officeHoursList">
+    <button type="button" class="ritual-nav-btn" id="morningRitualGate" onclick="toggleMorningRitual()" aria-expanded="true" aria-controls="officeHoursList">
       <span class="ritual-nav-dot" aria-hidden="true"></span>
       Morning Ritual
       <span class="ritual-nav-chevron" aria-hidden="true">+</span>
@@ -3175,7 +3185,8 @@
     setText('splashDay',      dayName);
     setText('splashDate',     dateLine.toUpperCase());
     setText('splashTime',     timeStr);
-    setText('splashGreeting', 'THE GREAT WINTER LOCK-IN OF 2026');
+    const _sg = document.getElementById('splashGreeting');
+    if (_sg) _sg.innerHTML = 'THE GREAT WINTER <span class="nb">LOCK-IN</span> <span class="nb">OF 2026</span>';
     setText('officeDayBig',   dayName.charAt(0) + dayName.slice(1).toLowerCase());
     setText('officeDateBig',  dateLine);
     setText('officeTimeBig',  timeStr);
@@ -4001,16 +4012,17 @@
     checkMorningGateVisibility();
     const incomplete = routines.filter(r => !r.classList.contains('section-complete'));
     if (!incomplete.length) return;
-    // Always start collapsed on load/app-open, regardless of the time-of-day auto-open that
-    // initRoutines() applies elsewhere. Does not touch checkbox state, section-complete state,
-    // ledger recording, or stats — purely the initial expand/collapse presentation.
+    // Always start expanded on load/app-open, regardless of the time-of-day auto-open that
+    // initRoutines() applies elsewhere. The Morning Ritual button still collapses/expands it.
+    // Does not touch checkbox state, section-complete state, ledger recording, or stats —
+    // purely the initial expand/collapse presentation.
     incomplete.forEach(r => {
-      r.classList.remove('open');
+      r.classList.add('open');
       const head = r.querySelector('.routine-head');
-      if (head) head.setAttribute('aria-expanded', 'false');
+      if (head) head.setAttribute('aria-expanded', 'true');
     });
-    gate.classList.remove('open');
-    gate.setAttribute('aria-expanded', 'false');
+    gate.classList.add('open');
+    gate.setAttribute('aria-expanded', 'true');
   }
   function toggleMorningRitual() {
     const gate = document.getElementById('morningRitualGate');
