@@ -3884,19 +3884,30 @@
         const rows = parseCSV(text);
         const weekRows = rows.slice(3, 15);
         const labels = weekRows.map((r,i) => r[0] || ('W' + (i+1)));
-        window._physiqueData = { startW: num(rows[1] ? rows[1][2] : null), goalW: (function(){ const md = weekRows.map(function(r){return num(r[3]);}); for (var i=md.length-1;i>=0;i--){ if (md[i]!=null) return md[i]; } return 140; })(), actual: weekRows.map(function(r){return num(r[5]);}), min: weekRows.map(function(r){return num(r[2]);}), target: weekRows.map(function(r){return num(r[3]);}), max: weekRows.map(function(r){return num(r[4]);}), labels: labels };
-        renderWeightChart(
-          labels,
-          weekRows.map(r => num(r[2])),
-          weekRows.map(r => num(r[3])),
-          weekRows.map(r => num(r[4])),
-          weekRows.map(r => num(r[5]))
-        );
-        updatePhysiqueStats(weekRows, rows);
-        buildHeatmap12(weekRows, rows);
-        updateSheetBtn(weekRows);
-        updateProgramName(rows);
-        if (typeof nwRenderStats === 'function') nwRenderStats();
+        window._physiqueData = { status: 'ok', startW: (function(){ var v = num(rows[1] ? rows[1][2] : null); if (v == null || isNaN(v)) { for (var ri = 0; ri < 3 && (v == null || isNaN(v)); ri++) { for (var ci = 0; ci < (rows[ri]||[]).length; ci++) { var c = num(rows[ri][ci]); if (c != null && !isNaN(c) && c > 80 && c < 400) { v = c; break; } } } } return v; })(), goalW: (function(){ const md = weekRows.map(function(r){return num(r[3]);}); for (var i=md.length-1;i>=0;i--){ if (md[i]!=null) return md[i]; } return 140; })(), actual: weekRows.map(function(r){return num(r[5]);}), min: weekRows.map(function(r){return num(r[2]);}), target: weekRows.map(function(r){return num(r[3]);}), max: weekRows.map(function(r){return num(r[4]);}), labels: labels };
+        try { if (typeof nwRenderStats === 'function') nwRenderStats(); } catch (e) { console.warn('[PhD Pro©] nw stats', e); }
+        try {
+          renderWeightChart(
+            labels,
+            weekRows.map(r => num(r[2])),
+            weekRows.map(r => num(r[3])),
+            weekRows.map(r => num(r[4])),
+            weekRows.map(r => num(r[5]))
+          );
+        } catch (e) { console.warn('[PhD Pro©] post-load step failed', e); }
+        try {
+          updatePhysiqueStats(weekRows, rows);
+        } catch (e) { console.warn('[PhD Pro©] post-load step failed', e); }
+        try {
+          buildHeatmap12(weekRows, rows);
+        } catch (e) { console.warn('[PhD Pro©] post-load step failed', e); }
+        try {
+          updateSheetBtn(weekRows);
+        } catch (e) { console.warn('[PhD Pro©] post-load step failed', e); }
+        try {
+          updateProgramName(rows);
+        } catch (e) { console.warn('[PhD Pro©] post-load step failed', e); }
+        console.info('[PhD Pro©] physique data', window._physiqueData);
         const _sds = document.getElementById('syncDot');
         const _sls = document.getElementById('syncLabel');
         if (_sds) { _sds.classList.remove('error','demo'); }
@@ -3915,8 +3926,10 @@
           [158.0,156.0,153.8,151.7,149.7,147.8,145.8,144.0,142.1,140.3,138.5,136.7],
           [158.0,156.8,155.4,null,null,null,null,null,null,null,null,null]
         );
-        window._physiqueData = { sample: true, startW: 162.4, goalW: 140, actual: [160.1,158.6,157.2,null,null,null,null,null,null,null,null,null], min: [158.0,156.7,155.5,154.2,152.9,151.7,150.5,149.3,148.0,146.8,145.5,144.3], target: [158.0,156.4,154.8,153.2,151.7,150.2,148.7,147.2,145.8,144.4,142.9,140.0], max: [158.0,156.0,153.8,151.7,149.7,147.8,145.8,144.0,142.1,140.3,138.5,136.7], labels: ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12'] };
+        window._physiqueData = { status: 'fetch-failed', sample: true, startW: 162.4, goalW: 140, actual: [160.1,158.6,157.2,null,null,null,null,null,null,null,null,null], min: [158.0,156.7,155.5,154.2,152.9,151.7,150.5,149.3,148.0,146.8,145.5,144.3], target: [158.0,156.4,154.8,153.2,151.7,150.2,148.7,147.2,145.8,144.4,142.9,140.0], max: [158.0,156.0,153.8,151.7,149.7,147.8,145.8,144.0,142.1,140.3,138.5,136.7], labels: ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12'] };
         updateSheetBtn(null);
+        try { if (typeof nwRenderStats === 'function') nwRenderStats(); } catch (_) {}
+        if (!window._physRetried) { window._physRetried = true; setTimeout(loadPhysiqueFromCSV, 5000); }
       });
   }
 
@@ -5493,7 +5506,7 @@
     let pct = 0;
     if (ok && ps.startW > ps.goalW) pct = Math.max(0, Math.min(100, ps.lost / (ps.startW - ps.goalW) * 100));
     if (wtBar) wtBar.style.width = pct.toFixed(1) + '%';
-    setText('nwWtCap', !ok ? 'Weight syncing\u2026'
+    setText('nwWtCap', !ok ? (pd && pd.sample ? 'Weight sheet unreachable \u00b7 retrying' : (pd && pd.status === 'ok' ? 'No start weight found in sheet (C2)' : 'Weight loading\u2026'))
       : Math.round(pct) + '% to ' + ps.goalW.toFixed(0) + ' lb' + (ps.weeksIn > 0 ? ' \u00b7 ' + (ps.avgWk >= 0 ? '\u2212' : '+') + Math.abs(ps.avgWk).toFixed(1) + ' lb/wk' : ''));
   }
 
