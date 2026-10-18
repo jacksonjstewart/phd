@@ -120,7 +120,7 @@
   /* Photo: sits behind everything, faded so it reads as atmosphere, not content.
      Tune --bg-photo-opacity (0 = hidden, 1 = full strength). */
   .bg-photo {
-    --bg-photo-opacity: 0.55;
+    --bg-photo-opacity: 0.42;
     position: fixed; top: 0; left: 0; width: 100%;
     height: 100vh; height: 100lvh;
     z-index: -3;
@@ -143,8 +143,8 @@
     z-index: -2;
     pointer-events: none;
     background:
-      radial-gradient(ellipse at 50% 38%, rgba(6,5,3,0) 0%, rgba(6,5,3,0.55) 100%),
-      linear-gradient(180deg, rgba(6,5,3,0.55) 0%, rgba(6,5,3,0.18) 35%, rgba(6,5,3,0.18) 65%, rgba(6,5,3,0.65) 100%);
+      radial-gradient(ellipse at 50% 38%, rgba(6,5,3,0.08) 0%, rgba(6,5,3,0.62) 100%),
+      linear-gradient(180deg, rgba(6,5,3,0.6) 0%, rgba(6,5,3,0.28) 35%, rgba(6,5,3,0.28) 65%, rgba(6,5,3,0.7) 100%);
   }
 
   /* ============================================================
@@ -1051,6 +1051,11 @@
   .nw-stats {
     display: none; flex-direction: column; gap: 14px;
     max-height: 600px;
+    padding: 14px 14px 12px;
+    background: rgba(6,5,3,0.62);
+    border: 1px solid rgba(201,161,74,0.16);
+    border-radius: 8px;
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
   }
   .nw-wrap.nw-complete .nw-list { display: none; }
   .nw-wrap.nw-complete .nw-stats { display: flex; }
@@ -1061,7 +1066,7 @@
   .nw-heat-block { display: flex; flex-direction: column; gap: 4px; }
   .nw-heat-block-label {
     font-family: var(--mono); font-size: 7px; letter-spacing: 0.2em;
-    text-transform: uppercase; color: var(--text-faint);
+    text-transform: uppercase; color: var(--text-dim);
   }
   .nw-heat-grid {
     display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px;
@@ -1071,10 +1076,10 @@
     background: rgba(255,255,255,0.045);
     border: 1px solid rgba(255,255,255,0.03);
   }
-  .nw-heat-cell.earned { background: linear-gradient(180deg,var(--gold-bright),var(--gold)); box-shadow: 0 0 4px rgba(201,161,74,0.4); border: none; }
-  .nw-heat-cell.missed { background: rgba(198,92,72,0.22); border-color: rgba(198,92,72,0.3); }
+  .nw-heat-cell.earned { background: linear-gradient(180deg,var(--green-bright),var(--green)); box-shadow: 0 0 5px rgba(67,181,124,0.55); border: none; }
+  .nw-heat-cell.missed { background: rgba(198,92,72,0.32); border-color: rgba(198,92,72,0.4); }
   .nw-heat-cell.today  { outline: 1px solid var(--gold-bright); outline-offset: 1px; }
-  .nw-heat-cell.future { background: rgba(255,255,255,0.025); }
+  .nw-heat-cell.future { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.07); }
   .nw-weight-card { padding-top: 4px; border-top: 1px solid rgba(201,161,74,0.12); }
   .nw-weight-card .wg-svg { width: 100%; height: auto; }
   @media (max-width: 880px) {
@@ -5307,6 +5312,7 @@
   // cascade (3-block heat map + weight graph).
   // ============================================================
   const NW_TASKS = ['wake-0430', 'hydration-supps', 'training-complete', 'cals-protein', 'push-pull-raise'];
+  const NW_PREFILLED = ['2026-10-13', '2026-10-14', '2026-10-15', '2026-10-16']; // completed before the tracker existed
   const NW_START = '2026-10-13';
   const NW_END   = '2027-02-01';
 
@@ -5400,12 +5406,12 @@
     const todayStr = todayISO();
     let html = '';
     dates.forEach(function (iso) {
-      const didAny = !!(log[iso] && log[iso].length);
-      const didAll = !!(log[iso] && NW_TASKS.every(function (t) { return log[iso].indexOf(t) !== -1; }));
+      const didAll = NW_PREFILLED.indexOf(iso) !== -1 ||
+        !!(log[iso] && NW_TASKS.every(function (t) { return log[iso].indexOf(t) !== -1; }));
       let cls = 'nw-heat-cell';
       if (didAll) cls += ' earned';
       else if (iso > todayStr) cls += ' future';
-      else if (iso < todayStr) cls += didAny ? ' earned' : ' missed';
+      else if (iso < todayStr) cls += ' missed';
       if (iso === todayStr) cls += ' today';
       html += '<div class="' + cls + '" title="' + iso + '"></div>';
     });
