@@ -1051,18 +1051,35 @@
   .nw-stats {
     display: none; flex-direction: column; gap: 14px;
     max-height: 600px;
-    padding: 14px 14px 12px;
-    background: rgba(6,5,3,0.62);
-    border: 1px solid rgba(201,161,74,0.16);
+    padding: 12px 12px 10px;
+    background: rgba(6,5,3,0.32);
     border-radius: 8px;
-    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
   }
+  .nw-hero { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; }
+  .nw-hero-main { display: flex; align-items: baseline; gap: 5px; }
+  .nw-hero-day { font-family: var(--serif); font-size: 30px; line-height: 1; color: var(--gold-bright); font-weight: 400; }
+  .nw-hero-of { font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em; color: var(--text-dim); }
+  .nw-hero-side { display: flex; flex-direction: column; align-items: flex-end; gap: 3px;
+    font-family: var(--mono); font-size: 7.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-dim); }
+  .nw-hero-side span:last-child { color: var(--green-bright); }
+  .nw-bar { height: 2px; border-radius: 2px; background: rgba(255,255,255,0.08); overflow: hidden; margin-top: -6px; }
+  .nw-bar > i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--gold), var(--gold-bright)); transition: width 900ms cubic-bezier(0.16,1,0.3,1); }
+  .nw-bar-w { margin-top: -6px; }
+  .nw-bar-w > i { background: linear-gradient(90deg, var(--green), var(--green-bright)); }
+  .nw-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+  .nw-kpi { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+  .nw-kpi-v { font-family: var(--mono); font-size: 13px; color: var(--text); letter-spacing: 0.01em; }
+  .nw-kpi-good .nw-kpi-v { color: var(--green-bright); }
+  .nw-kpi-l { white-space: nowrap; font-family: var(--mono); font-size: 7px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-dim); }
+  .nw-cap { margin-top: -8px; font-family: var(--mono); font-size: 7.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-dim); }
   .nw-wrap.nw-complete .nw-list { display: none; }
   .nw-wrap.nw-complete .nw-stats { display: flex; }
   .nw-stats-head {
     font-family: var(--mono); font-size: 8px; letter-spacing: 0.28em;
-    text-transform: uppercase; color: rgba(201,161,74,0.65);
+    text-transform: uppercase; color: rgba(201,161,74,0.7);
   }
+  .nw-stats-head span { color: var(--green-bright); margin-left: 6px; }
   .nw-heat-block { display: flex; flex-direction: column; gap: 4px; }
   .nw-heat-block-label {
     font-family: var(--mono); font-size: 7px; letter-spacing: 0.2em;
@@ -1080,7 +1097,7 @@
   .nw-heat-cell.missed { background: rgba(198,92,72,0.32); border-color: rgba(198,92,72,0.4); }
   .nw-heat-cell.today  { outline: 1px solid var(--gold-bright); outline-offset: 1px; }
   .nw-heat-cell.future { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.07); }
-  .nw-weight-card { padding-top: 4px; border-top: 1px solid rgba(201,161,74,0.12); }
+  .nw-weight-card { padding-top: 2px; }
   .nw-weight-card .wg-svg { width: 100%; height: auto; }
   @media (max-width: 880px) {
     .nw-heat-grid { grid-template-columns: repeat(14, 1fr); }
@@ -2782,7 +2799,20 @@
   </div>
 
   <div class="nw-stats" id="nwStats">
-    <div class="nw-stats-head">Consistency</div>
+    <div class="nw-hero">
+      <div class="nw-hero-main"><span class="nw-hero-day" id="nwDay">&mdash;</span><span class="nw-hero-of" id="nwDayOf"></span></div>
+      <div class="nw-hero-side"><span id="nwWeekLbl"></span><span id="nwStreakLbl"></span></div>
+    </div>
+    <div class="nw-bar"><i id="nwDayBar"></i></div>
+    <div class="nw-kpis">
+      <div class="nw-kpi"><span class="nw-kpi-v" id="nwKStart">&mdash;</span><span class="nw-kpi-l">Start</span></div>
+      <div class="nw-kpi"><span class="nw-kpi-v" id="nwKNow">&mdash;</span><span class="nw-kpi-l" id="nwKNowL">Now</span></div>
+      <div class="nw-kpi nw-kpi-good"><span class="nw-kpi-v" id="nwKLost">&mdash;</span><span class="nw-kpi-l">Lost</span></div>
+      <div class="nw-kpi"><span class="nw-kpi-v" id="nwKGoal">&mdash;</span><span class="nw-kpi-l">To go</span></div>
+    </div>
+    <div class="nw-bar nw-bar-w"><i id="nwWtBar"></i></div>
+    <div class="nw-cap" id="nwWtCap"></div>
+    <div class="nw-stats-head">Perfect days <span id="nwPerfect"></span></div>
     <div class="nw-heat-block">
       <div class="nw-heat-block-label">Oct 13 &ndash; Nov 22</div>
       <div class="nw-heat-grid" id="nwHeatA"></div>
@@ -3866,6 +3896,7 @@
         buildHeatmap12(weekRows, rows);
         updateSheetBtn(weekRows);
         updateProgramName(rows);
+        if (typeof nwRenderStats === 'function') nwRenderStats();
         const _sds = document.getElementById('syncDot');
         const _sls = document.getElementById('syncLabel');
         if (_sds) { _sds.classList.remove('error','demo'); }
@@ -3884,7 +3915,7 @@
           [158.0,156.0,153.8,151.7,149.7,147.8,145.8,144.0,142.1,140.3,138.5,136.7],
           [158.0,156.8,155.4,null,null,null,null,null,null,null,null,null]
         );
-        window._physiqueData = { startW: 162.4, goalW: 140, actual: [160.1,158.6,157.2,null,null,null,null,null,null,null,null,null], min: [158.0,156.7,155.5,154.2,152.9,151.7,150.5,149.3,148.0,146.8,145.5,144.3], target: [158.0,156.4,154.8,153.2,151.7,150.2,148.7,147.2,145.8,144.4,142.9,140.0], max: [158.0,156.0,153.8,151.7,149.7,147.8,145.8,144.0,142.1,140.3,138.5,136.7], labels: ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12'] };
+        window._physiqueData = { sample: true, startW: 162.4, goalW: 140, actual: [160.1,158.6,157.2,null,null,null,null,null,null,null,null,null], min: [158.0,156.7,155.5,154.2,152.9,151.7,150.5,149.3,148.0,146.8,145.5,144.3], target: [158.0,156.4,154.8,153.2,151.7,150.2,148.7,147.2,145.8,144.4,142.9,140.0], max: [158.0,156.0,153.8,151.7,149.7,147.8,145.8,144.0,142.1,140.3,138.5,136.7], labels: ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12'] };
         updateSheetBtn(null);
       });
   }
@@ -5417,6 +5448,10 @@
     });
     wrap.innerHTML = html;
   }
+  function nwDayDone(iso, log) {
+    return NW_PREFILLED.indexOf(iso) !== -1 ||
+      !!(log[iso] && NW_TASKS.every(function (t) { return log[iso].indexOf(t) !== -1; }));
+  }
   function nwRenderStats() {
     const all = nwIsoRange(NW_START, NW_END);
     const third = Math.ceil(all.length / 3);
@@ -5424,6 +5459,42 @@
     nwRenderHeatBlock('nwHeatB', all.slice(third, third * 2));
     nwRenderHeatBlock('nwHeatC', all.slice(third * 2));
     if (typeof renderWeightGraph === 'function') renderWeightGraph('nwWeightCard');
+
+    // ---- progress: day / week / streak / perfect days ----
+    const log = nwLoadLog(), todayStr = todayISO(), total = all.length;
+    const idx = all.indexOf(todayStr);
+    const dayNum = todayStr < NW_START ? 0 : (idx === -1 ? total : idx + 1);
+    const weekNum = dayNum === 0 ? 0 : Math.floor((dayNum - 1) / 7) + 1, weekTot = Math.ceil(total / 7);
+    setText('nwDay', dayNum === 0 ? '\u2014' : String(dayNum));
+    setText('nwDayOf', '/ ' + total);
+    setText('nwWeekLbl', dayNum === 0 ? 'Starts Oct 13' : 'Week ' + weekNum + ' of ' + weekTot);
+    const dayBar = document.getElementById('nwDayBar'); if (dayBar) dayBar.style.width = (dayNum / total * 100).toFixed(1) + '%';
+    let perfect = 0, streak = 0;
+    all.forEach(function (iso) { if (iso <= todayStr && nwDayDone(iso, log)) perfect++; });
+    for (let k = Math.max(0, dayNum - 1); k >= 0 && dayNum > 0; k--) {
+      if (nwDayDone(all[k], log)) streak++;
+      else if (all[k] === todayStr) continue;   // today still in progress
+      else break;
+    }
+    setText('nwStreakLbl', streak + '-day streak');
+    setText('nwPerfect', perfect + ' / ' + dayNum);
+
+    // ---- weight (published CSV, first tab: start weight + weekly actuals) ----
+    const pd = window._physiqueData, ps = (typeof physiqueStats === 'function') ? physiqueStats() : null;
+    const ok = ps && pd && !pd.sample;
+    if (!ok) { const wc = document.getElementById('nwWeightCard'); if (wc) wc.innerHTML = ''; }
+    const f1 = function (v) { return (v == null || isNaN(v)) ? '\u2014' : v.toFixed(1); };
+    setText('nwKStart', ok ? f1(ps.startW) : '\u2014');
+    setText('nwKNow',   ok ? f1(ps.currentW) : '\u2014');
+    setText('nwKNowL',  ok && ps.weeksIn ? 'Now W' + ps.weeksIn : 'Now');
+    setText('nwKLost',  ok ? (ps.lost > 0 ? '\u2212' + ps.lost.toFixed(1) : f1(ps.lost)) : '\u2014');
+    setText('nwKGoal',  ok ? f1(Math.max(0, ps.toGo)) : '\u2014');
+    const wtBar = document.getElementById('nwWtBar');
+    let pct = 0;
+    if (ok && ps.startW > ps.goalW) pct = Math.max(0, Math.min(100, ps.lost / (ps.startW - ps.goalW) * 100));
+    if (wtBar) wtBar.style.width = pct.toFixed(1) + '%';
+    setText('nwWtCap', !ok ? 'Weight syncing\u2026'
+      : Math.round(pct) + '% to ' + ps.goalW.toFixed(0) + ' lb' + (ps.weeksIn > 0 ? ' \u00b7 ' + (ps.avgWk >= 0 ? '\u2212' : '+') + Math.abs(ps.avgWk).toFixed(1) + ' lb/wk' : ''));
   }
 
   function initNightwingDailies() {
