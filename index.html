@@ -3885,6 +3885,7 @@
         const weekRows = rows.slice(3, 15);
         const labels = weekRows.map((r,i) => r[0] || ('W' + (i+1)));
         window._physiqueData = { status: 'ok', startW: (function(){ var v = num(rows[1] ? rows[1][2] : null); if (v == null || isNaN(v)) { for (var ri = 0; ri < 3 && (v == null || isNaN(v)); ri++) { for (var ci = 0; ci < (rows[ri]||[]).length; ci++) { var c = num(rows[ri][ci]); if (c != null && !isNaN(c) && c > 80 && c < 400) { v = c; break; } } } } return v; })(), goalW: (function(){ const md = weekRows.map(function(r){return num(r[3]);}); for (var i=md.length-1;i>=0;i--){ if (md[i]!=null) return md[i]; } return 140; })(), actual: weekRows.map(function(r){return num(r[5]);}), min: weekRows.map(function(r){return num(r[2]);}), target: weekRows.map(function(r){return num(r[3]);}), max: weekRows.map(function(r){return num(r[4]);}), labels: labels };
+        if (window._nwBackendPD) window._physiqueData = window._nwBackendPD;   // backend weights win
         try { if (typeof nwRenderStats === 'function') nwRenderStats(); } catch (e) { console.warn('[PhD Pro©] nw stats', e); }
         try {
           renderWeightChart(
@@ -3927,6 +3928,7 @@
           [158.0,156.8,155.4,null,null,null,null,null,null,null,null,null]
         );
         window._physiqueData = { status: 'fetch-failed', sample: true, startW: 162.4, goalW: 140, actual: [160.1,158.6,157.2,null,null,null,null,null,null,null,null,null], min: [158.0,156.7,155.5,154.2,152.9,151.7,150.5,149.3,148.0,146.8,145.5,144.3], target: [158.0,156.4,154.8,153.2,151.7,150.2,148.7,147.2,145.8,144.4,142.9,140.0], max: [158.0,156.0,153.8,151.7,149.7,147.8,145.8,144.0,142.1,140.3,138.5,136.7], labels: ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12'] };
+        if (window._nwBackendPD) window._physiqueData = window._nwBackendPD;
         updateSheetBtn(null);
         try { if (typeof nwRenderStats === 'function') nwRenderStats(); } catch (_) {}
         if (!window._physRetried) { window._physRetried = true; setTimeout(loadPhysiqueFromCSV, 5000); }
@@ -5426,6 +5428,33 @@
     }
   }
 
+  // ---- weights from the Apps Script backend (PHYSIQUE ACADEMY baseline/weekly + first-tab daily) ----
+  function nwLoadWeights(attempt) {
+    attempt = attempt || 0;
+    if (typeof APPS_SCRIPT_URL === 'undefined' || !APPS_SCRIPT_URL) return;
+    fetch(APPS_SCRIPT_URL + '?action=getWeights&_=' + Date.now(), { cache: 'no-store', redirect: 'follow' })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject('http'); })
+      .then(function (w) {
+        if (!w || w.ok !== true) { window._nwBackendStale = true; return; }   // old script: returns calendar array
+        window._nwBackendStale = false;
+        const pdOld = window._physiqueData || {};
+        const tgt = w.target || [];
+        let goal = null; for (let i = tgt.length - 1; i >= 0; i--) { if (tgt[i] != null) { goal = tgt[i]; break; } }
+        window._physiqueData = {
+          status: 'ok', source: 'backend',
+          startW: (w.baseline != null) ? w.baseline : (pdOld.sample ? null : pdOld.startW),
+          goalW: goal != null ? goal : (pdOld.sample ? 140 : (pdOld.goalW != null ? pdOld.goalW : 140)),
+          actual: w.actual || [], min: w.min || [], target: tgt, max: w.max || [],
+          labels: ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12'],
+          daily: w.daily || []
+        };
+        window._nwBackendPD = window._physiqueData;
+        try { renderWeightChart(window._physiqueData.labels, w.min || [], tgt, w.max || [], w.actual || []); } catch (_) {}
+        nwRenderStats();
+      })
+      .catch(function () { if (attempt < 2) setTimeout(function () { nwLoadWeights(attempt + 1); }, 4000); });
+  }
+
   function nwLoadFromSheets() {
     if (typeof APPS_SCRIPT_URL === 'undefined' || !APPS_SCRIPT_URL) { nwApplyState(); return; }
     fetch(APPS_SCRIPT_URL + '?action=getNwCompletions&date=' + encodeURIComponent(todayISO()) + '&_=' + Date.now(), { cache: 'no-store', redirect: 'follow' })
@@ -5498,16 +5527,22 @@
     if (!ok) { const wc = document.getElementById('nwWeightCard'); if (wc) wc.innerHTML = ''; }
     const f1 = function (v) { return (v == null || isNaN(v)) ? '\u2014' : v.toFixed(1); };
     setText('nwKStart', ok ? f1(ps.startW) : '\u2014');
-    setText('nwKNow',   ok ? f1(ps.currentW) : '\u2014');
-    setText('nwKNowL',  ok && ps.weeksIn ? 'Now W' + ps.weeksIn : 'Now');
-    setText('nwKLost',  ok ? (ps.lost > 0 ? '\u2212' + ps.lost.toFixed(1) : f1(ps.lost)) : '\u2014');
-    setText('nwKGoal',  ok ? f1(Math.max(0, ps.toGo)) : '\u2014');
+    let curW = ok ? ps.currentW : null, curTag = ok && ps.weeksIn ? 'Now W' + ps.weeksIn : 'Now';
+    if (ok && pd.daily && pd.daily.length) { curW = pd.daily[pd.daily.length - 1]; curTag = 'Now \u00b7 D' + pd.daily.length; }
+    const lostW = ok ? ps.startW - curW : null, toGoW = ok ? Math.max(0, curW - ps.goalW) : null;
+    setText('nwKNow',   ok ? f1(curW) : '\u2014');
+    setText('nwKNowL',  curTag);
+    setText('nwKLost',  ok ? (lostW > 0 ? '\u2212' + lostW.toFixed(1) : f1(lostW)) : '\u2014');
+    setText('nwKGoal',  ok ? f1(toGoW) : '\u2014');
+    let pace = null;
+    if (ok && pd.daily && pd.daily.length > 1) pace = lostW / (pd.daily.length / 7);
+    else if (ok && ps.weeksIn > 0) pace = ps.avgWk;
     const wtBar = document.getElementById('nwWtBar');
     let pct = 0;
-    if (ok && ps.startW > ps.goalW) pct = Math.max(0, Math.min(100, ps.lost / (ps.startW - ps.goalW) * 100));
+    if (ok && ps.startW > ps.goalW) pct = Math.max(0, Math.min(100, lostW / (ps.startW - ps.goalW) * 100));
     if (wtBar) wtBar.style.width = pct.toFixed(1) + '%';
-    setText('nwWtCap', !ok ? (pd && pd.sample ? 'Weight sheet unreachable \u00b7 retrying' : (pd && pd.status === 'ok' ? 'No start weight found in sheet (C2)' : 'Weight loading\u2026'))
-      : Math.round(pct) + '% to ' + ps.goalW.toFixed(0) + ' lb' + (ps.weeksIn > 0 ? ' \u00b7 ' + (ps.avgWk >= 0 ? '\u2212' : '+') + Math.abs(ps.avgWk).toFixed(1) + ' lb/wk' : ''));
+    setText('nwWtCap', !ok ? (window._nwBackendStale ? 'Redeploy Code.gs to enable weight sync' : (pd && pd.sample ? 'Weight sheet unreachable \u00b7 retrying' : (pd && pd.status === 'ok' ? 'No start weight found (PHYSIQUE ACADEMY C2)' : 'Weight loading\u2026')))
+      : Math.round(pct) + '% to ' + ps.goalW.toFixed(0) + ' lb' + (pace != null ? ' \u00b7 ' + (pace >= 0 ? '\u2212' : '+') + Math.abs(pace).toFixed(1) + ' lb/wk' : ''));
   }
 
   function initNightwingDailies() {
@@ -5523,6 +5558,7 @@
       });
     }
     nwLoadFromSheets();
+    nwLoadWeights();
   }
 
   // ============================================================
