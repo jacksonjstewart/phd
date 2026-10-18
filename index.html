@@ -5442,7 +5442,7 @@
       fetch(APPS_SCRIPT_URL + '?action=addNwCompletion&date=' + encodeURIComponent(todayISO())
             + '&task=' + encodeURIComponent(id) + '&_=' + Date.now(), { cache: 'no-store' })
         .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
-        .then(function (remote) { nwMergeRemoteToday(remote.tasks); })
+        .then(function (remote) { if (remote && remote.tasks) { nwMergeRemoteToday(remote.tasks); nwApplyState(); } })
         .catch(function () {});
     }
   }
@@ -5486,13 +5486,62 @@
       .catch(function () { if (attempt < 2) setTimeout(function () { nwLoadWeights(attempt + 1); }, 4000); });
   }
 
+  // ---- sync: pull everything from the sheet, union with local, push anything the sheet lacks ----
+  let _nwDay = null, _nwSyncing = false, _nwRetried = false, _nwLastSync = 0;
+  function nwResetForNewDay() {
+    document.querySelectorAll('.nw-tile').forEach(function (t) { t.classList.remove('nw-done', 'nw-collapsing'); });
+    const wrap = document.getElementById('nwWrap'); if (wrap) wrap.classList.remove('nw-complete');
+  }
+  function nwUnion(a, b) {
+    return Array.from(new Set((a || []).concat(b || []))).filter(function (t) { return NW_TASKS.indexOf(t) !== -1; });
+  }
+  function nwPost(date, task) {
+    return fetch(APPS_SCRIPT_URL + '?action=addNwCompletion&date=' + encodeURIComponent(date) + '&task=' + encodeURIComponent(task) + '&_=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(); });
+  }
   function nwLoadFromSheets() {
+    const day = todayISO();
+    if (_nwDay !== null && _nwDay !== day) nwResetForNewDay();     // page left open past midnight
+    _nwDay = day;
     if (typeof APPS_SCRIPT_URL === 'undefined' || !APPS_SCRIPT_URL) { nwApplyState(); return; }
-    fetch(APPS_SCRIPT_URL + '?action=getNwCompletions&date=' + encodeURIComponent(todayISO()) + '&_=' + Date.now(), { cache: 'no-store', redirect: 'follow' })
+    if (_nwSyncing) return;
+    _nwSyncing = true; _nwLastSync = Date.now();
+    const u = APPS_SCRIPT_URL;
+    fetch(u + '?action=getNwHistory&_=' + Date.now(), { cache: 'no-store', redirect: 'follow' })
       .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
-      .then(function (remote) { nwMergeRemoteToday(remote.tasks); })
-      .catch(function () {})
-      .then(function () { nwApplyState(); });
+      .then(function (res) {
+        if (!res || typeof res.days !== 'object' || Array.isArray(res)) {
+          // older backend: fall back to today-only sync
+          return fetch(u + '?action=getNwCompletions&date=' + encodeURIComponent(day) + '&_=' + Date.now(), { cache: 'no-store', redirect: 'follow' })
+            .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+            .then(function (rem) { if (rem && rem.tasks) nwMergeRemoteToday(rem.tasks); });
+        }
+        const remote = res.days, log = nwLoadLog(), pushes = [];
+        Object.keys(remote).forEach(function (d) { log[d] = nwUnion(log[d], remote[d]); });
+        Object.keys(log).forEach(function (d) {
+          if (d < NW_START || d > day) return;
+          log[d] = nwUnion(log[d], []);
+          log[d].forEach(function (t) { if ((remote[d] || []).indexOf(t) === -1) pushes.push([d, t]); });
+        });
+        const todaySet = nwUnion(nwLoadToday(), log[day]);
+        if (todaySet.length) log[day] = todaySet;
+        nwSaveToday(todaySet); nwSaveLog(log);
+        // push what the sheet is missing (idempotent server-side), sequentially, capped
+        return pushes.slice(0, 30).reduce(function (chain, p) {
+          return chain.then(function () { return nwPost(p[0], p[1]).catch(function () {}); });
+        }, Promise.resolve());
+      })
+      .catch(function () {
+        if (!_nwRetried) { _nwRetried = true; setTimeout(nwLoadFromSheets, 8000); }
+      })
+      .then(function () { _nwSyncing = false; nwApplyState(); if (document.getElementById('nwWrap').classList.contains('nw-complete')) nwRenderStats(); });
+  }
+  function nwWatch() {
+    setInterval(function () { if (_nwDay !== todayISO()) nwLoadFromSheets(); }, 60 * 1000);
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'visible' && (_nwDay !== todayISO() || Date.now() - _nwLastSync > 15000)) nwLoadFromSheets();
+    });
+    window.addEventListener('focus', function () { if (_nwDay !== todayISO() || Date.now() - _nwLastSync > 15000) nwLoadFromSheets(); });
   }
 
   // ---- stats cascade: 112 days (Oct 13 2026 – Feb 1 2027) in three blocks ----
@@ -5654,6 +5703,7 @@
     }
     nwLoadFromSheets();
     nwLoadWeights();
+    nwWatch();
   }
 
   // ============================================================
