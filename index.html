@@ -995,6 +995,10 @@
   .nw-head-label { flex: 1; text-align: left; }
   .nw-head-chev { font-size: 11px; color: rgba(143,247,255,0.5); transition: transform 280ms ease; }
   .nw-wrap.collapsed .nw-head-chev { transform: rotate(-90deg); }
+  /* Complete state: plain centered title, no dot, no chevron, not clickable */
+  .nw-wrap.nw-complete .nw-head { justify-content: center; cursor: default; pointer-events: none; }
+  .nw-wrap.nw-complete .nw-head-dot, .nw-wrap.nw-complete .nw-head-chev { display: none; }
+  .nw-wrap.nw-complete .nw-head-label { flex: 0 1 auto; text-align: center; }
   .nw-wrap.collapsed .nw-list { max-height: 0; opacity: 0; margin-top: 0; }
   .nw-list {
     display: flex; flex-direction: column; gap: 8px;
