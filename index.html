@@ -995,8 +995,9 @@
   .nw-head-label { flex: 1; text-align: left; }
   .nw-head-chev { font-size: 11px; color: rgba(143,247,255,0.5); transition: transform 280ms ease; }
   .nw-wrap.collapsed .nw-head-chev { transform: rotate(-90deg); }
+  .nw-wrap.nw-instant, .nw-wrap.nw-instant * { transition: none !important; animation-duration: 0s !important; }
   /* Complete state: plain centered title, no dot, no chevron, not clickable */
-  .nw-wrap.nw-complete .nw-head { justify-content: center; cursor: default; pointer-events: none; }
+  .nw-wrap.nw-complete .nw-head { justify-content: center; cursor: pointer; }
   .nw-wrap.nw-complete .nw-head-dot, .nw-wrap.nw-complete .nw-head-chev { display: none; }
   .nw-wrap.nw-complete .nw-head-label { flex: 0 1 auto; text-align: center; }
   .nw-wrap.collapsed .nw-list { max-height: 0; opacity: 0; margin-top: 0; }
@@ -1110,6 +1111,7 @@
   .nw-heat-cell.earned { background: linear-gradient(180deg,var(--green-bright),var(--green)); box-shadow: 0 0 5px rgba(67,181,124,0.55); border: none; }
   .nw-heat-cell.missed { background: rgba(198,92,72,0.32); border-color: rgba(198,92,72,0.4); }
   .nw-heat-cell.today  { outline: 1px solid var(--gold-bright); outline-offset: 1px; }
+  .nw-heat-cell.partial { background: rgba(201,161,74,0.3); border-color: rgba(201,161,74,0.38); }
   .nw-heat-cell.future { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.07); }
   .nw-weight-card { padding-top: 4px; }
   .nwg { display: block; width: 100%; height: auto; max-width: 300px; margin: 0 auto; overflow: visible; }
@@ -1887,10 +1889,101 @@
   @media(prefers-reduced-motion:reduce){.fc-left,.fc-right,.fc-unlock,.fc-unlock-btn,.fc-lock,.fc-lock .fc-shackle,.fc-seal-ring,.fc-seal-check,.fc-bar-fill,.oc-bar-fill,.cons-ring-arc,.oc-body,.oc-status-chev{transition:none!important;animation:none!important;}.fc-box,.oc-panel,.fc-left.sealed .fc-seal{animation:none!important;}}
 
 
+
+  /* ============================================================
+     NIGHTWING STATISTICS PAGE
+     ============================================================ */
+  .nws { display: flex; flex-direction: column; gap: 22px; }
+  .nws-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap;
+    padding-bottom: 18px; border-bottom: 1px solid var(--border); }
+  .nws-eyebrow { font-family: var(--mono); font-size: 9px; letter-spacing: 0.5em; text-transform: uppercase; color: var(--gold); font-weight: 500; }
+  .nws-title { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: 30px; color: var(--text); margin-top: 8px; }
+  .nws-chip { font-family: var(--mono); font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--green-bright); border: 1px solid var(--green-dim); padding: 7px 14px; }
+  .nws-hero { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 30px;
+    padding: 22px 26px; border: 1px solid var(--border); background: rgba(14,14,18,0.62); }
+  .nws-day { display: flex; align-items: baseline; gap: 10px; }
+  .nws-day-word { font-family: var(--mono); font-size: 10px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--text-dim); }
+  .nws-day-num { font-family: var(--mono); font-size: 56px; line-height: 1; font-weight: 300; color: var(--gold-bright); }
+  .nws-day-of { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; color: var(--text-dim); }
+  .nws-hero-bar { min-width: 120px; }
+  .nws-bar { height: 3px; border-radius: 3px; background: rgba(255,255,255,0.08); overflow: hidden; }
+  .nws-bar > i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--gold), var(--gold-bright)); transition: width 900ms cubic-bezier(0.16,1,0.3,1); }
+  .nws-bar-w { margin: -2px 0 10px; }
+  .nws-bar-w > i { background: linear-gradient(90deg, var(--green), var(--green-bright)); }
+  .nws-bar-sub { margin-top: 10px; font-family: var(--mono); font-size: 9px; letter-spacing: 0.24em; text-transform: uppercase; color: var(--text-dim); }
+  .nws-hero-stats { display: grid; grid-template-columns: repeat(4, auto); gap: 26px; }
+  .nws-hero-stats > div { display: flex; flex-direction: column; gap: 6px; }
+  .nws-hv { font-family: var(--mono); font-size: 20px; color: var(--text); white-space: nowrap; }
+  .nws-hv.nws-good { color: var(--green-bright); }
+  .nws-hl { font-family: var(--mono); font-size: 8px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--text-dim); }
+  .pp-tiles.nws-tiles { grid-template-columns: repeat(6, 1fr); margin-bottom: 0; }
+  .nws-tile-good .pp-tile-val { color: var(--green-bright); }
+  .nws-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 22px; align-items: stretch; }
+  .nws-card { border: 1px solid var(--border); background: rgba(14,14,18,0.62); padding: 20px 22px; }
+  .nws-card-h { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px;
+    font-family: 'Cormorant Garamond', serif; font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(201,161,74,0.75); }
+  .nws-card-h2 { margin-top: 26px; }
+  .nws-card-r { font-family: var(--mono); font-size: 9px; letter-spacing: 0.2em; color: var(--text-dim); }
+  .nws-card-r.good { color: var(--green-bright); }
+  .nws-calwrap { display: grid; grid-template-columns: auto 1fr; gap: 8px; }
+  .nws-dows { display: grid; grid-template-rows: repeat(7, 1fr); margin-top: 20px; gap: 4px;
+    font-family: var(--mono); font-size: 8px; color: var(--text-dim); align-items: center; }
+  .nws-months { display: grid; height: 16px; margin-bottom: 4px; font-family: var(--mono); font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-dim); }
+  .nws-months span { white-space: nowrap; }
+  .nws-cal { display: grid; grid-template-rows: repeat(7, 1fr); gap: 4px; }
+  .nws-cell { aspect-ratio: 1 / 1; border-radius: 3px; background: rgba(255,255,255,0.045); border: 1px solid rgba(255,255,255,0.06);
+    display: flex; align-items: center; justify-content: center; position: relative; }
+  .nws-cell span { font-family: var(--mono); font-size: 8px; color: rgba(255,255,255,0.28); }
+  .nws-cell.earned { background: linear-gradient(180deg, var(--green-bright), var(--green)); border: none; box-shadow: 0 0 6px rgba(67,181,124,0.45); }
+  .nws-cell.earned span { color: rgba(5,25,15,0.7); }
+  .nws-cell.partial { background: rgba(201,161,74,0.28); border-color: rgba(201,161,74,0.35); }
+  .nws-cell.partial span { color: rgba(255,235,190,0.8); }
+  .nws-cell.missed { background: rgba(198,92,72,0.3); border-color: rgba(198,92,72,0.4); }
+  .nws-cell.missed span { color: rgba(255,200,190,0.6); }
+  .nws-cell.future { background: rgba(255,255,255,0.03); }
+  .nws-cell.today { outline: 1.5px solid var(--gold-bright); outline-offset: 1px; }
+  .nws-legend { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 14px; font-family: var(--mono); font-size: 8px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-dim); }
+  .nws-legend span::before { content: ''; display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+  .lg-perfect::before { background: var(--green); } .lg-partial::before { background: rgba(201,161,74,0.5); }
+  .lg-missed::before { background: rgba(198,92,72,0.55); } .lg-future::before { background: rgba(255,255,255,0.12); }
+  .nws-task { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; margin-bottom: 14px; align-items: end; }
+  .nws-task-n { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; color: var(--text); }
+  .nws-task-n.orange { color: #e8a25a; }
+  .nws-task-v { font-family: var(--mono); font-size: 10px; color: var(--text-dim); }
+  .nws-task-v b { font-weight: 400; color: var(--text); margin-left: 8px; }
+  .nws-task .nws-bar { grid-column: 1 / -1; height: 4px; }
+  .nws-task .nws-bar > i { background: linear-gradient(90deg, #2fb8c9, #8ff7ff); }
+  .nws-task.orange .nws-bar > i { background: linear-gradient(90deg, #c8762a, #f0a860); }
+  .nws-weeks { display: flex; align-items: flex-end; gap: 5px; height: 96px; }
+  .nws-wk { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 5px; }
+  .nws-wk-bar { width: 100%; border-radius: 2px 2px 0 0; background: rgba(255,255,255,0.06); min-height: 3px; }
+  .nws-wk-bar.has { background: linear-gradient(180deg, var(--green-bright), var(--green)); }
+  .nws-wk-bar.cur { box-shadow: 0 0 0 1px var(--gold-bright); }
+  .nws-wk span { font-family: var(--mono); font-size: 7.5px; color: var(--text-dim); }
+  .nws-graph .nwg { max-width: none; }
+  .nwg-big .nwg-ax { font-size: 10.5px; } .nwg-big .nwg-goal-t { font-size: 10px; } .nwg-big .nwg-now { font-size: 15px; }
+  .nwg-big .nwg-line { stroke-width: 2.4; }
+  @media (max-width: 1000px) {
+    .nws-hero { grid-template-columns: 1fr; gap: 18px; }
+    .nws-hero-stats { grid-template-columns: repeat(4, 1fr); }
+    .pp-tiles.nws-tiles { grid-template-columns: repeat(3, 1fr); }
+    .nws-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .pp-tiles.nws-tiles { grid-template-columns: 1fr 1fr; }
+    .nws-day-num { font-size: 46px; }
+    .nws-hero-stats { grid-template-columns: 1fr 1fr; gap: 18px 24px; }
+    .nws-cell span { display: none; }
+    .nws-card { padding: 16px 14px; }
+    .nws-title { font-size: 24px; }
+  }
+
+  .stats-legacy { display: none !important; }
   .stats-split {
     display: grid;
     grid-template-columns: 1fr;
-    max-width: 680px;
+    max-width: 1120px;
     gap: 40px;
     align-items: start;
   }
@@ -2703,10 +2796,129 @@
     background: rgba(201,161,74,0.06);
   }
 
+  /* ============================================================
+     OFFICE — LOCK + CASCADE CARDS
+     ============================================================ */
+  .tm-side { display: flex; flex-direction: column; align-items: flex-end; gap: 22px; flex: 0 0 auto; }
+  .tm-goal { text-align: right; display: none; }
+  #office.unlocked .tm-goal { display: block; }
+  .tm-quest { margin-bottom: 14px; }
+  .tm-quest-k { display: block; font-family: var(--mono); font-size: 9px; letter-spacing: 0.45em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+  .tm-quest-line { font-family: var(--serif); font-size: 22px; color: var(--text); display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
+  .tm-quest-ring { display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%;
+    border: 2.5px solid var(--gold-bright); color: var(--gold-bright); font-family: var(--mono); font-weight: 700; font-size: 22px;
+    box-shadow: 0 0 14px rgba(201,161,74,0.4), inset 0 0 8px rgba(201,161,74,0.18); }
+  #tmGoal.met .tm-quest-ring { border-color: var(--green-bright); color: var(--green-bright); box-shadow: 0 0 16px rgba(111,224,164,0.55), inset 0 0 8px rgba(111,224,164,0.2); }
+  .tm-carry { display: flex; justify-content: flex-end; gap: 22px; margin-top: 14px; }
+  .tm-carry > div { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+  .tm-carry b { font-family: var(--mono); font-weight: 400; font-size: 17px; color: var(--text); }
+  .tm-carry b.pos { color: var(--green-bright); }
+  .tm-carry span { font-family: var(--mono); font-size: 8px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text-dim); }
+  .tm-weeks { display: flex; justify-content: flex-end; gap: 4px; margin-top: 14px; }
+  .tm-weeks i { width: 12px; height: 12px; border-radius: 2px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.06); }
+  .tm-weeks i.met { background: var(--green); border-color: transparent; box-shadow: 0 0 5px rgba(67,181,124,0.5); }
+  .tm-weeks i.miss { background: rgba(198,92,72,0.35); border-color: rgba(198,92,72,0.4); }
+  .tm-weeks i.cur { outline: 1.5px solid var(--gold-bright); outline-offset: 1px; background: rgba(201,161,74,0.25); }
+  .tm-weeks i.cur.met { background: var(--green); }
+  .tm-goal-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.45em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+  .tm-goal-row { display: flex; align-items: baseline; justify-content: flex-end; gap: 14px; }
+  .tm-goal-num { font-family: var(--mono); font-size: 34px; font-weight: 300; color: var(--text); line-height: 1; }
+  .tm-goal-num.met { color: var(--green-bright); text-shadow: 0 0 14px rgba(111,224,164,0.45); }
+  .tm-goal-num small { font-size: 16px; color: var(--text-dim); }
+  .tm-goal-pips { display: flex; gap: 6px; }
+  .tm-goal-pips i { width: 11px; height: 11px; border-radius: 50%; border: 1px solid rgba(201,161,74,0.5); }
+  .tm-goal-pips i.on { background: var(--green-bright); border-color: var(--green-bright); box-shadow: 0 0 9px rgba(111,224,164,0.7); }
+  .tm-goal-cap { margin-top: 8px; font-family: var(--mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-dim); }
+  .tm-goal-cap b { font-weight: 400; color: var(--green-bright); }
+  .office-legacy { display: none !important; }
+  #office .section-inner { max-width: 1120px; }
+  .occ-open, .occ-name { white-space: nowrap; }
+  .occ-counts { gap: 8px 20px; }
+  .oc-lock { display: none; text-align: center; padding: 70px 20px 90px; }
+  #office.locked .oc-lock { display: block; }
+  .oc-lock svg { width: 34px; height: 34px; color: var(--gold); opacity: 0.85; }
+  .oc-lock-t { font-family: 'Cinzel', var(--serif); font-size: clamp(22px, 4vw, 34px); letter-spacing: 0.18em; text-transform: uppercase; color: var(--text); margin: 18px 0 10px; }
+  .oc-lock-s { font-family: var(--serif); font-style: italic; font-size: 19px; color: var(--text-dim); }
+  .oc-lock-n { margin-top: 22px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.3em; color: var(--cyan-bright); }
+  .oc-lock-btn { margin-top: 26px; background: none; border: 1px solid rgba(143,247,255,0.4); color: var(--cyan-bright); font-family: var(--mono); font-size: 9px; letter-spacing: 0.4em; text-transform: uppercase; padding: 12px 28px; cursor: pointer; border-radius: 2px; }
+  .oc-lock-btn:hover { background: rgba(79,214,214,0.08); }
+  .oc-casc { display: none; grid-template-columns: 1fr 1fr; gap: 26px; }
+  #office.unlocked .oc-casc { display: grid; }
+  .occ { border: 1px solid var(--border); background: rgba(14,14,18,0.62); padding: 30px 30px 28px; display: flex; flex-direction: column; gap: 22px; min-height: 360px; }
+  .occ-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .occ-name { font-family: var(--mono); font-size: 10px; letter-spacing: 0.45em; text-transform: uppercase; color: var(--gold); }
+  .occ-open { font-family: var(--mono); font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text-dim); text-decoration: none; }
+  .occ-open:hover { color: var(--gold-bright); }
+  .occ-health { display: flex; flex-direction: column; gap: 10px; }
+  .occ-seg { display: flex; height: 8px; border-radius: 8px; overflow: hidden; background: rgba(255,255,255,0.07); gap: 2px; }
+  .occ-seg i { display: block; height: 100%; transition: width 1000ms cubic-bezier(0.16,1,0.3,1); }
+  .occ-seg .g { background: linear-gradient(90deg, var(--green), var(--green-bright)); }
+  .occ-seg .b { background: #4c8fe0; } .occ-seg .y { background: #e0b84a; }
+  .occ-counts { display: flex; gap: 20px; flex-wrap: wrap; font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-dim); }
+  .occ-counts b { font-weight: 400; font-size: 15px; letter-spacing: 0.05em; margin-right: 6px; }
+  .occ-counts .g b { color: var(--green-bright); } .occ-counts .b b { color: #7db2f5; } .occ-counts .y b { color: #f0cc62; }
+  .occ-next { display: flex; flex-direction: column; gap: 8px; padding-top: 20px; border-top: 1px solid var(--border); }
+  .occ-next + .occ-next { padding-top: 18px; }
+  .occ-k { font-family: var(--mono); font-size: 9px; letter-spacing: 0.4em; text-transform: uppercase; color: var(--text-dim); }
+  .occ-task { font-family: var(--serif); font-size: clamp(20px, 2.2vw, 26px); line-height: 1.25; color: var(--text); }
+  .occ-task.dim { color: var(--text-dim); font-style: italic; font-size: 19px; }
+  .occ-meta { font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-dim); display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .occ-chip { padding: 3px 9px; border-radius: 2px; border: 1px solid currentColor; }
+  .occ-chip.y { color: #f0cc62; } .occ-chip.b { color: #7db2f5; } .occ-chip.g { color: var(--green-bright); } .occ-chip.r { color: #f08a78; }
+  .occ-loading { font-family: var(--mono); font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text-dim); }
+  @media (max-width: 900px) { .oc-casc { grid-template-columns: 1fr; } .tm-side { align-items: flex-start; } .tm-goal { text-align: left; } .tm-goal-row, .tm-quest-line, .tm-carry, .tm-weeks { justify-content: flex-start; } .tm-carry > div { align-items: flex-start; } }
+
+  /* ============================================================
+     NIGHTWING COMPLETION SPLASH
+     ============================================================ */
+  .nwd { position: fixed; inset: 0; z-index: 9990; opacity: 0; visibility: hidden; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 40%, rgba(8,18,24,0.93), rgba(2,4,7,0.97) 70%);
+    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    transition: opacity 450ms ease, visibility 0s linear 450ms; }
+  .nwd.on { opacity: 1; visibility: visible; pointer-events: auto; transition: opacity 450ms ease; }
+  .nwd-in { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+    padding: max(22px, env(safe-area-inset-top)) 4vw max(22px, env(safe-area-inset-bottom)); text-align: center; }
+  .nwd-in > * { opacity: 0; transform: translateY(10px); transition: opacity 600ms ease, transform 600ms ease; }
+  .nwd.on .nwd-in > * { opacity: 1; transform: none; }
+  .nwd.on .nwd-line { transition-delay: 60ms; } .nwd.on .nwd-graph { transition-delay: 160ms; }
+  .nwd.on .nwd-msg { transition-delay: 1800ms; } .nwd.on .nwd-prog { transition-delay: 2100ms; } .nwd.on .nwd-ack { transition-delay: 2400ms; }
+  .nwd-line { font-family: 'Cinzel', var(--serif); font-size: clamp(24px, 5.2vw, 46px); letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--cyan-bright); text-shadow: 0 0 22px rgba(79,214,214,0.45), 0 0 4px rgba(143,247,255,0.5); }
+  .nwd-graph { flex: 1 1 auto; width: 100%; max-width: 1200px; min-height: 220px; }
+  .nwd-graph svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .nwd-msg { font-family: var(--serif); font-style: italic; font-size: clamp(17px, 2.6vw, 24px); color: rgba(232,226,208,0.88); max-width: 720px; line-height: 1.4; }
+  .nwd-prog { width: min(760px, 88vw); }
+  .nwd-bar { height: 5px; border-radius: 5px; background: rgba(255,255,255,0.09); overflow: hidden; }
+  .nwd-bar > i { display: block; height: 100%; width: 0; border-radius: 5px; background: linear-gradient(90deg, var(--green), var(--green-bright)); box-shadow: 0 0 12px rgba(111,224,164,0.6); transition: width 1600ms cubic-bezier(0.16,1,0.3,1); }
+  .nwd-prog-cap { line-height: 1.9; margin-top: 10px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-dim); }
+  .nwd-prog-cap b { font-weight: 400; color: var(--green-bright); }
+  .nwd-ack { margin-top: 4px; background: rgba(111,224,164,0.07); border: 1px solid rgba(111,224,164,0.55); color: var(--green-bright);
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.5em; text-transform: uppercase; padding: 14px 38px; cursor: pointer; border-radius: 2px;
+    box-shadow: 0 0 18px rgba(111,224,164,0.18); animation: nwdPulse 3.2s ease-in-out infinite; -webkit-tap-highlight-color: transparent; }
+  .nwd-ack:hover, .nwd-ack:active { background: rgba(111,224,164,0.16); }
+  @keyframes nwdPulse { 0%,100% { box-shadow: 0 0 10px rgba(111,224,164,0.12); } 50% { box-shadow: 0 0 26px rgba(111,224,164,0.4); } }
+  @media (max-width: 560px) { .nwd-prog-cap { font-size: 8.5px; letter-spacing: 0.14em; } }
+  .nwd .g-dot-today { transform-box: fill-box; transform-origin: center; }
+  @keyframes nwdRing { 0% { transform: scale(1); opacity: 0.7; } 100% { transform: scale(3.2); opacity: 0; } }
+  .nwd .g-ring { transform-box: fill-box; transform-origin: center; animation: nwdRing 2.4s ease-out infinite; }
+  .nw-wrap.nw-complete .nw-head:hover { color: var(--cyan-bright); text-shadow: 0 0 10px rgba(79,214,214,0.6); }
+  @media (prefers-reduced-motion: reduce) { .nwd-in > *, .nwd-bar > i { transition-duration: 1ms !important; transition-delay: 0s !important; } .nwd-ack, .nwd .g-ring { animation: none; } }
+
   /* ── Tenure streak display ── */
 </style>
 </head>
 <body>
+
+<!-- Nightwing completion splash -->
+<div class="nwd" id="nwDone" role="dialog" aria-modal="true" aria-label="Nightwing Dailies complete" aria-hidden="true">
+  <div class="nwd-in">
+    <div class="nwd-line" id="nwdLine"></div>
+    <div class="nwd-graph" id="nwdGraph"></div>
+    <div class="nwd-msg" id="nwdMsg"></div>
+    <div class="nwd-prog"><div class="nwd-bar"><i id="nwdBar"></i></div><div class="nwd-prog-cap" id="nwdCap"></div></div>
+    <button type="button" class="nwd-ack" id="nwdAck">Acknowledged</button>
+  </div>
+</div>
 
 <!-- Boot splash (branded, quick) -->
 <div id="bootSplash" aria-hidden="true">
@@ -2765,7 +2977,7 @@
 <div class="topleft">
   <ul class="nav-links" aria-label="Primary navigation">
     <li><a href="#splash"     data-nav>Home</a></li>
-    <li><a href="#office"     data-nav id="officeNavLink">Office<span class="office-notif" id="officeNotif"></span></a></li>
+    <li><a href="#office"     data-nav id="officeNavLink" class="nav-locked" aria-disabled="true">Office<svg class="nav-lock" viewBox="0 0 24 24" width="9" height="9" aria-hidden="true"><path d="M8 11 V8 a4 4 0 0 1 8 0 V11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><rect x="6" y="11" width="12" height="9" rx="1.6" fill="currentColor"/></svg><span class="office-notif" id="officeNotif"></span></a></li>
     <li><a href="#weekly"     data-nav id="desksNavLink" class="nav-locked" aria-disabled="true">Desks<svg class="nav-lock" viewBox="0 0 24 24" width="9" height="9" aria-hidden="true"><path d="M8 11 V8 a4 4 0 0 1 8 0 V11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><rect x="6" y="11" width="12" height="9" rx="1.6" fill="currentColor"/></svg></a></li>
     <li><a href="#statistics" data-nav id="statsNavLink">Statistics<span class="stats-notif" id="statsNotif"></span></a></li>
   </ul>
@@ -2791,7 +3003,6 @@
   <h1 class="splash-greeting">
     <span class="sg-main" id="splashGreeting">THE GREAT WINTER <span class="nb">LOCK-IN</span> <span class="nb">OF 2026</span></span>
     <span class="sg-flake" aria-hidden="true"><svg viewBox="-52 -52 104 104" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><g transform="rotate(0)"><line x1="0" y1="0" x2="0" y2="-44"/><path d="M0 -14 L-9 -23 M0 -14 L9 -23 M0 -27 L-7 -34 M0 -27 L7 -34"/><path d="M0 -44 L-4 -49 M0 -44 L4 -49"/></g><g transform="rotate(60)"><line x1="0" y1="0" x2="0" y2="-44"/><path d="M0 -14 L-9 -23 M0 -14 L9 -23 M0 -27 L-7 -34 M0 -27 L7 -34"/><path d="M0 -44 L-4 -49 M0 -44 L4 -49"/></g><g transform="rotate(120)"><line x1="0" y1="0" x2="0" y2="-44"/><path d="M0 -14 L-9 -23 M0 -14 L9 -23 M0 -27 L-7 -34 M0 -27 L7 -34"/><path d="M0 -44 L-4 -49 M0 -44 L4 -49"/></g><g transform="rotate(180)"><line x1="0" y1="0" x2="0" y2="-44"/><path d="M0 -14 L-9 -23 M0 -14 L9 -23 M0 -27 L-7 -34 M0 -27 L7 -34"/><path d="M0 -44 L-4 -49 M0 -44 L4 -49"/></g><g transform="rotate(240)"><line x1="0" y1="0" x2="0" y2="-44"/><path d="M0 -14 L-9 -23 M0 -14 L9 -23 M0 -27 L-7 -34 M0 -27 L7 -34"/><path d="M0 -44 L-4 -49 M0 -44 L4 -49"/></g><g transform="rotate(300)"><line x1="0" y1="0" x2="0" y2="-44"/><path d="M0 -14 L-9 -23 M0 -14 L9 -23 M0 -27 L-7 -34 M0 -27 L7 -34"/><path d="M0 -44 L-4 -49 M0 -44 L4 -49"/></g><circle r="3.2" fill="currentColor" stroke="none"/><circle r="13" stroke-width="0.8" opacity="0.55"/></svg></span>
-    <span class="sg-sub">Doctor of Philosophy &middot; Scientist &middot; Professor</span>
   </h1>
 
 <!-- ========== NIGHTWING DAILIES ==========
@@ -2862,7 +3073,7 @@
 </section>
 
 <!-- ========== OFFICE ========== -->
-<section id="office" class="section" aria-labelledby="office-title">
+<section id="office" class="section locked" aria-labelledby="office-title" style="display:none">
   <div class="section-inner">
     <p class="section-eyebrow">OFFICE</p>
     <header class="today-module">
@@ -2871,11 +3082,28 @@
         <div class="tm-date" id="officeDateBig">&mdash;</div>
         <div class="tm-time" id="officeTimeBig">&mdash;</div>
       </div>
-      <div class="tm-weather">
-        <div class="tm-weather-label">Edmonton</div>
-        <div class="tm-weather-value" id="officeWeatherBig">&mdash;</div>
+      <div class="tm-side">
+        <div class="tm-goal" id="tmGoal">
+          <div class="tm-quest">
+            <span class="tm-quest-k">Weekly Quest</span>
+            <div class="tm-quest-line">Finish <span class="tm-quest-ring" id="tmGoalRing">2</span> cascade items</div>
+          </div>
+          <div class="tm-goal-row"><div class="tm-goal-pips" id="tmGoalPips"></div><div class="tm-goal-num" id="tmGoalNum">&mdash;</div></div>
+          <div class="tm-carry" id="tmCarry"></div>
+          <div class="tm-weeks" id="tmWeeks"></div>
+          <div class="tm-goal-cap" id="tmGoalCap"></div>
+        </div>
+        <div class="tm-weather">
+          <div class="tm-weather-label">Edmonton</div>
+          <div class="tm-weather-value" id="officeWeatherBig">&mdash;</div>
+        </div>
       </div>
     </header>
+    <div class="oc-casc" id="ocCasc">
+      <div class="occ" id="occPers"><div class="occ-loading">Reading cascade&hellip;</div></div>
+      <div class="occ" id="occPhd"><div class="occ-loading">Reading cascade&hellip;</div></div>
+    </div>
+    <div class="office-legacy" hidden aria-hidden="true">
 
     <!-- MORNING RITUAL toggle — static, scrolls with the page (not fixed like the top nav) -->
     <button type="button" class="ritual-nav-btn" id="morningRitualGate" onclick="toggleMorningRitual()" aria-expanded="true" aria-controls="officeHoursList">
@@ -3107,6 +3335,7 @@
       <button class="oc-ei-btn" id="ocEiBtn" type="button"></button>
     </div>
 
+    </div><!-- /office-legacy -->
   </div>
 </section>
 
@@ -3201,8 +3430,68 @@
     <p class="section-eyebrow">III &middot; Statistics</p>
     <div class="stats-split">
 
-      <!-- Physique panel -->
-      <div class="stats-right reveal">
+      <!-- NIGHTWING STATISTICS (persistent) -->
+      <div class="nws reveal" id="nwsPage">
+        <div class="nws-head">
+          <div>
+            <div class="nws-eyebrow">Nightwing Dailies</div>
+            <div class="nws-title">The Great Winter Lock-In</div>
+          </div>
+          <div class="nws-chip" id="nwsChip">&mdash;</div>
+        </div>
+
+        <div class="nws-hero">
+          <div class="nws-day"><span class="nws-day-word">Day</span><span class="nws-day-num" id="nwsDay">&mdash;</span><span class="nws-day-of" id="nwsDayOf"></span></div>
+          <div class="nws-hero-bar">
+            <div class="nws-bar"><i id="nwsDayBar"></i></div>
+            <div class="nws-bar-sub" id="nwsRemain"></div>
+          </div>
+          <div class="nws-hero-stats">
+            <div><span class="nws-hv nws-good" id="nwsStreak">&mdash;</span><span class="nws-hl">Streak</span></div>
+            <div><span class="nws-hv" id="nwsBest">&mdash;</span><span class="nws-hl">Best</span></div>
+            <div><span class="nws-hv" id="nwsPerfect">&mdash;</span><span class="nws-hl">Perfect days</span></div>
+            <div><span class="nws-hv" id="nwsRate">&mdash;</span><span class="nws-hl">Rate</span></div>
+          </div>
+        </div>
+
+        <div class="pp-tiles nws-tiles">
+          <div class="pp-tile"><div class="pp-tile-val" id="nwsKStart">&mdash;</div><div class="pp-tile-label">Starting</div></div>
+          <div class="pp-tile"><div class="pp-tile-val" id="nwsKNow">&mdash;</div><div class="pp-tile-sub" id="nwsKNowSub">&nbsp;</div><div class="pp-tile-label">Current</div></div>
+          <div class="pp-tile nws-tile-good"><div class="pp-tile-val" id="nwsKLost">&mdash;</div><div class="pp-tile-label">Total Lost</div></div>
+          <div class="pp-tile"><div class="pp-tile-val" id="nwsKGoal">&mdash;</div><div class="pp-tile-sub" id="nwsKGoalSub">&nbsp;</div><div class="pp-tile-label">To Goal</div></div>
+          <div class="pp-tile"><div class="pp-tile-val" id="nwsKPace">&mdash;</div><div class="pp-tile-label">Pace / Week</div></div>
+          <div class="pp-tile"><div class="pp-tile-val" id="nwsKEta">&mdash;</div><div class="pp-tile-label">Goal ETA</div></div>
+        </div>
+
+        <div class="nws-grid">
+          <div class="nws-card">
+            <div class="nws-card-h"><span>Consistency</span><span class="nws-card-r" id="nwsCalCap"></span></div>
+            <div class="nws-calwrap">
+              <div class="nws-dows"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
+              <div class="nws-calcol">
+                <div class="nws-months" id="nwsMonths"></div>
+                <div class="nws-cal" id="nwsCal"></div>
+              </div>
+            </div>
+            <div class="nws-legend"><span class="lg-perfect">Perfect</span><span class="lg-partial">Partial</span><span class="lg-missed">Missed</span><span class="lg-future">Upcoming</span></div>
+          </div>
+          <div class="nws-card">
+            <div class="nws-card-h"><span>The Five Dailies</span><span class="nws-card-r">since Oct 13</span></div>
+            <div class="nws-tasks" id="nwsTasks"></div>
+            <div class="nws-card-h nws-card-h2"><span>Perfect days per week</span></div>
+            <div class="nws-weeks" id="nwsWeeks"></div>
+          </div>
+        </div>
+
+        <div class="nws-card">
+          <div class="nws-card-h"><span>Weight</span><span class="nws-card-r" id="nwsWtCap"></span></div>
+          <div class="nws-bar nws-bar-w"><i id="nwsWtBar"></i></div>
+          <div id="nwsGraph" class="nws-graph"></div>
+        </div>
+      </div>
+
+      <!-- Legacy Physique panel (kept in the DOM so existing sheet loaders keep working; not shown) -->
+      <div class="stats-right stats-legacy" hidden aria-hidden="true">
         <div class="pp-top-bar">
           <div>
             <div class="pp-heading">Physique Progress</div>
@@ -4492,19 +4781,7 @@
   // ============================================================
   let _stewardActionCount = null;
 
-  function updateOfficeNotif() {
-    const dot = document.getElementById('officeNotif');
-    if (!dot) return;
-    // Authoritative signal: the gold dot reflects whether today's Part I (Core Daily Actions)
-    // AND Part II (Daily Disposition) are BOTH complete — matching the green states in the
-    // Office overlay. It clears only once both are done.
-    const coreDone = loadLedger().indexOf(todayISO()) !== -1;
-    const eiDone   = (typeof eiDoneToday === 'function') ? eiDoneToday() : false;
-    const hasUnchecked = !(coreDone && eiDone);
-    const stewardBusy = _stewardActionCount !== null && _stewardActionCount > 0;
-    if (hasUnchecked || stewardBusy) { dot.classList.add('visible'); }
-    else { dot.classList.remove('visible'); }
-  }
+  function updateOfficeNotif() { if (typeof ocUpdateDot === 'function') ocUpdateDot(); }
 
   // ============================================================
   // COMPETENCE SYSTEM
@@ -5425,6 +5702,7 @@
       if (done.has(id)) { tile.classList.add('nw-done', 'nw-collapsing'); }
     });
     nwCheckAllDone(true);
+    try { nwRenderStatsPage(); } catch (e) {}
   }
 
   function nwToggleTask(tile) {
@@ -5435,11 +5713,12 @@
     if (today.indexOf(id) === -1) { today.push(id); nwSaveToday(today); }
     const log = nwLoadLog(); log[todayISO()] = today; nwSaveLog(log);
 
+    if (NW_TASKS.every(function (t) { return today.indexOf(t) !== -1; })) { ocApplyLock(); nwAutoSplash(); }
     setTimeout(function () { tile.classList.add('nw-collapsing'); }, 420);
-    setTimeout(function () { nwCheckAllDone(false); }, 920);
+    setTimeout(function () { nwCheckAllDone(false); try { nwRenderStatsPage(); } catch (e) {} }, 920);
 
     if (typeof APPS_SCRIPT_URL !== 'undefined' && APPS_SCRIPT_URL) {
-      fetch(APPS_SCRIPT_URL + '?action=addNwCompletion&date=' + encodeURIComponent(todayISO())
+      nwFetch(APPS_SCRIPT_URL + '?action=addNwCompletion&date=' + encodeURIComponent(todayISO())
             + '&task=' + encodeURIComponent(id) + '&_=' + Date.now(), { cache: 'no-store' })
         .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
         .then(function (remote) { if (remote && remote.tasks) { nwMergeRemoteToday(remote.tasks); nwApplyState(); } })
@@ -5454,9 +5733,11 @@
     if (allDone) {
       wrap.classList.add('nw-complete');
       nwRenderStats();
+      nwAutoSplash();
     } else if (!silent) {
       wrap.classList.remove('nw-complete');
     }
+    ocApplyLock();
   }
 
   // ---- weights from the Apps Script backend (PHYSIQUE ACADEMY baseline/weekly + first-tab daily) ----
@@ -5482,6 +5763,8 @@
         window._nwBackendPD = window._physiqueData;
         try { renderWeightChart(window._physiqueData.labels, w.min || [], tgt, w.max || [], w.actual || []); } catch (_) {}
         nwRenderStats();
+        if (_nwDoneOpen && !_nwDoneData) nwBuildDone();
+        else if (document.getElementById('nwWrap').classList.contains('nw-complete')) nwAutoSplash();
       })
       .catch(function () { if (attempt < 2) setTimeout(function () { nwLoadWeights(attempt + 1); }, 4000); });
   }
@@ -5491,12 +5774,19 @@
   function nwResetForNewDay() {
     document.querySelectorAll('.nw-tile').forEach(function (t) { t.classList.remove('nw-done', 'nw-collapsing'); });
     const wrap = document.getElementById('nwWrap'); if (wrap) wrap.classList.remove('nw-complete');
+    ocApplyLock();
   }
   function nwUnion(a, b) {
     return Array.from(new Set((a || []).concat(b || []))).filter(function (t) { return NW_TASKS.indexOf(t) !== -1; });
   }
+  function nwFetch(url, opts) {                       // never hang forever on a cold Apps Script
+    if (typeof AbortController === 'undefined') return fetch(url, opts);
+    const c = new AbortController(), t = setTimeout(function () { c.abort(); }, 15000);
+    return fetch(url, Object.assign({}, opts, { signal: c.signal })).then(
+      function (r) { clearTimeout(t); return r; }, function (e) { clearTimeout(t); throw e; });
+  }
   function nwPost(date, task) {
-    return fetch(APPS_SCRIPT_URL + '?action=addNwCompletion&date=' + encodeURIComponent(date) + '&task=' + encodeURIComponent(task) + '&_=' + Date.now(), { cache: 'no-store' })
+    return nwFetch(APPS_SCRIPT_URL + '?action=addNwCompletion&date=' + encodeURIComponent(date) + '&task=' + encodeURIComponent(task) + '&_=' + Date.now(), { cache: 'no-store' })
       .then(function (r) { return r.ok ? r.json() : Promise.reject(); });
   }
   function nwLoadFromSheets() {
@@ -5507,12 +5797,12 @@
     if (_nwSyncing) return;
     _nwSyncing = true; _nwLastSync = Date.now();
     const u = APPS_SCRIPT_URL;
-    fetch(u + '?action=getNwHistory&_=' + Date.now(), { cache: 'no-store', redirect: 'follow' })
+    nwFetch(u + '?action=getNwHistory&_=' + Date.now(), { cache: 'no-store', redirect: 'follow' })
       .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
       .then(function (res) {
         if (!res || typeof res.days !== 'object' || Array.isArray(res)) {
           // older backend: fall back to today-only sync
-          return fetch(u + '?action=getNwCompletions&date=' + encodeURIComponent(day) + '&_=' + Date.now(), { cache: 'no-store', redirect: 'follow' })
+          return nwFetch(u + '?action=getNwCompletions&date=' + encodeURIComponent(day) + '&_=' + Date.now(), { cache: 'no-store', redirect: 'follow' })
             .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
             .then(function (rem) { if (rem && rem.tasks) nwMergeRemoteToday(rem.tasks); });
         }
@@ -5564,6 +5854,7 @@
       let cls = 'nw-heat-cell';
       if (didAll) cls += ' earned';
       else if (iso > todayStr) cls += ' future';
+      else if (iso <= todayStr && log[iso] && log[iso].length) cls += ' partial';
       else if (iso < todayStr) cls += ' missed';
       if (iso === todayStr) cls += ' today';
       html += '<div class="' + cls + '" title="' + iso + '"></div>';
@@ -5574,11 +5865,12 @@
     return NW_PREFILLED.indexOf(iso) !== -1 ||
       !!(log[iso] && NW_TASKS.every(function (t) { return log[iso].indexOf(t) !== -1; }));
   }
-  function nwRenderWeightGraph(elId) {
+  function nwRenderWeightGraph(elId, big) {
     const wrap = document.getElementById(elId); if (!wrap) return;
     const pd = window._physiqueData;
-    if (!pd || pd.sample || pd.startW == null || isNaN(pd.startW)) { wrap.innerHTML = ''; return; }
-    const W = 212, H = 158, pL = 28, pR = 10, pT = 16, pB = 22, X0 = 1, X1 = 85;
+    if (!pd || pd.sample || pd.startW == null || isNaN(pd.startW)) { wrap.innerHTML = big ? '<div class="nws-empty">Weight data loads from your PHYSIQUE ACADEMY tab once the backend is connected.</div>' : ''; return; }
+    const bw = big ? Math.max(300, Math.min(760, wrap.clientWidth || 680)) : 212;
+    const W = bw, H = big ? (bw < 520 ? 230 : 280) : 158, pL = big ? 44 : 28, pR = big ? 22 : 10, pT = big ? 26 : 16, pB = big ? 32 : 22, X0 = 1, X1 = 85;
     const pw = W - pL - pR, ph = H - pT - pB;
     const start = pd.startW, goal = (pd.goalW != null && !isNaN(pd.goalW)) ? pd.goalW : 140;
     const wkX = function (k) { return 1 + 7 * (k + 1); };           // week k+1 check-in day (Wk1 = day 8)
@@ -5592,8 +5884,9 @@
     const pad = Math.max(1, (hi - lo) * 0.08); hi += pad; lo -= pad;
     const X = function (d) { return pL + (d - X0) / (X1 - X0) * pw; };
     const Y = function (w) { return pT + (hi - w) / (hi - lo) * ph; };
-    let g = '<svg class="nwg" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Weight progress">';
-    g += '<defs><linearGradient id="nwgFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6fe0a4" stop-opacity="0.32"/><stop offset="1" stop-color="#6fe0a4" stop-opacity="0"/></linearGradient></defs>';
+    const gid = 'nwgFill' + elId;
+    let g = '<svg class="nwg' + (big ? ' nwg-big' : '') + '" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Weight progress">';
+    g += '<defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6fe0a4" stop-opacity="0.32"/><stop offset="1" stop-color="#6fe0a4" stop-opacity="0"/></linearGradient></defs>';
     // grid + y labels
     const step = (hi - lo) > 24 ? 10 : 5;
     for (let v = Math.ceil(lo / step) * step; v <= hi; v += step) {
@@ -5625,9 +5918,9 @@
     if (pts.length) {
       const line = pts.map(function (q, i) { return (i ? 'L' : 'M') + X(q.x).toFixed(1) + ' ' + Y(q.w).toFixed(1); }).join(' ');
       const last = pts[pts.length - 1], first = pts[0];
-      g += '<path d="' + line + ' L' + X(last.x).toFixed(1) + ' ' + (pT + ph) + ' L' + X(first.x).toFixed(1) + ' ' + (pT + ph) + ' Z" fill="url(#nwgFill)"/>';
+      g += '<path d="' + line + ' L' + X(last.x).toFixed(1) + ' ' + (pT + ph) + ' L' + X(first.x).toFixed(1) + ' ' + (pT + ph) + ' Z" fill="url(#' + gid + ')"/>';
       g += '<path class="nwg-line" d="' + line + '"/>';
-      if (pts.length <= 40) pts.forEach(function (q) { g += '<circle class="nwg-pt" cx="' + X(q.x).toFixed(1) + '" cy="' + Y(q.w).toFixed(1) + '" r="1.7"><title>Day ' + q.x + ': ' + q.w.toFixed(1) + ' lb</title></circle>'; });
+      if (pts.length <= 40 || big) pts.forEach(function (q) { g += '<circle class="nwg-pt" cx="' + X(q.x).toFixed(1) + '" cy="' + Y(q.w).toFixed(1) + '" r="' + (big ? 2.4 : 1.7) + '"><title>Day ' + q.x + ': ' + q.w.toFixed(1) + ' lb</title></circle>'; });
       g += '<circle class="nwg-halo" cx="' + X(last.x).toFixed(1) + '" cy="' + Y(last.w).toFixed(1) + '" r="6.5"/>';
       g += '<circle class="nwg-cur" cx="' + X(last.x).toFixed(1) + '" cy="' + Y(last.w).toFixed(1) + '" r="3.2"/>';
       const lx = X(last.x), anchor = lx > W - 44 ? 'end' : 'start', dx = anchor === 'end' ? -8 : 9;
@@ -5638,6 +5931,106 @@
     g += '</svg><div class="nwg-leg"><span class="l-act">Actual</span><span class="l-tgt">Target</span></div>';
     wrap.innerHTML = g;
   }
+  // ---------------- Statistics page (persistent) ----------------
+  const NW_NAMES = { 'wake-0430': 'Wake Up at 04:30', 'hydration-supps': 'Hydration & Supplements', 'training-complete': 'Full Training Complete', 'cals-protein': '1400 Cals / 120P', 'push-pull-raise': '30 / 10 / 20' };
+  const NW_MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function nwFmt(iso) { const d = new Date(iso + 'T12:00:00'); return NW_MON[d.getMonth()] + ' ' + d.getDate(); }
+  function nwDayTasks(iso, log) { return NW_PREFILLED.indexOf(iso) !== -1 ? NW_TASKS.slice() : nwUnion(log[iso], []); }
+  function nwRenderStatsPage() {
+    const page = document.getElementById('nwsPage'); if (!page) return;
+    const T = function (id, v) { const e = document.getElementById(id); if (e) e.textContent = v; };
+    const all = nwIsoRange(NW_START, NW_END), total = all.length, log = nwLoadLog(), todayStr = todayISO();
+    const idx = all.indexOf(todayStr);
+    const dayNum = todayStr < NW_START ? 0 : (idx === -1 ? total : idx + 1);
+    const weekTot = Math.ceil(total / 7), weekNum = dayNum ? Math.floor((dayNum - 1) / 7) + 1 : 0;
+    const dayTasks = all.map(function (iso) { return nwDayTasks(iso, log); });
+    const perfectAt = dayTasks.map(function (a) { return a.length === NW_TASKS.length; });
+
+    // ---- hero ----
+    T('nwsDay', dayNum ? String(dayNum) : '\u2014'); T('nwsDayOf', 'of ' + total);
+    T('nwsChip', dayNum ? 'Week ' + weekNum + ' of ' + weekTot : 'Starts ' + nwFmt(NW_START));
+    const bar = document.getElementById('nwsDayBar'); if (bar) bar.style.width = (dayNum / total * 100).toFixed(1) + '%';
+    const left = total - dayNum;
+    T('nwsRemain', dayNum ? (Math.round(dayNum / total * 100) + '% complete \u00b7 ' + left + ' day' + (left === 1 ? '' : 's') + ' to go') : '');
+    let perfect = 0, streak = 0, best = 0, run = 0;
+    for (let i = 0; i < dayNum; i++) {
+      if (perfectAt[i]) { perfect++; run++; if (run > best) best = run; } else if (all[i] !== todayStr) run = 0;
+    }
+    for (let k = dayNum - 1; k >= 0; k--) { if (perfectAt[k]) streak++; else if (all[k] === todayStr) continue; else break; }
+    T('nwsStreak', streak + 'd'); T('nwsBest', best + 'd'); T('nwsPerfect', perfect + ' / ' + dayNum);
+    T('nwsRate', dayNum ? Math.round(perfect / dayNum * 100) + '%' : '\u2014');
+
+    // ---- weight tiles ----
+    const pd = window._physiqueData, ps = (typeof physiqueStats === 'function') ? physiqueStats() : null;
+    const ok = !!(ps && pd && !pd.sample);
+    const f1 = function (v) { return (v == null || isNaN(v)) ? '\u2014' : v.toFixed(1); };
+    let curW = null, lostW = null, toGoW = null, pace = null, pct = 0, nowSub = '\u00a0';
+    if (ok) {
+      curW = ps.currentW;
+      if (pd.daily && pd.daily.length) { curW = pd.daily[pd.daily.length - 1]; nowSub = pd.daily.length + ' weigh-ins'; }
+      else if (ps.weeksIn) nowSub = 'Week ' + ps.weeksIn;
+      lostW = ps.startW - curW; toGoW = Math.max(0, curW - ps.goalW);
+      if (pd.daily && pd.daily.length > 1) pace = lostW / (pd.daily.length / 7); else if (ps.weeksIn > 0) pace = ps.avgWk;
+      if (ps.startW > ps.goalW) pct = Math.max(0, Math.min(100, lostW / (ps.startW - ps.goalW) * 100));
+    }
+    T('nwsKStart', ok ? f1(ps.startW) + ' lb' : '\u2014');
+    T('nwsKNow', ok ? f1(curW) + ' lb' : '\u2014'); T('nwsKNowSub', nowSub);
+    T('nwsKLost', ok ? (lostW > 0 ? '\u2212' + lostW.toFixed(1) : f1(lostW)) + ' lb' : '\u2014');
+    T('nwsKGoal', ok ? f1(toGoW) + ' lb' : '\u2014'); T('nwsKGoalSub', ok ? 'goal ' + ps.goalW.toFixed(0) + ' lb' : '\u00a0');
+    T('nwsKPace', ok && pace != null ? (pace >= 0 ? '\u2212' : '+') + Math.abs(pace).toFixed(1) + ' lb' : '\u2014');
+    let eta = '\u2014';
+    if (ok) {
+      if (toGoW === 0) eta = 'Reached';
+      else if (pace > 0.05) { const d = new Date(); d.setDate(d.getDate() + Math.ceil(toGoW / pace * 7)); eta = NW_MON[d.getMonth()] + ' ' + d.getDate(); }
+    }
+    T('nwsKEta', eta);
+    const wb = document.getElementById('nwsWtBar'); if (wb) wb.style.width = pct.toFixed(1) + '%';
+    T('nwsWtCap', ok ? Math.round(pct) + '% of the way to ' + ps.goalW.toFixed(0) + ' lb' : (window._nwBackendStale ? 'Redeploy Code.gs to enable weight sync' : 'Weight loading\u2026'));
+    nwRenderWeightGraph('nwsGraph', true);
+
+    // ---- calendar heat map (weekday-aligned) ----
+    const dow0 = new Date(NW_START + 'T12:00:00').getDay();
+    const cols = Math.floor((dow0 + total - 1) / 7) + 1;
+    let cal = '', months = '', lastMonthCol = -1;
+    all.forEach(function (iso, i) {
+      const pos = dow0 + i, c = Math.floor(pos / 7) + 1, r = pos % 7 + 1, k = dayTasks[i].length;
+      let cls = 'nws-cell';
+      if (perfectAt[i]) cls += ' earned';
+      else if (iso > todayStr) cls += ' future';
+      else if (k > 0) cls += ' partial';
+      else if (iso < todayStr) cls += ' missed';
+      if (iso === todayStr) cls += ' today';
+      const dnum = parseInt(iso.slice(8), 10);
+      cal += '<div class="' + cls + '" style="grid-column:' + c + ';grid-row:' + r + '" title="' + nwFmt(iso) + ' \u00b7 ' + k + '/5"><span>' + dnum + '</span></div>';
+      if ((dnum === 1 || i === 0) && c !== lastMonthCol) {
+        months += '<span style="grid-column:' + c + '">' + NW_MON[parseInt(iso.slice(5, 7), 10) - 1] + '</span>'; lastMonthCol = c;
+      }
+    });
+    const calEl = document.getElementById('nwsCal'); if (calEl) { calEl.style.gridTemplateColumns = 'repeat(' + cols + ', 1fr)'; calEl.innerHTML = cal; }
+    const moEl = document.getElementById('nwsMonths'); if (moEl) { moEl.style.gridTemplateColumns = 'repeat(' + cols + ', 1fr)'; moEl.innerHTML = months; }
+    const calCap = document.getElementById('nwsCalCap'); if (calCap) { calCap.textContent = perfect + ' perfect \u00b7 ' + nwFmt(NW_START) + ' \u2013 ' + nwFmt(NW_END); calCap.classList.toggle('good', perfect > 0); }
+
+    // ---- per-task consistency ----
+    const elapsed = Math.max(1, dayNum);
+    let th = '';
+    NW_TASKS.forEach(function (id) {
+      let n = 0; for (let i = 0; i < dayNum; i++) { if (dayTasks[i].indexOf(id) !== -1) n++; }
+      const pc = dayNum ? Math.round(n / elapsed * 100) : 0;
+      th += '<div class="nws-task' + (id === 'training-complete' ? ' orange' : '') + '"><span class="nws-task-n' + (id === 'training-complete' ? ' orange' : '') + '">' + NW_NAMES[id] + '</span>'
+          + '<span class="nws-task-v">' + n + ' / ' + dayNum + '<b>' + pc + '%</b></span><div class="nws-bar"><i style="width:' + pc + '%"></i></div></div>';
+    });
+    const tEl = document.getElementById('nwsTasks'); if (tEl) tEl.innerHTML = th;
+
+    // ---- perfect days per week ----
+    let wh = '';
+    for (let w = 0; w < weekTot; w++) {
+      let n = 0; for (let i = w * 7; i < Math.min(total, w * 7 + 7); i++) { if (i < dayNum && perfectAt[i]) n++; }
+      const started = w * 7 < dayNum;
+      wh += '<div class="nws-wk" title="Week ' + (w + 1) + ': ' + n + ' perfect"><div class="nws-wk-bar' + (n ? ' has' : '') + (w + 1 === weekNum ? ' cur' : '') + '" style="height:' + (started ? Math.max(3, n / 7 * 100) : 3) + '%"></div><span>' + (w + 1) + '</span></div>';
+    }
+    const wEl = document.getElementById('nwsWeeks'); if (wEl) wEl.innerHTML = wh;
+  }
+
   function nwRenderStats() {
     const all = nwIsoRange(NW_START, NW_END);
     const third = Math.ceil(all.length / 3);
@@ -5645,6 +6038,7 @@
     nwRenderHeatBlock('nwHeatB', all.slice(third, third * 2));
     nwRenderHeatBlock('nwHeatC', all.slice(third * 2));
     nwRenderWeightGraph('nwWeightCard');
+    try { nwRenderStatsPage(); } catch (e) { console.warn('[PhD Pro©] stats page', e); }
 
     // ---- progress: day / week / streak / perfect days ----
     const log = nwLoadLog(), todayStr = todayISO(), total = all.length;
@@ -5689,6 +6083,243 @@
       : Math.round(pct) + '% to ' + ps.goalW.toFixed(0) + ' lb' + (pace != null ? ' \u00b7 ' + (pace >= 0 ? '\u2212' : '+') + Math.abs(pace).toFixed(1) + ' lb/wk' : ''));
   }
 
+  // ---------------- Completion splash ----------------
+  // Messages are easy to tweak here.
+  const NW_DONE_LEAN = 'Getting leaner.';
+  const NW_DONE_MUSCLE = 'Building muscle.';
+  const NW_DONE_FIRST = 'Day one is in the books.';
+  const NW_DONE_MSG = 'Every day you do this, you move closer to the version of you that you are building. Stay on course.';
+  let _nwDoneOpen = false, _nwDoneData = false, _nwSplashDay = null, _nwSplashTimer = null, _nwDoneTimers = [];
+  function nwDoneInfo() {
+    const pd = window._physiqueData;
+    if (!pd || pd.sample || !pd.daily || !pd.daily.length || pd.startW == null) return null;
+    return pd;
+  }
+  function nwDoneGraph(el, vals, labels) {
+    const W = Math.max(280, el.clientWidth), H = Math.max(200, el.clientHeight), n = vals.length;
+    const pL = 52, pR = 34, pT = 46, pB = 42;
+    let lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
+    const pad = Math.max(1.2, (hi - lo) * 0.6); lo -= pad; hi += pad;
+    const X = function (i) { return n === 1 ? pL + (W - pL - pR) / 2 : pL + i * (W - pL - pR) / (n - 1); };
+    const Y = function (v) { return pT + (hi - v) / (hi - lo) * (H - pT - pB); };
+    const raw = (hi - lo) / 4, steps = [0.5, 1, 2, 5, 10], step = steps.find(function (s) { return s >= raw; }) || 10;
+    let g = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" role="img" aria-label="Weight, last ' + n + ' days">';
+    g += '<defs><linearGradient id="nwdFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6fe0a4" stop-opacity="0.28"/><stop offset="1" stop-color="#6fe0a4" stop-opacity="0"/></linearGradient></defs>';
+    for (let t = Math.ceil(lo / step) * step; t <= hi; t += step) {
+      g += '<line x1="' + pL + '" x2="' + (W - pR) + '" y1="' + Y(t).toFixed(1) + '" y2="' + Y(t).toFixed(1) + '" stroke="rgba(255,255,255,0.07)"/>'
+         + '<text x="' + (pL - 10) + '" y="' + (Y(t) + 4).toFixed(1) + '" text-anchor="end" font-family="DM Mono,monospace" font-size="11" fill="rgba(232,226,208,0.45)">' + (step < 1 ? t.toFixed(1) : t.toFixed(0)) + '</text>';
+    }
+    labels.forEach(function (l, i) { g += '<text x="' + X(i).toFixed(1) + '" y="' + (H - 14) + '" text-anchor="middle" font-family="DM Mono,monospace" font-size="11" letter-spacing="2" fill="rgba(232,226,208,0.5)">' + l + '</text>'; });
+    const pts = vals.map(function (v, i) { return [X(i), Y(v)]; });
+    const pathOf = function (a) { return a.map(function (p, i) { return (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' '); };
+    if (n >= 3) g += '<path id="nwdA" d="' + pathOf(pts.slice(0, n - 1)) + '" fill="none" stroke="#6fe0a4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>';
+    if (n >= 2) g += '<path id="nwdB" d="' + pathOf(pts.slice(n - 2)) + '" fill="none" stroke="#a6ffd0" stroke-width="3.5" stroke-linecap="round" style="filter:drop-shadow(0 0 8px rgba(111,224,164,0.9))"/>';
+    for (let i = 0; i < n - 1; i++) {
+      g += '<g class="nwd-pd" data-i="' + i + '" style="opacity:0;transition:opacity 500ms"><circle cx="' + pts[i][0].toFixed(1) + '" cy="' + pts[i][1].toFixed(1) + '" r="4.5" fill="#0a1512" stroke="#6fe0a4" stroke-width="2"/>'
+         + '<text x="' + pts[i][0].toFixed(1) + '" y="' + (pts[i][1] - 14).toFixed(1) + '" text-anchor="middle" font-family="DM Mono,monospace" font-size="12" fill="rgba(232,226,208,0.7)">' + vals[i].toFixed(1) + '</text></g>';
+    }
+    const tp = pts[n - 1];
+    g += '<g id="nwdToday" style="opacity:0;transition:opacity 600ms"><circle class="g-ring" cx="' + tp[0].toFixed(1) + '" cy="' + tp[1].toFixed(1) + '" r="7" fill="none" stroke="#6fe0a4" stroke-width="2"/>'
+       + '<circle cx="' + tp[0].toFixed(1) + '" cy="' + tp[1].toFixed(1) + '" r="8" fill="#e8fff2" stroke="#6fe0a4" stroke-width="3.5" style="filter:drop-shadow(0 0 10px rgba(111,224,164,0.95))"/>'
+       + '<text id="nwdTodayVal" x="' + Math.min(tp[0], W - 44).toFixed(1) + '" y="' + (tp[1] + ((n >= 2 && vals[n - 1] < vals[n - 2]) ? 36 : -22)).toFixed(1) + '" text-anchor="middle" font-family="DM Mono,monospace" font-size="22" fill="#a6ffd0" style="filter:drop-shadow(0 0 8px rgba(111,224,164,0.6))">' + vals[n - 1].toFixed(1) + '</text></g>';
+    el.innerHTML = g + '</svg>';
+    // animate
+    const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const A = el.querySelector('#nwdA'), B = el.querySelector('#nwdB'), tg = el.querySelector('#nwdToday'), tv = el.querySelector('#nwdTodayVal');
+    const later = function (fn, ms) { _nwDoneTimers.push(setTimeout(fn, ms)); };
+    const dots = el.querySelectorAll('.nwd-pd');
+    if (reduce) { dots.forEach(function (d) { d.style.opacity = 1; }); tg.style.opacity = 1; return; }
+    const prep = function (p) { if (!p) return 0; const L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = L; return L; };
+    prep(A); prep(B);
+    const aMs = 1000, bMs = 800, bStart = 250 + (A ? aMs : 0) + 100;
+    later(function () {
+      if (A) { A.style.transition = 'stroke-dashoffset ' + aMs + 'ms cubic-bezier(.4,0,.2,1)'; A.style.strokeDashoffset = 0; }
+      dots.forEach(function (d) { later(function () { d.style.opacity = 1; }, 150 + (+d.dataset.i) / Math.max(1, n - 2) * (A ? aMs : 300)); });
+    }, 250);
+    later(function () {
+      if (B) { B.style.transition = 'stroke-dashoffset ' + bMs + 'ms cubic-bezier(.4,0,.2,1)'; B.style.strokeDashoffset = 0; }
+      later(function () { tg.style.opacity = 1; }, B ? bMs - 250 : 0);
+      if (tv && n >= 2) {
+        const from = vals[n - 2], to = vals[n - 1], t0 = performance.now(), dur = bMs + 300;
+        tv.textContent = from.toFixed(1);
+        (function stepF(now) { const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3); tv.textContent = (from + (to - from) * e).toFixed(1); if (k < 1 && _nwDoneOpen) requestAnimationFrame(stepF); })(t0);
+      }
+    }, bStart);
+  }
+  function nwBuildDone() {
+    const ov = document.getElementById('nwDone'); if (!ov) return;
+    _nwDoneTimers.forEach(clearTimeout); _nwDoneTimers = [];
+    const pd = nwDoneInfo(), line = document.getElementById('nwdLine'), gEl = document.getElementById('nwdGraph');
+    const cap = document.getElementById('nwdCap'), bar = document.getElementById('nwdBar');
+    document.getElementById('nwdMsg').textContent = NW_DONE_MSG;
+    bar.style.width = '0%';
+    _nwDoneData = !!pd;
+    if (!pd) {
+      line.textContent = 'All five. Done.'; gEl.innerHTML = ''; cap.textContent = 'Weight syncing\u2026';
+      return;
+    }
+    const d = pd.daily, n = d.length, vals = d.slice(Math.max(0, n - 7));
+    const labels = vals.map(function (_, i) { return 'D' + (n - vals.length + i + 1); });
+    line.textContent = n < 2 ? NW_DONE_FIRST : (d[n - 1] < d[n - 2] - 0.049 ? NW_DONE_LEAN : NW_DONE_MUSCLE);
+    nwDoneGraph(gEl, vals, labels);
+    const cur = d[n - 1], start = pd.startW, goal = pd.goalW;
+    const pct = start > goal ? Math.max(0, Math.min(100, (start - cur) / (start - goal) * 100)) : 0;
+    const all = nwIsoRange(NW_START, NW_END), idx = all.indexOf(todayISO()), dayNum = idx === -1 ? all.length : idx + 1;
+    cap.innerHTML = '<b>' + Math.round(pct) + '%</b> to goal &middot; ' + start.toFixed(1) + ' &rarr; ' + goal.toFixed(0) + ' lb &middot; ' + Math.max(0, cur - goal).toFixed(1) + ' lb to go'
+      + (n < dayNum ? '<br><span style="opacity:.6;letter-spacing:.14em">Today\u2019s weigh-in isn\u2019t in the sheet yet</span>' : '');
+    _nwDoneTimers.push(setTimeout(function () { bar.style.width = pct.toFixed(1) + '%'; }, 2200));
+  }
+  function nwShowDone() {
+    const ov = document.getElementById('nwDone'); if (!ov) return;
+    _nwDoneOpen = true;
+    ov.setAttribute('aria-hidden', 'false');
+    ov.classList.remove('on'); void ov.offsetWidth;
+    nwBuildDone();
+    requestAnimationFrame(function () { ov.classList.add('on'); const b = document.getElementById('nwdAck'); if (b) setTimeout(function () { try { b.focus({ preventScroll: true }); } catch (e) {} }, 800); });
+  }
+  function nwCloseDone() {
+    const ov = document.getElementById('nwDone'); if (!ov) return;
+    try { localStorage.setItem('nw_splash_ack', todayISO()); } catch (e) {}
+    _nwDoneOpen = false; _nwDoneTimers.forEach(clearTimeout); _nwDoneTimers = [];
+    ov.classList.remove('on'); ov.setAttribute('aria-hidden', 'true');
+  }
+  function nwAutoSplash() {
+    const t = todayISO(); let ack = null; try { ack = localStorage.getItem('nw_splash_ack'); } catch (e) {}
+    if (ack === t || _nwSplashDay === t || _nwDoneOpen) return;
+    const fire = function () { clearTimeout(_nwSplashTimer); _nwSplashTimer = null; _nwSplashDay = t; setTimeout(nwShowDone, 120); };
+    if (nwDoneInfo()) fire();
+    else if (!_nwSplashTimer) _nwSplashTimer = setTimeout(fire, 1800);   // wait briefly for weights, then show anyway
+  }
+
+  // ---------------- Office: lock + cascades ----------------
+  const OC_GOAL = 2;   // cascade items to finish per week (surplus banks into later weeks)
+  const OC_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1My6fWDsy8EiCZ9qc_0O0yvAcdVTC-V4hTFQm7E_I07c/edit';
+  const OC_NAMES = { pers: 'Personal Cascade', phd: 'PhD Cascade' };
+  let _ocData = null, _ocLast = 0, _ocStale = false;
+  function ocIsUnlocked() { const t = nwLoadToday(); return NW_TASKS.every(function (id) { return t.indexOf(id) !== -1; }); }
+  function ocApplyLock() {
+    const off = document.getElementById('office'); if (!off) return;
+    const un = ocIsUnlocked();
+    off.classList.toggle('unlocked', un); off.classList.toggle('locked', !un);
+    off.style.display = un ? '' : 'none';              // hidden entirely until unlocked, like Desks
+    const nav = document.getElementById('officeNavLink');
+    if (nav) { nav.classList.toggle('nav-locked', !un); nav.setAttribute('aria-disabled', un ? 'false' : 'true'); }
+    if (un) { try { ocRender(); } catch (e) { console.warn('[PhD Pro©] office', e); } }
+    ocUpdateDot();
+  }
+  let _ocMet = false;
+  function ocUpdateDot() {      // gold dot above "Office": only when unlocked AND this week's quest isn't met yet
+    const dot = document.getElementById('officeNotif'); if (!dot) return;
+    dot.classList.toggle('visible', ocIsUnlocked() && !!_ocData && !_ocMet);
+  }
+  function ocIso(s) {
+    if (!s) return '';
+    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+    const t = Date.parse(s + (/\d{4}/.test(s) ? '' : ' ' + new Date().getFullYear())); if (isNaN(t)) return '';
+    const d = new Date(t), p = function (n) { return String(n).padStart(2, '0'); };
+    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+  }
+  function ocDays(a, b) { return Math.round((Date.parse(b + 'T12:00:00') - Date.parse(a + 'T12:00:00')) / 864e5); }
+  function ocWeekly(log) {
+    const today = todayISO(), cur = Math.max(0, Math.floor(ocDays(NW_START, today) / 7));
+    const counts = []; for (let i = 0; i <= cur; i++) counts.push(0);
+    (log || []).forEach(function (e) {
+      if (e.date < NW_START || e.date > today) return;
+      const w = Math.floor(ocDays(NW_START, e.date) / 7); if (w >= 0 && w <= cur) counts[w]++;
+    });
+    const weeks = []; let carry = 0;
+    for (let w = 0; w <= cur; w++) {
+      const total = counts[w] + carry;
+      weeks.push({ count: counts[w], carryIn: carry, total: total, met: total >= OC_GOAL });
+      carry = Math.max(0, total - OC_GOAL);       // surplus banks into the next week
+    }
+    const c = weeks[cur];
+    return { week: cur + 1, count: c.count, carry: c.carryIn, total: c.total, forward: carry, weeks: weeks };
+  }
+  function ocCard(key, items) {
+    const mine = items.filter(function (x) { return x.sheet === key; });
+    const g = mine.filter(function (x) { return x.state === 'done'; }).length;
+    const b = mine.filter(function (x) { return x.state === 'sched'; }).length;
+    const y = mine.filter(function (x) { return x.state === 'due'; }).length, N = Math.max(1, mine.length);
+    const esc = function (t) { return String(t == null ? '' : t).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); };
+    const fmt = function (iso) { return iso ? nwFmt(iso) : ''; };
+    const due = mine.filter(function (x) { return x.state === 'due'; })[0];
+    let up;
+    if (due) {
+      let chip = '<span class="occ-chip y">Due now</span>';
+      if (due.days != null && due.days < 0) chip = '<span class="occ-chip r">Overdue ' + Math.abs(due.days) + ' d</span>';
+      else if (due.days != null && due.days > 0) chip = '<span class="occ-chip y">In ' + due.days + ' d</span>';
+      up = '<div class="occ-k">Next due</div><div class="occ-task">' + esc(due.task) + '</div><div class="occ-meta">' + chip + '<span>' + esc(due.sub || due.desk) + '</span></div>';
+    } else {
+      const soon = mine.filter(function (x) { return x.days != null && x.days >= 0; }).sort(function (a, c) { return a.days - c.days; })[0];
+      up = '<div class="occ-k">Next due</div><div class="occ-task">All green &mdash; nothing needs action.</div>'
+         + (soon ? '<div class="occ-meta"><span class="occ-chip g">Up next in ' + soon.days + ' d</span><span>' + esc(soon.task) + '</span></div>' : '');
+    }
+    const sched = mine.filter(function (x) { return x.state === 'sched'; }).sort(function (a, c) { return (ocIso(a.sched) || '9') < (ocIso(c.sched) || '9') ? -1 : 1; })[0];
+    const sc = sched
+      ? '<div class="occ-k">Next scheduled</div><div class="occ-task">' + esc(sched.task) + '</div><div class="occ-meta"><span class="occ-chip b">' + esc(fmt(ocIso(sched.sched)) || sched.sched || 'Scheduled') + '</span><span>' + esc(sched.sub || sched.desk) + '</span></div>'
+      : '<div class="occ-k">Next scheduled</div><div class="occ-task dim">Nothing scheduled.</div>';
+    return '<div class="occ-top"><span class="occ-name">' + OC_NAMES[key] + '</span><a class="occ-open" href="' + OC_SHEET_URL + '" target="_blank" rel="noopener">Open sheet &rarr;</a></div>'
+      + '<div class="occ-health"><div class="occ-seg"><i class="g" style="width:' + (g / N * 100) + '%"></i><i class="b" style="width:' + (b / N * 100) + '%"></i><i class="y" style="width:' + (y / N * 100) + '%"></i></div>'
+      + '<div class="occ-counts"><span class="g"><b>' + g + '</b>Green</span><span class="b"><b>' + b + '</b>Scheduled</span><span class="y"><b>' + y + '</b>Due</span></div></div>'
+      + '<div class="occ-next">' + up + '</div><div class="occ-next">' + sc + '</div>';
+  }
+  function ocRender() {
+    const goalNum = document.getElementById('tmGoalNum'); if (!goalNum) return;
+    const pips = document.getElementById('tmGoalPips'), cap = document.getElementById('tmGoalCap');
+    const pe = document.getElementById('occPers'), he = document.getElementById('occPhd');
+    if (!_ocData) {
+      goalNum.innerHTML = '&mdash; <small>/ ' + OC_GOAL + '</small>';
+      if (_ocStale) { const m = '<div class="occ-loading">Redeploy Code.gs to enable cascades</div>'; pe.innerHTML = m; he.innerHTML = m; }
+      return;
+    }
+    const items = _ocData.items.map(function (r) { return { sheet: r[0], desk: r[1], sub: r[2], task: r[3], state: r[4], sched: r[5], due: r[6], days: r[7] }; });
+    pe.innerHTML = ocCard('pers', items); he.innerHTML = ocCard('phd', items);
+    const wk = ocWeekly(_ocData.log), met = wk.total >= OC_GOAL; _ocMet = met;
+    const goalEl = document.getElementById('tmGoal'); if (goalEl) goalEl.classList.toggle('met', met);
+    const ring = document.getElementById('tmGoalRing'); if (ring) ring.textContent = OC_GOAL;
+    goalNum.className = 'tm-goal-num' + (met ? ' met' : '');
+    goalNum.innerHTML = wk.total + ' <small>/ ' + OC_GOAL + '</small>';
+    let ph = ''; for (let i = 0; i < OC_GOAL; i++) ph += '<i class="' + (i < wk.total ? 'on' : '') + '"></i>';
+    pips.innerHTML = ph;
+    const wkTot = Math.ceil(nwIsoRange(NW_START, NW_END).length / 7);
+    document.getElementById('tmCarry').innerHTML =
+        '<div><b class="' + (wk.carry ? 'pos' : '') + '">+' + wk.carry + '</b><span>Carried in</span></div>'
+      + '<div><b>' + wk.count + '</b><span>Finished this week</span></div>'
+      + '<div><b class="' + (wk.forward ? 'pos' : '') + '">+' + wk.forward + '</b><span>Banking forward</span></div>';
+    let wh = '';
+    for (let w = 0; w < wkTot; w++) {
+      const d = wk.weeks[w], isCur = w === wk.week - 1;
+      const cls = d ? (isCur ? 'cur' + (d.met ? ' met' : '') : (d.met ? 'met' : 'miss')) : '';
+      wh += '<i class="' + cls + '" title="' + (d ? 'Week ' + (w + 1) + ': ' + d.count + ' finished' + (d.carryIn ? ' + ' + d.carryIn + ' carried in' : '') + ' = ' + d.total + ' / ' + OC_GOAL : 'Week ' + (w + 1)) + '"></i>';
+    }
+    document.getElementById('tmWeeks').innerHTML = wh;
+    cap.innerHTML = 'Week ' + Math.min(wk.week, wkTot) + ' of ' + wkTot + (met ? ' &middot; <b>quest complete</b>' : ' &middot; ' + (OC_GOAL - wk.total) + ' to go');
+    ocUpdateDot();
+  }
+  function ocLoad(force) {
+    if (typeof APPS_SCRIPT_URL === 'undefined' || !APPS_SCRIPT_URL) return;
+    if (!force && Date.now() - _ocLast < 60000) return;
+    _ocLast = Date.now();
+    nwFetch(APPS_SCRIPT_URL + '?action=getCascade&_=' + Date.now(), { cache: 'no-store', redirect: 'follow' })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+      .then(function (j) {
+        if (!j || j.ok !== true || !j.items) { _ocStale = true; ocRender(); return; }
+        _ocStale = false; _ocData = j;
+        try { localStorage.setItem('oc_cache', JSON.stringify(j)); } catch (e) {}
+        if (ocIsUnlocked()) ocRender();
+      })
+      .catch(function () { _ocLast = 0; });
+  }
+  function ocInit() {
+    try { const c = localStorage.getItem('oc_cache'); if (c) _ocData = JSON.parse(c); } catch (e) {}
+    ocApplyLock();
+    ocLoad(true);
+    document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') ocLoad(false); });
+    window.addEventListener('focus', function () { ocLoad(false); });
+    setInterval(function () { ocLoad(false); }, 5 * 60 * 1000);
+  }
+
   function initNightwingDailies() {
     document.querySelectorAll('.nw-tile').forEach(function (tile) {
       tile.addEventListener('click', function () { nwToggleTask(tile); });
@@ -5697,13 +6328,23 @@
     const wrap = document.getElementById('nwWrap');
     if (headBtn && wrap) {
       headBtn.addEventListener('click', function () {
+        if (wrap.classList.contains('nw-complete')) { nwShowDone(); return; }
         const collapsed = wrap.classList.toggle('collapsed');
         headBtn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
       });
     }
+    // Restore saved progress immediately from this device (no waiting on the network, no animation)
+    if (wrap) wrap.classList.add('nw-instant');
+    _nwDay = todayISO();
+    nwApplyState();
+    requestAnimationFrame(function () { requestAnimationFrame(function () { if (wrap) wrap.classList.remove('nw-instant'); }); });
+    const ackBtn = document.getElementById('nwdAck'); if (ackBtn) ackBtn.addEventListener('click', nwCloseDone);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && _nwDoneOpen) nwCloseDone(); });
     nwLoadFromSheets();
     nwLoadWeights();
     nwWatch();
+    ocInit();
+    let _nwRz; window.addEventListener('resize', function () { clearTimeout(_nwRz); _nwRz = setTimeout(function () { try { nwRenderStatsPage(); } catch (e) {} }, 200); });
   }
 
   // ============================================================
