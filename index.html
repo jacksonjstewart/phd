@@ -2196,8 +2196,7 @@
 
   // 7 · Statistics — heatmap + Chart.js
 
-  // CSV
-  const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSm6d7HdIKw7iYXdo1B5-IUBc6e33FO3wxKp3FmnGGChnqk_MmPl1593rv5XJ3F4Sweg-HyBVwSQGgK/pub?output=csv';
+  // Program/weight data comes from the Apps Script backend (getWeights) — see nwLoadWeights().
   let _checkinDOW = 5;
   let _chart = null;
 
@@ -2224,35 +2223,6 @@
 
 
 
-  function loadPhysiqueFromCSV() {
-    fetch(CSV_URL, { cache: 'no-store' })
-      .then(r => r.ok ? r.text() : Promise.reject(r.status))
-      .then(text => {
-        const rows = parseCSV(text);
-        const weekRows = rows.slice(3, 15);
-        const labels = weekRows.map((r,i) => r[0] || ('W' + (i+1)));
-        window._physiqueData = { status: 'ok', startW: (function(){ var v = num(rows[1] ? rows[1][2] : null); if (v == null || isNaN(v)) { for (var ri = 0; ri < 3 && (v == null || isNaN(v)); ri++) { for (var ci = 0; ci < (rows[ri]||[]).length; ci++) { var c = num(rows[ri][ci]); if (c != null && !isNaN(c) && c > 80 && c < 400) { v = c; break; } } } } return v; })(), goalW: (function(){ const md = weekRows.map(function(r){return num(r[3]);}); for (var i=md.length-1;i>=0;i--){ if (md[i]!=null) return md[i]; } return 140; })(), actual: weekRows.map(function(r){return num(r[5]);}), min: weekRows.map(function(r){return num(r[2]);}), target: weekRows.map(function(r){return num(r[3]);}), max: weekRows.map(function(r){return num(r[4]);}), labels: labels };
-        if (window._nwBackendPD) window._physiqueData = window._nwBackendPD;   // backend weights win
-        try { if (typeof nwRenderStats === 'function') nwRenderStats(); } catch (e) { console.warn('[PhD Pro©] nw stats', e); }
-        console.info('[PhD Pro©] physique data', window._physiqueData);
-        const _sds = document.getElementById('syncDot');
-        const _sls = document.getElementById('syncLabel');
-        if (_sds) { _sds.classList.remove('error','demo'); }
-        if (_sls) _sls.textContent = 'Synced';
-      })
-      .catch(err => {
-        console.warn('[PhD Pro©] CSV fetch failed, falling back to sample data:', err);
-        const _sdf = document.getElementById('syncDot');
-        const _slf = document.getElementById('syncLabel');
-        if (_sdf) _sdf.classList.add('error');
-        if (_slf) _slf.textContent = 'Sync Failed';
-
-        window._physiqueData = { status: 'fetch-failed', sample: true, startW: 162.4, goalW: 140, actual: [160.1,158.6,157.2,null,null,null,null,null,null,null,null,null], min: [158.0,156.7,155.5,154.2,152.9,151.7,150.5,149.3,148.0,146.8,145.5,144.3], target: [158.0,156.4,154.8,153.2,151.7,150.2,148.7,147.2,145.8,144.4,142.9,140.0], max: [158.0,156.0,153.8,151.7,149.7,147.8,145.8,144.0,142.1,140.3,138.5,136.7], labels: ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12'] };
-        if (window._nwBackendPD) window._physiqueData = window._nwBackendPD;
-        try { if (typeof nwRenderStats === 'function') nwRenderStats(); } catch (_) {}
-        if (!window._physRetried) { window._physRetried = true; setTimeout(loadPhysiqueFromCSV, 5000); }
-      });
-  }
 
 
 
@@ -2315,7 +2285,7 @@
 
     function evaluate() {
       const now = new Date();
-      // _checkinDOW is set by loadPhysiqueFromCSV — default 6 (Sat) matches your program
+      // _checkinDOW = weekday of the program start date (set by progRefresh)
       const isCheckinDay = now.getDay() === _checkinDOW;
       if (!isCheckinDay) {
         dot.classList.remove('visible');
@@ -2334,9 +2304,9 @@
       }, { once: true });
     }
 
-    // Evaluate immediately (uses default _checkinDOW if CSV not yet loaded)
+    // Evaluate immediately
     evaluate();
-    // Re-evaluate after CSV load settles to pick up correct _checkinDOW
+    // Re-evaluate once the sheet's dates have loaded
     setTimeout(evaluate, 3000);
   }
 
@@ -2673,8 +2643,38 @@
   // ============================================================
   const NW_TASKS = ['wake-0430', 'hydration-supps', 'training-complete', 'cals-protein', 'push-pull-raise'];
   const NW_PREFILLED = ['2026-10-13', '2026-10-14', '2026-10-15', '2026-10-16']; // completed before the tracker existed
-  const NW_START = '2026-10-13';
-  const NW_END   = '2027-02-01';
+  // Program window. These are only defaults / last-known values — the sheet's "Start Date" and
+  // "End Date" cells (THE GREAT WINTER tab) override them on every sync, and the result is cached
+  // on this device so the page is right even before (or without) the network.
+  let NW_START = '2026-10-13';
+  let NW_END   = '2027-02-01';
+  function nwApplyProgram(start, end, silent) {
+    const ok = function (v) { return typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v); };
+    if (!ok(start) || !ok(end) || start >= end) return false;
+    const changed = start !== NW_START || end !== NW_END;
+    NW_START = start; NW_END = end;
+    try { localStorage.setItem('nw_prog', JSON.stringify({ s: start, e: end })); } catch (e) {}
+    if (changed && !silent) { try { progRefresh(); } catch (e) {} }
+    return changed;
+  }
+  (function () { try { const c = JSON.parse(localStorage.getItem('nw_prog') || 'null'); if (c) nwApplyProgram(c.s, c.e, true); } catch (e) {} })();
+  function nwProgTotal() { return nwIsoRange(NW_START, NW_END).length; }
+  // Single source for "where are we in the program" (splash, header, stats all agree)
+  function progInfo() {
+    const all = nwIsoRange(NW_START, NW_END), total = all.length, today = todayISO(), idx = all.indexOf(today);
+    const dayNum = today < NW_START ? 1 : (idx === -1 ? total : idx + 1);
+    return { total: total, totalWeeks: Math.ceil(total / 7), dayNum: dayNum, weekNum: Math.ceil(dayNum / 7),
+             daysLeft: Math.max(0, total - dayNum + 1), started: today >= NW_START, ended: idx === -1 && today > NW_END };
+  }
+  function progRefresh() {
+    const pi = progInfo(), now = new Date();
+    _checkinDOW = new Date(NW_START + 'T12:00:00').getDay();                 // weekly check-in = same weekday the program started
+    const diff = (_checkinDOW - now.getDay() + 7) % 7, daysToNext = diff === 0 ? 7 : diff;
+    const nextCheckin = new Date(now); nextCheckin.setDate(now.getDate() + daysToNext);
+    window._splashData = { dayNum: pi.dayNum, weekNum: pi.weekNum, totalWeeks: pi.totalWeeks, daysLeft: pi.daysLeft,
+                           nextCheckin: nextCheckin, daysToNext: daysToNext, loaded: true, dateUnresolved: false };
+    if (typeof initStatsNotif === 'function') { try { initStatsNotif(); } catch (e) {} }
+  }
 
   function nwKey() { return 'stewlab-nw-' + todayISO(); }
   function nwLoadToday() {
@@ -2753,8 +2753,10 @@
     fetch(APPS_SCRIPT_URL + '?action=getWeights&_=' + Date.now(), { cache: 'no-store', redirect: 'follow' })
       .then(function (r) { return r.ok ? r.json() : Promise.reject('http'); })
       .then(function (w) {
-        if (!w || w.ok !== true) { window._nwBackendStale = true; return; }   // old script: returns calendar array
+        if (!w || w.ok !== true) { window._nwBackendStale = true; nwSyncDot(false, 'Update Backend'); return; }   // old script: returns calendar array
         window._nwBackendStale = false;
+        nwSyncDot(true); window._nwWtAt = Date.now();
+        if (w.start && w.end) nwApplyProgram(w.start, w.end);            // sheet is the source of truth for the program window
         const pdOld = window._physiqueData || {};
         const tgt = w.target || [];
         let goal = null; for (let i = tgt.length - 1; i >= 0; i--) { if (tgt[i] != null) { goal = tgt[i]; break; } }
@@ -2763,7 +2765,7 @@
           startW: (w.baseline != null) ? w.baseline : (pdOld.sample ? null : pdOld.startW),
           goalW: goal != null ? goal : (pdOld.sample ? 140 : (pdOld.goalW != null ? pdOld.goalW : 140)),
           actual: w.actual || [], min: w.min || [], target: tgt, max: w.max || [],
-          labels: ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12'],
+          labels: (w.labels && w.labels.length) ? w.labels : tgt.map(function (_, i) { return 'W' + (i + 1); }),
           daily: w.daily || []
         };
         window._nwBackendPD = window._physiqueData;
@@ -2771,7 +2773,12 @@
         if (_nwDoneOpen && !_nwDoneData) nwBuildDone();
         else if (document.getElementById('nwWrap').classList.contains('nw-complete')) nwAutoSplash();
       })
-      .catch(function () { if (attempt < 2) setTimeout(function () { nwLoadWeights(attempt + 1); }, 4000); });
+      .catch(function () { if (attempt < 2) setTimeout(function () { nwLoadWeights(attempt + 1); }, 4000); else nwSyncDot(false, 'Sync Failed'); });
+  }
+  function nwSyncDot(ok, label) {
+    const d = document.getElementById('syncDot'), l = document.getElementById('syncLabel');
+    if (d) { d.classList.remove('error', 'demo'); if (!ok) d.classList.add('error'); }
+    if (l) l.textContent = ok ? 'Synced' : (label || 'Sync Failed');
   }
 
   // ---- sync: pull everything from the sheet, union with local, push anything the sheet lacks ----
@@ -2875,7 +2882,7 @@
     const pd = window._physiqueData;
     if (!pd || pd.sample || pd.startW == null || isNaN(pd.startW)) { wrap.innerHTML = big ? '<div class="nws-empty">Weight data loads from your PHYSIQUE ACADEMY tab once the backend is connected.</div>' : ''; return; }
     const bw = big ? Math.max(300, Math.min(760, wrap.clientWidth || 680)) : 212;
-    const W = bw, H = big ? (bw < 520 ? 230 : 280) : 158, pL = big ? 44 : 28, pR = big ? 22 : 10, pT = big ? 26 : 16, pB = big ? 32 : 22, X0 = 1, X1 = 85;
+    const W = bw, H = big ? (bw < 520 ? 230 : 280) : 158, pL = big ? 44 : 28, pR = big ? 22 : 10, pT = big ? 26 : 16, pB = big ? 32 : 22, X0 = 1, X1 = Math.max(8, nwProgTotal());
     const pw = W - pL - pR, ph = H - pT - pB;
     const start = pd.startW, goal = (pd.goalW != null && !isNaN(pd.goalW)) ? pd.goalW : 140;
     const wkX = function (k) { return 1 + 7 * (k + 1); };           // week k+1 check-in day (Wk1 = day 8)
@@ -2899,7 +2906,8 @@
       g += '<text class="nwg-ax" x="' + (pL - 5) + '" y="' + (Y(v) + 3).toFixed(1) + '" text-anchor="end">' + v + '</text>';
     }
     // x ticks (weeks)
-    [[1, 'W1'], [4, 'W4'], [8, 'W8'], [12, 'W12']].forEach(function (t) {
+    const _wkTicks = [1]; for (let w = 4; w <= Math.ceil(X1 / 7); w += 4) _wkTicks.push(w);
+    _wkTicks.map(function (w) { return [w, 'W' + w]; }).forEach(function (t) {
       const d = Math.min(1 + 7 * (t[0] - 1), X1);
       g += '<text class="nwg-ax" x="' + X(d).toFixed(1) + '" y="' + (H - 6) + '" text-anchor="middle">' + t[1] + '</text>';
     });
@@ -2907,13 +2915,13 @@
     g += '<line class="nwg-goal" x1="' + pL + '" x2="' + (W - pR) + '" y1="' + Y(goal).toFixed(1) + '" y2="' + Y(goal).toFixed(1) + '"/>';
     g += '<text class="nwg-goal-t" x="' + (W - pR) + '" y="' + (Y(goal) - 4).toFixed(1) + '" text-anchor="end">GOAL ' + goal.toFixed(0) + '</text>';
     // min/max band + target line (weekly)
-    const bandK = []; for (let k = 0; k < 12; k++) { if (mn[k] != null && mx[k] != null) bandK.push(k); }
+    const _nWk = Math.max(tg.length, mn.length, mx.length), bandK = []; for (let k = 0; k < _nWk; k++) { if (mn[k] != null && mx[k] != null) bandK.push(k); }
     if (bandK.length > 1) {
       let d = ''; bandK.forEach(function (k) { d += (d ? ' L' : 'M') + X(wkX(k)).toFixed(1) + ' ' + Y(mn[k]).toFixed(1); });
       for (let z = bandK.length - 1; z >= 0; z--) { const k = bandK[z]; d += ' L' + X(wkX(k)).toFixed(1) + ' ' + Y(mx[k]).toFixed(1); }
       g += '<path class="nwg-band" d="' + d + ' Z"/>';
     }
-    const tK = []; for (let k = 0; k < 12; k++) { if (tg[k] != null) tK.push(k); }
+    const tK = []; for (let k = 0; k < _nWk; k++) { if (tg[k] != null) tK.push(k); }
     if (tK.length > 1) {
       let d = 'M' + X(1).toFixed(1) + ' ' + Y(start).toFixed(1);
       tK.forEach(function (k) { d += ' L' + X(wkX(k)).toFixed(1) + ' ' + Y(tg[k]).toFixed(1); });
@@ -2935,6 +2943,23 @@
     g += '<circle class="nwg-start" cx="' + X(1).toFixed(1) + '" cy="' + Y(start).toFixed(1) + '" r="3"/>';
     g += '</svg><div class="nwg-leg"><span class="l-act">Actual</span><span class="l-tgt">Target</span></div>';
     wrap.innerHTML = g;
+  }
+  // ---------------- Weight statistics (sheet-driven; works for any program length) ----------------
+  function physiqueStats() {
+    const pd = window._physiqueData;
+    if (!pd || pd.sample || pd.startW == null || isNaN(pd.startW)) return null;
+    const startW = pd.startW, goalW = (pd.goalW != null && !isNaN(pd.goalW)) ? pd.goalW : 140;
+    let currentW = startW, lastIdx = -1;
+    (pd.daily || []).forEach(function (v, i) { if (v != null && !isNaN(v)) { currentW = v; lastIdx = i; } });
+    const acts = (pd.actual || []).map(function (v, i) { return { v: v, i: i }; }).filter(function (o) { return o.v != null && !isNaN(o.v); });
+    if (lastIdx < 0 && acts.length) currentW = acts[acts.length - 1].v;
+    const weeksIn = acts.length ? acts[acts.length - 1].i + 1 : (lastIdx >= 0 ? Math.floor(lastIdx / 7) : 0);
+    const lost = startW - currentW, toGo = currentW - goalW;
+    const elapsedWk = lastIdx >= 0 ? (lastIdx + 1) / 7 : weeksIn;
+    const avgWk = elapsedWk > 0 ? lost / elapsedWk : 0;
+    const weeksLeft = Math.max(0, (nwProgTotal() - progInfo().dayNum) / 7);
+    const projected = elapsedWk > 0 ? currentW - avgWk * weeksLeft : null;
+    return { startW: startW, goalW: goalW, currentW: currentW, lost: lost, toGo: toGo, avgWk: avgWk, projected: projected, weeksIn: weeksIn };
   }
   // ---------------- Statistics page (persistent) ----------------
   const NW_NAMES = { 'wake-0430': 'Wake Up at 04:30', 'hydration-supps': 'Hydration & Supplements', 'training-complete': 'Full Training Complete', 'cals-protein': '1400 Cals / 120P', 'push-pull-raise': '30 / 10 / 20' };
@@ -2972,7 +2997,7 @@
     let curW = null, lostW = null, toGoW = null, pace = null, pct = 0, nowSub = '\u00a0';
     if (ok) {
       curW = ps.currentW;
-      if (pd.daily && pd.daily.length) { curW = pd.daily[pd.daily.length - 1]; nowSub = pd.daily.length + ' weigh-ins'; }
+      if (pd.daily && pd.daily.length) { curW = pd.daily[pd.daily.length - 1]; nowSub = pd.daily.filter(function (v) { return v != null; }).length + ' weigh-ins'; }
       else if (ps.weeksIn) nowSub = 'Week ' + ps.weeksIn;
       lostW = ps.startW - curW; toGoW = Math.max(0, curW - ps.goalW);
       if (pd.daily && pd.daily.length > 1) pace = lostW / (pd.daily.length / 7); else if (ps.weeksIn > 0) pace = ps.avgWk;
@@ -3163,15 +3188,17 @@
       line.textContent = 'All five. Done.'; gEl.innerHTML = ''; cap.textContent = 'Weight syncing\u2026';
       return;
     }
-    const d = pd.daily, n = d.length, vals = d.slice(Math.max(0, n - 7));
-    const labels = vals.map(function (_, i) { return 'D' + (n - vals.length + i + 1); });
-    line.textContent = n < 2 ? NW_DONE_FIRST : (d[n - 1] < d[n - 2] - 0.049 ? NW_DONE_LEAN : NW_DONE_MUSCLE);
+    const ser = []; pd.daily.forEach(function (v, i) { if (v != null && !isNaN(v)) ser.push({ day: i + 1, w: v }); });
+    const n = ser.length; if (!n) { line.textContent = 'All five. Done.'; gEl.innerHTML = ''; cap.textContent = 'Weight syncing\u2026'; return; }
+    const recent = ser.slice(Math.max(0, n - 7)), vals = recent.map(function (q) { return q.w; });
+    const labels = recent.map(function (q) { return 'D' + q.day; });
+    line.textContent = n < 2 ? NW_DONE_FIRST : (ser[n - 1].w < ser[n - 2].w - 0.049 ? NW_DONE_LEAN : NW_DONE_MUSCLE);
     nwDoneGraph(gEl, vals, labels);
-    const cur = d[n - 1], start = pd.startW, goal = pd.goalW;
+    const cur = ser[n - 1].w, start = pd.startW, goal = pd.goalW;
     const pct = start > goal ? Math.max(0, Math.min(100, (start - cur) / (start - goal) * 100)) : 0;
     const all = nwIsoRange(NW_START, NW_END), idx = all.indexOf(todayISO()), dayNum = idx === -1 ? all.length : idx + 1;
     cap.innerHTML = '<b>' + Math.round(pct) + '%</b> to goal &middot; ' + start.toFixed(1) + ' &rarr; ' + goal.toFixed(0) + ' lb &middot; ' + Math.max(0, cur - goal).toFixed(1) + ' lb to go'
-      + (n < dayNum ? '<br><span style="opacity:.6;letter-spacing:.14em">Today\u2019s weigh-in isn\u2019t in the sheet yet</span>' : '');
+      + (ser[n - 1].day < dayNum ? '<br><span style="opacity:.6;letter-spacing:.14em">Today\u2019s weigh-in isn\u2019t in the sheet yet</span>' : '');
     _nwDoneTimers.push(setTimeout(function () { bar.style.width = pct.toFixed(1) + '%'; }, 2200));
   }
   function nwShowDone() {
@@ -3353,6 +3380,8 @@
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && _nwDoneOpen) nwCloseDone(); });
     nwLoadFromSheets();
     nwLoadWeights();
+    setInterval(function () { if (!document.hidden) nwLoadWeights(); }, 10 * 60 * 1000);
+    document.addEventListener('visibilitychange', function () { if (!document.hidden && Date.now() - (window._nwWtAt || 0) > 60000) nwLoadWeights(); });
     nwWatch();
     ocInit();
     let _nwRz; window.addEventListener('resize', function () { clearTimeout(_nwRz); _nwRz = setTimeout(function () { try { nwRenderStatsPage(); } catch (e) {} }, 200); });
@@ -3370,7 +3399,7 @@
   initStatsNotif();
   refreshWeather();
   setInterval(refreshWeather, 30 * 60 * 1000);
-  loadPhysiqueFromCSV();
+  progRefresh();
   loadStewardCount();
   initNightwingDailies();
   loadDomainsCSV();
@@ -3401,7 +3430,7 @@
       }
 
       const weekEl = document.getElementById('dspWeek');
-      if (weekEl) weekEl.textContent = 'Week ' + d.weekNum + ' of 12';
+      if (weekEl) weekEl.textContent = 'Week ' + d.weekNum + ' of ' + (d.totalWeeks || Math.ceil(progInfo().total / 7));
 
       const ciEl = document.getElementById('dspCheckin');
       if (ciEl) {
