@@ -16,12 +16,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Inter:wght@400;500;600;700&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet" />
 
-<!-- Library photograph — served from /lab/library.jpg on GitHub Pages. Bump ?v= in the preload + CSS url when the image changes.
+<!-- Library photograph — served from ./library.jpg (repo root) on GitHub Pages. Bump ?v= in the preload + CSS url when the image changes.
      Wikimedia is NOT used (blocks hotlinks). Source: Long Room, Trinity College Dublin · CC BY-SA 3.0 -->
 <link rel="preload" as="image" fetchpriority="high" href="./library.jpg?v=3" />
-
-<!-- Chart.js loaded deferred — only used by Statistics section -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js" defer></script>
 
 <style>
   /* ============================================================
@@ -393,11 +390,6 @@
     letter-spacing: 0.45em; text-transform: uppercase;
     color: var(--gold); margin: 0 0 14px 0;
   }
-  .section-title {
-    font-family: var(--serif); font-weight: 300; font-style: italic;
-    font-size: clamp(40px, 5vw, 58px);
-    margin: 0 0 12px 0; line-height: 1.05; letter-spacing: 0.005em;
-  }
 
   .blocks { display: flex; flex-direction: column; gap: 4px; }
   .block { border-top: 1px solid var(--border); }
@@ -433,8 +425,7 @@
     letter-spacing: 0.25em; color: var(--text-faint);
     text-transform: uppercase; margin-top: 6px;
   }
-  
-  
+
   button.routine-head {
     width: 100%; background: none;
     border: none; border-bottom: 1px solid var(--border);
@@ -618,85 +609,6 @@
     .nw-heat-grid { grid-template-columns: repeat(14, 1fr); }
   }
 
-  .chart-wrap {
-    border: 1px solid var(--border);
-    padding: 22px;
-    margin-bottom: 40px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.008) 0%, rgba(0,0,0,0.2) 100%);
-    height: 442px;
-    position: relative;
-  }
-  .chart-wrap canvas {
-    position: absolute;
-    inset: 22px;
-    width: calc(100% - 44px) !important;
-    height: calc(100% - 44px) !important;
-  }
-  @media (max-width: 900px) { .chart-wrap { height: 272px; } }
-  .chart-section-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 0.72rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: rgba(201,161,74,0.65);
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .sheet-link {
-    font-family: var(--mono);
-    font-size: 7px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: rgba(62,207,110,0.6);
-    text-decoration: none;
-    border: 1px solid rgba(62,207,110,0.22);
-    padding: 3px 9px;
-    border-radius: 2px;
-    background: rgba(62,207,110,0.04);
-    transition: color 200ms, border-color 200ms, background 200ms, box-shadow 200ms;
-    white-space: nowrap;
-  }
-  .sheet-link::before {
-    content: '⊞ ';
-    font-size: 8px;
-    opacity: 0.7;
-  }
-  .sheet-link:hover {
-    color: rgba(62,207,110,0.95);
-    border-color: rgba(62,207,110,0.5);
-    background: rgba(62,207,110,0.08);
-  }
-  @keyframes sheetCheckinPulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(34,211,238,0); border-color: rgba(34,211,238,0.3); }
-    50%       { box-shadow: 0 0 8px 2px rgba(34,211,238,0.28); border-color: rgba(34,211,238,0.7); }
-  }
-  .sheet-link.needs-checkin {
-    color: rgba(34,211,238,0.85);
-    border-color: rgba(34,211,238,0.35);
-    background: rgba(34,211,238,0.05);
-    animation: sheetCheckinPulse 2.2s ease-in-out infinite;
-  }
-  .sheet-link.needs-checkin::before { content: '◆ '; }
-  .sheet-link.needs-checkin:hover {
-    color: rgba(34,211,238,1);
-    border-color: rgba(34,211,238,0.7);
-    background: rgba(34,211,238,0.1);
-  }
-  .hm-cell {
-    aspect-ratio: 1;
-    border: 1px solid var(--border);
-    position: relative;
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--mono); font-size: 9px;
-    color: var(--text-faint);
-  }
-  .hm-cell.ontrack { background: rgba(42,157,110,0.22); border-color: rgba(42,157,110,0.4); color: var(--text); }
-  .hm-cell.ahead   { background: rgba(201,161,74,0.22); border-color: var(--gold-dim);     color: var(--gold); }
-  .hm-cell.behind  { background: rgba(192,57,43,0.22);  border-color: rgba(192,57,43,0.4); color: var(--text); }
-  .hm-cell.current { box-shadow: 0 0 0 1.5px var(--gold-bright); }
-
   .footer {
     padding: 60px 40px 50px;
     border-top: 1px solid var(--border-soft);
@@ -758,24 +670,6 @@
     }
     .splash-greeting { max-width: 95%; }
     .nw-wrap { position: static; order: 2; width: 100%; max-width: 360px; margin: 0 auto; padding: 0; }
-  }
-
-  /* ============================================================
-     CONTENT OPACITY OVERRIDES
-     ============================================================ */
-  .r-row,
-  .wm-tile,
-  .stat-cell,
-  .scaffold-card,
-  .chart-wrap,
-  .heatmap-12,
-  .week-day {
-    background-color: rgba(14, 14, 18, 0.93) !important;
-    backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
-  }
-  .hm-cell {
-    background-color: rgba(14, 14, 18, 0.82) !important;
   }
 
   /* ============================================================
@@ -842,12 +736,7 @@
     margin-top: 5px;
   }
   .steward-link.no-actions .steward-sub { color: rgba(45, 100, 55, 0.4); }
-  
-  
-  
-  
-  
-  
+
   .wg-line{fill:none;stroke:var(--green-bright);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px rgba(99,214,150,0.4));}
   .wg-leg{font-family:var(--mono);font-size:6.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-faint);display:inline-flex;align-items:center;gap:5px;}
   .wg-leg::before{content:"";display:inline-block;width:12px;height:2px;border-radius:2px;}
@@ -856,13 +745,8 @@
   .wg-target{fill:none;stroke:rgba(201,161,74,0.5);stroke-width:1.1;stroke-dasharray:4 4;}
   .wg-halo{fill:none;stroke:var(--green-bright);stroke-width:1.4;opacity:0.5;transform-box:fill-box;transform-origin:center;animation:wgHalo 1.9s ease-in-out infinite;}
   @keyframes wgHalo{0%,100%{transform:scale(0.8);opacity:0.5}50%{transform:scale(1.3);opacity:0.1}}
-  .bar-marker{position:absolute;top:50%;left:0;width:11px;height:11px;border-radius:50%;background:var(--gold-bright);transform:translate(-50%,-50%);transition:left 1.5s cubic-bezier(0.16,1,0.3,1);animation:barMarkerPulse 1.9s ease-in-out infinite;z-index:2;}
-  @keyframes barMarkerPulse{0%,100%{box-shadow:0 0 4px rgba(201,161,74,0.5);transform:translate(-50%,-50%) scale(0.88)}50%{box-shadow:0 0 13px rgba(201,161,74,0.95);transform:translate(-50%,-50%) scale(1.12)}}
-  
-  
-  
+
   @keyframes ocEiPulse{0%,100%{box-shadow:0 0 14px rgba(201,161,74,0.08),inset 0 1px 0 rgba(255,255,255,0.03)}50%{box-shadow:0 0 26px rgba(201,161,74,0.2),inset 0 1px 0 rgba(255,255,255,0.05)}}
-  
 
   /* ============================================================
      NIGHTWING STATISTICS PAGE
@@ -870,7 +754,6 @@
   .nws { display: flex; flex-direction: column; gap: 22px; }
   .nws-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap;
     padding-bottom: 18px; border-bottom: 1px solid var(--border); }
-  .nws-eyebrow { font-family: var(--mono); font-size: 9px; letter-spacing: 0.5em; text-transform: uppercase; color: var(--gold); font-weight: 500; }
   .nws-title { font-family: var(--serif); font-style: normal; font-weight: 400; font-size: 30px; color: var(--text); }
   .nws-chip { font-family: var(--mono); font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase;
     color: var(--green-bright); border: 1px solid var(--green-dim); padding: 7px 14px; }
@@ -952,38 +835,12 @@
     .nws-card { padding: 16px 14px; }
     .nws-title { font-size: 24px; }
   }
-
-  .stats-legacy { display: none !important; }
   .stats-split {
     display: grid;
     grid-template-columns: 1fr;
     max-width: 1120px;
     gap: 40px;
     align-items: start;
-  }
-
-  /* ── Physique Progress panel ── */
-  .pp-top-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-  }
-  .pp-heading {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.5em;
-    color: var(--gold);
-    text-transform: uppercase;
-    font-weight: 500;
-  }
-  .pp-program-name {
-    font-family: var(--serif);
-    font-size: 11px;
-    font-style: italic;
-    color: rgba(201,161,74,0.45);
-    letter-spacing: 0.04em;
-    margin-top: 3px;
   }
   .pp-status {
     font-family: var(--mono);
@@ -1000,109 +857,6 @@
   .pp-status.ahead   { background: rgba(42,157,110,0.18); color: rgba(60,210,140,0.95); border-color: rgba(42,157,110,0.4); }
   .pp-status.ontrack { background: rgba(201,161,74,0.15); color: var(--gold);           border-color: var(--gold-dim); }
   .pp-status.behind  { background: rgba(192,57,43,0.18);  color: rgba(230,90,70,0.95); border-color: rgba(192,57,43,0.4); }
-  .pp-hero {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-bottom: 22px;
-    margin-bottom: 22px;
-    border-bottom: 1px solid var(--border);
-  }
-  .pp-hero-weight { display: flex; align-items: baseline; gap: 8px; }
-  .pp-weight-val {
-    font-family: var(--serif);
-    font-size: 62px;
-    font-weight: 300;
-    color: var(--text);
-    line-height: 1;
-    letter-spacing: -0.02em;
-  }
-  .pp-weight-unit {
-    font-family: var(--mono);
-    font-size: 16px;
-    color: var(--text-faint);
-  }
-  .pp-hero-right { text-align: right; }
-  .pp-hero-lost {
-    font-family: var(--mono);
-    font-size: 22px;
-    color: var(--gold);
-    letter-spacing: -0.01em;
-  }
-  .pp-hero-pct {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    color: var(--text-faint);
-    margin-top: 3px;
-  }
-  .pp-timeline { margin-bottom: 28px; }
-  .pp-dates {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 10px;
-    gap: 8px;
-  }
-  .pp-date-start, .pp-date-end {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.12em;
-    color: var(--text-faint);
-    white-space: nowrap;
-  }
-  .pp-date-label {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.2em;
-    color: var(--gold);
-    text-transform: uppercase;
-    text-align: center;
-    flex: 1;
-  }
-  #phDayWeek {
-    color: #3ecf6e;
-    font-size: 10px;
-    text-shadow: 0 0 8px rgba(62,207,110,0.45);
-  }
-  #phDayWeek.unresolved {
-    color: var(--gold-bright);
-    text-shadow: 0 0 8px rgba(201,161,74,0.4);
-    letter-spacing: 0.08em;
-  }
-  .pp-bar-track {
-    position: relative;
-    height: 5px;
-    background: rgba(201,161,74,0.10);
-    border-radius: 3px;
-    overflow: visible;
-    margin-bottom: 8px;
-  }
-  .pp-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, rgba(201,161,74,0.35) 0%, var(--gold) 100%);
-    border-radius: 3px;
-    transition: width 1.4s cubic-bezier(.4,0,.2,1);
-  }
-  .pp-bar-marker {
-    position: absolute;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 13px; height: 13px;
-    background: var(--gold);
-    border-radius: 50%;
-    border: 2px solid var(--bg);
-    box-shadow: 0 0 10px rgba(201,161,74,0.65);
-    transition: left 1.4s cubic-bezier(.4,0,.2,1);
-  }
-  .pp-bar-sub {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.2em;
-    color: var(--text-faint);
-    text-align: right;
-    text-transform: uppercase;
-  }
   .pp-tiles {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -2124,7 +1878,6 @@
 <script>
   // 1 · Time / date / greeting
   const DAYS_FULL  = ['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
-  const DAYS_SHORT = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
   const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   function pad(n) { return n < 10 ? '0' + n : '' + n; }
   function setText(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
@@ -2195,11 +1948,9 @@
 
 
 
-  // 7 · Statistics — heatmap + Chart.js
 
   // Program/weight data comes from the Apps Script backend (getWeights) — see nwLoadWeights().
   let _checkinDOW = 5;
-  let _chart = null;
 
   function parseCSV(text) {
     const rows = []; let cur = ['']; let inQ = false;
@@ -2294,7 +2045,7 @@
       }
       const p2 = n => String(n).padStart(2, '0');
       const key = 'stewlab-checkin-notif-' + now.getFullYear() + '-' + p2(now.getMonth()+1) + '-' + p2(now.getDate());
-      if (!localStorage.getItem(key)) {
+      if (!lsGet(key)) {
         dot.classList.add('visible');
       } else {
         dot.classList.remove('visible');
@@ -2319,6 +2070,9 @@
   function updateOfficeNotif() { if (typeof ocUpdateDot === 'function') ocUpdateDot(); }
 
   // ============================================================
+  // Safe localStorage (private mode / blocked storage must never stop the page from booting)
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } }
   // DATE HELPERS (shared — used by Nightwing Dailies & Statistics)
   // ============================================================
   // Apps Script backend endpoint (shared)
@@ -2331,7 +2085,6 @@
   function isoFromDate(d) {
     return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
   }
-  function isoOffset(days) { const d = new Date(); d.setDate(d.getDate() + days); return isoFromDate(d); }
 
   // ============================================================
   // DOMAIN HEALTH RINGS
@@ -2453,28 +2206,6 @@
   }
 
   // Solid progress arc for high-density tracks (too many segments to see individually)
-  function buildProgressArc(svgEl, done, total, cx, cy, r, strokeW) {
-    while (svgEl.firstChild) svgEl.removeChild(svgEl.firstChild);
-    const svgNS = 'http://www.w3.org/2000/svg';
-    const track = document.createElementNS(svgNS, 'circle');
-    track.setAttribute('cx', cx); track.setAttribute('cy', cy); track.setAttribute('r', r);
-    track.setAttribute('fill', 'none');
-    track.setAttribute('stroke', 'rgba(255,255,255,0.07)');
-    track.setAttribute('stroke-width', strokeW);
-    svgEl.appendChild(track);
-    if (total <= 0 || done <= 0) return;
-    const pct = Math.min(done / total, 1);
-    const circumference = 2 * Math.PI * r;
-    const arc = document.createElementNS(svgNS, 'circle');
-    arc.setAttribute('cx', cx); arc.setAttribute('cy', cy); arc.setAttribute('r', r);
-    arc.setAttribute('fill', 'none');
-    arc.setAttribute('stroke', 'rgba(42,157,110,0.85)');
-    arc.setAttribute('stroke-width', strokeW);
-    arc.setAttribute('stroke-linecap', 'round');
-    arc.setAttribute('stroke-dasharray', `${circumference * pct} ${circumference}`);
-    arc.setAttribute('stroke-dashoffset', circumference * 0.25);
-    svgEl.appendChild(arc);
-  }
 
   function getDomainSegments(domainData) {
     return domainData.subcategories.map(sc => {
@@ -2594,12 +2325,12 @@
         const d = new Date();
         return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
       })();
-      const direct = localStorage.getItem('st_today_pending');
+      const direct = lsGet('st_today_pending');
       if (direct !== null) { const n = parseInt(direct, 10); if (!isNaN(n) && n >= 0) count = n; }
       if (count === null) {
         try {
           function normDate(s) { if (!s) return ''; var p = String(s).split('-'); if (p.length !== 3) return String(s); return p[0] + '-' + String(p[1]).padStart(2,'0') + '-' + String(p[2]).padStart(2,'0'); }
-          const stPro = JSON.parse(localStorage.getItem('st_pro') || 'null');
+          const stPro = JSON.parse(lsGet('st_pro') || 'null');
           if (stPro && typeof stPro === 'object' && !Array.isArray(stPro)) {
             let pending = 0;
             Object.values(stPro).forEach(function(v) {
@@ -3417,7 +3148,7 @@
   (function initDailySplash() {
     const SPLASH_KEY = 'stewlab-splash-date';
     const today      = todayISO();
-    const lastSeen   = localStorage.getItem(SPLASH_KEY);
+    const lastSeen   = lsGet(SPLASH_KEY);
     if (lastSeen === today) return; // already acknowledged today
 
     const splash = document.getElementById('dailySplash');
@@ -3514,7 +3245,7 @@
     }
 
     function dismissSplash() {
-      localStorage.setItem(SPLASH_KEY, today);
+      lsSet(SPLASH_KEY, today);
       splash.classList.remove('fade-in');
       splash.classList.add('fade-out');
       setTimeout(() => {
