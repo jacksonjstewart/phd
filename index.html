@@ -3,22 +3,23 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2.5" />
-<meta name="theme-color" content="#0a0806" />
+<meta name="theme-color" content="#060e26" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="PhD Pro©" />
-<link rel="manifest" href="./manifest.json" />
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%230a0806'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Georgia,serif' font-size='72' fill='%23c9a14a'%3E%CE%A8%3C/text%3E%3C/svg%3E" />
+<link rel="manifest" href="./manifest.json?v=2" />
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png?v=2" />
 <title>PhD Pro© Dashboard</title>
-<!-- Inline SVG favicon — gold serif "S" on dark, no network request, no 404 -->
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%230a0806'/%3E%3Ctext x='50%25' y='54%25' text-anchor='middle' dominant-baseline='middle' font-family='Georgia,serif' font-size='24' fill='%23c9a14a'%3EDr.%3C/text%3E%3C/svg%3E" />
+<!-- Favicon: white snowflake on dark navy (PNG fallback + SVG) -->
+<link rel="icon" type="image/svg+xml" href="./icons/favicon.svg?v=2" />
+<link rel="icon" type="image/png" sizes="64x64" href="./icons/favicon-64.png?v=2" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Inter:wght@400;500;600;700&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet" />
 
 <!-- Library photograph — served from ./library.jpg (repo root) on GitHub Pages. Bump ?v= in the preload + CSS url when the image changes.
      Wikimedia is NOT used (blocks hotlinks). Source: Long Room, Trinity College Dublin · CC BY-SA 3.0 -->
-<link rel="preload" as="image" fetchpriority="high" href="./library.jpg?v=3" />
+<link rel="preload" as="image" fetchpriority="high" href="./library.jpg?v=4" />
 
 <style>
   /* ============================================================
@@ -122,7 +123,7 @@
     height: 100vh; height: 100lvh;
     z-index: -3;
     pointer-events: none;
-    background-image: url('./library.jpg?v=3');
+    background-image: url('./library.jpg?v=4');
     background-size: cover;
     background-position: center 40%;
     background-repeat: no-repeat;
@@ -1438,8 +1439,30 @@
   #office .section-inner { max-width: 1120px; }
   .occ-open, .occ-name { white-space: nowrap; }
   .occ-counts { gap: 8px 20px; }
-  .oc-casc { display: none; grid-template-columns: 1fr 1fr; gap: 26px; }
-  #office.unlocked .oc-casc { display: grid; }
+  .oc-main { display: none; grid-template-columns: minmax(250px, 310px) 1fr; gap: 26px; align-items: start; }
+  #office.unlocked .oc-main { display: grid; }
+  .oc-casc { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; min-width: 0; }
+  /* Office daily checklist — Nightwing tiles, nothing tracked */
+  .ocd { border: 1px solid var(--border); background: rgba(14,14,18,0.62); padding: 22px 18px 18px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  .ocd-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; min-height: 14px; }
+  .ocd-k { font-family: var(--mono); font-size: 9px; letter-spacing: 0.4em; text-transform: uppercase; color: var(--gold); }
+  .ocd-chg { background: none; border: 0; padding: 6px 0; font-family: var(--mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-dim); cursor: pointer; min-height: 32px; }
+  .ocd-chg:hover { color: var(--gold-bright); }
+  .ocd-list { display: flex; flex-direction: column; gap: 8px; }
+  .ocd .nw-tile { max-height: 80px; width: 100%; text-align: left; min-height: 44px; }
+  .nw-tile.oc-g { border-color: rgba(60,200,130,0.55); color: #7dffb3; } .nw-tile.oc-g .nw-box { border-color: rgba(60,200,130,0.8); } .nw-tile.oc-g:hover { border-color: #7dffb3; box-shadow: 0 0 16px rgba(60,200,130,0.3); }
+  .nw-tile.oc-r { border-color: rgba(230,90,80,0.55); color: #ff8f84; } .nw-tile.oc-r .nw-box { border-color: rgba(230,90,80,0.8); } .nw-tile.oc-r:hover { border-color: #ff8f84; box-shadow: 0 0 16px rgba(230,90,80,0.3); }
+  .nw-tile.nw-done.oc-g, .nw-tile.nw-done.oc-r, .nw-tile.nw-done.nw-training { border-color: rgba(42,157,110,0.7); color: rgba(180,220,195,0.9); }
+  .ocd-done { text-align: center; padding: 22px 6px 14px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--green-bright); text-shadow: 0 0 14px rgba(111,224,164,0.4); animation: ocdIn 700ms ease both; }
+  @keyframes ocdIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .ocm { position: fixed; inset: 0; z-index: 10020; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(2,4,7,0.82); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+  .ocm.on { display: flex; }
+  .ocm-box { width: min(380px, 100%); border: 1px solid var(--border); background: rgba(10,10,13,0.96); padding: 22px 18px 18px; display: flex; flex-direction: column; gap: 10px; animation: ocdIn 300ms ease both; }
+  .ocm-box .ocd-k { margin-bottom: 4px; text-align: center; }
+  .ocm-box .nw-tile { justify-content: center; text-align: center; min-height: 48px; max-height: none; }
+  .ocm-box .nw-label { flex: 0 1 auto; }
+  .ocm-box .nw-box { display: none; }
+  @media (prefers-reduced-motion: reduce) { .ocd-done, .ocm-box { animation: none; } }
   .occ { border: 1px solid var(--border); background: rgba(14,14,18,0.62); padding: 30px 30px 28px; display: flex; flex-direction: column; gap: 22px; min-height: 360px; }
   .occ-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
   .occ-name { font-family: var(--mono); font-size: 10px; letter-spacing: 0.45em; text-transform: uppercase; color: var(--gold); }
@@ -1462,6 +1485,7 @@
   .occ-chip { padding: 3px 9px; border-radius: 2px; border: 1px solid currentColor; }
   .occ-chip.y { color: #f0cc62; } .occ-chip.b { color: #7db2f5; } .occ-chip.g { color: var(--green-bright); } .occ-chip.r { color: #f08a78; }
   .occ-loading { font-family: var(--mono); font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text-dim); }
+  @media (max-width: 1100px) { .oc-main { grid-template-columns: 1fr; } }
   @media (max-width: 900px) { .oc-casc { grid-template-columns: 1fr; } .tm-side { align-items: flex-start; } .tm-goal { text-align: left; } .tm-goal-row, .tm-quest-line, .tm-carry, .tm-weeks { justify-content: flex-start; } .tm-carry > div { align-items: flex-start; } }
 
   /* ============================================================
@@ -1501,6 +1525,64 @@
   .nw-wrap.nw-complete .nw-head:hover { color: var(--cyan-bright); text-shadow: 0 0 10px rgba(79,214,214,0.6); }
   @media (prefers-reduced-motion: reduce) { .nwd-in > *, .nwd-bar > i { transition-duration: 1ms !important; transition-delay: 0s !important; } .nwd-ack, .nwd .g-ring { animation: none; } }
 
+
+  /* ============================================================
+     PHASE REPORT — end-of-phase summary + permanent archive viewer
+     ============================================================ */
+  .pr { position: fixed; inset: 0; z-index: 10010; overflow-y: auto; overscroll-behavior: contain; opacity: 0; visibility: hidden; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 0%, rgba(10,22,30,0.97), rgba(2,4,7,0.985) 72%); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    transition: opacity 500ms ease, visibility 0s linear 500ms; }
+  .pr.on { opacity: 1; visibility: visible; pointer-events: auto; transition: opacity 500ms ease; }
+  .pr-in { max-width: 1180px; margin: 0 auto; padding: max(28px, env(safe-area-inset-top)) clamp(16px, 4vw, 40px) max(48px, env(safe-area-inset-bottom)); }
+  .pr-in > * { opacity: 0; transform: translateY(14px); transition: opacity 700ms ease, transform 700ms ease; }
+  .pr.on .pr-in > * { opacity: 1; transform: none; }
+  .pr.on .pr-in > *:nth-child(2) { transition-delay: 120ms; } .pr.on .pr-in > *:nth-child(3) { transition-delay: 240ms; } .pr.on .pr-in > *:nth-child(4) { transition-delay: 360ms; }
+  .pr.on .pr-in > *:nth-child(5) { transition-delay: 480ms; } .pr.on .pr-in > *:nth-child(6) { transition-delay: 600ms; } .pr.on .pr-in > *:nth-child(7) { transition-delay: 720ms; }
+  .pr-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .pr-kick { font-family: var(--mono); font-size: 9px; letter-spacing: 0.5em; text-transform: uppercase; color: var(--gold); }
+  .pr-close, .nwd-ack { min-height: 44px; } .pr-close { background: transparent; border: 1px solid var(--border); color: var(--text-dim); font-family: var(--mono); font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; padding: 10px 16px; cursor: pointer; border-radius: 2px; min-height: 44px; }
+  .pr-close:hover, .pr-close:active { color: var(--gold-bright); border-color: var(--gold-dim); }
+  .pr-hero { text-align: center; padding: 18px 0 8px; }
+  .pr-name { font-family: 'Cinzel', var(--serif); font-weight: 700; font-size: clamp(22px, 4.4vw, 46px); letter-spacing: 0.1em; text-transform: uppercase; line-height: 1.2; color: var(--cyan-bright);
+    text-shadow: 0 0 24px rgba(79,214,214,0.45), 0 0 4px rgba(143,247,255,0.5); }
+  .pr-range { margin-top: 10px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--text-dim); }
+  .pr-verdict { margin: 18px auto 0; max-width: 760px; font-family: var(--serif); font-style: italic; font-size: clamp(18px, 2.6vw, 26px); line-height: 1.4; color: rgba(232,226,208,0.9); }
+  .pr-big { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); margin: 26px 0 22px; }
+  .pr-big > div { background: rgba(10,10,13,0.88); padding: 20px 14px; text-align: center; }
+  .pr-big b { display: block; font-family: var(--serif); font-weight: 400; font-size: clamp(30px, 5vw, 52px); line-height: 1; color: var(--text); }
+  .pr-big b.g { color: var(--green-bright); text-shadow: 0 0 18px rgba(111,224,164,0.4); } .pr-big b.y { color: var(--gold-bright); }
+  .pr-big span { display: block; margin-top: 10px; font-family: var(--mono); font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--text-dim); }
+  .pr-card { border: 1px solid var(--border); background: rgba(10,10,13,0.84); padding: 20px clamp(14px, 2.4vw, 26px); margin-bottom: 18px; }
+  .pr-h { font-family: var(--mono); font-size: 9px; letter-spacing: 0.45em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .pr-h i { font-style: normal; color: var(--text-dim); letter-spacing: 0.2em; }
+  .pr-graph { width: 100%; } .pr-graph svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .pr-leg { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 10px; font-family: var(--mono); font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-dim); }
+  .pr-leg i { display: inline-block; width: 18px; height: 0; border-top: 2px solid var(--green-bright); vertical-align: middle; margin-right: 8px; } .pr-leg i.t { border-top: 2px dashed var(--gold-bright); } .pr-leg i.b { height: 9px; border: 0; background: rgba(201,161,74,0.2); }
+  .pr-two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; } .pr-two > .pr-card { margin-bottom: 0; } .pr-two { margin-bottom: 18px; }
+  .pr-bars { display: flex; align-items: flex-end; gap: 6px; height: 170px; padding-top: 6px; }
+  .pr-bar { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 100%; gap: 6px; min-width: 0; }
+  .pr-bar i { display: block; width: 100%; border-radius: 2px 2px 0 0; background: linear-gradient(180deg, var(--green-bright), var(--green)); min-height: 2px; box-shadow: 0 0 10px rgba(111,224,164,0.25); }
+  .pr-bar i.up { background: linear-gradient(180deg, #f0c75e, rgba(201,161,74,0.7)); box-shadow: 0 0 10px rgba(224,186,102,0.25); } .pr-bar i.na { background: rgba(255,255,255,0.08); box-shadow: none; }
+  .pr-bar em { font-style: normal; font-family: var(--mono); font-size: 8.5px; color: var(--text-dim); } .pr-bar u { text-decoration: none; font-family: var(--mono); font-size: 8.5px; color: rgba(232,226,208,0.88); }
+  .pr-tile { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center; padding: 9px 0; border-top: 1px solid var(--border-soft); } .pr-tile:first-of-type { border-top: 0; }
+  .pr-tile span { font-family: var(--serif); font-size: 17px; color: var(--text); } .pr-tile b { font-family: var(--mono); font-weight: 400; font-size: 12px; color: var(--green-bright); }
+  .pr-tile .pr-meter { grid-column: 1 / -1; height: 4px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden; } .pr-tile .pr-meter i { display: block; height: 100%; background: linear-gradient(90deg, var(--green), var(--green-bright)); }
+  .pr-kv { display: grid; grid-template-columns: 1fr auto; gap: 9px 14px; font-family: var(--serif); font-size: 17px; } .pr-kv b { font-family: var(--mono); font-weight: 400; font-size: 12px; color: var(--gold-bright); align-self: center; }
+  .pr-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 11px; } .pr-table th { text-align: right; font-weight: 400; letter-spacing: 0.18em; text-transform: uppercase; font-size: 8.5px; color: var(--gold); padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  .pr-table td { text-align: right; padding: 7px 8px; color: rgba(232,226,208,0.88); border-bottom: 1px solid var(--border-soft); } .pr-table th:first-child, .pr-table td:first-child { text-align: left; }
+  .pr-table td.dn { color: var(--green-bright); } .pr-table td.up { color: var(--gold-bright); } .pr-wrap { overflow-x: auto; }
+  .pr-foot { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 26px; }
+  .pr-foot .nwd-ack { margin-top: 0; }
+  .pr-list { display: flex; flex-direction: column; gap: 10px; }
+  .pr-item { display: grid; grid-template-columns: 1fr auto; gap: 4px 14px; align-items: center; text-align: left; width: 100%; padding: 16px 18px; background: rgba(10,10,13,0.84); border: 1px solid var(--border); color: var(--text); cursor: pointer; border-radius: 2px; min-height: 44px; }
+  .pr-item:hover, .pr-item:active { border-color: var(--gold-dim); } .pr-item strong { font-family: 'Cinzel', var(--serif); font-weight: 600; font-size: 17px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cyan-bright); }
+  .pr-item small { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-dim); } .pr-item b { font-family: var(--serif); font-weight: 400; font-size: 26px; color: var(--green-bright); }
+  .pr-empty { text-align: center; color: var(--text-dim); font-style: italic; padding: 40px 0; font-size: 19px; }
+  .pr-archive-btn { margin-left: 10px; }
+  @media (max-width: 720px) { .pr-big { grid-template-columns: repeat(2, 1fr); } .pr-two { grid-template-columns: 1fr; } .pr-bars { height: 140px; gap: 3px; } .pr-bar em { font-size: 7.5px; } .pr-bar u { display: none; } }
+  @media print { .pr { position: static; opacity: 1; visibility: visible; } .pr-close, .pr-foot { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .pr, .pr-in > * { transition-duration: 1ms !important; transition-delay: 0s !important; } }
+
   /* ── Tenure streak display ── */
 </style>
 </head>
@@ -1516,6 +1598,9 @@
     <button type="button" class="nwd-ack" id="nwdAck">Acknowledged</button>
   </div>
 </div>
+
+<!-- Phase report / archive viewer -->
+<div class="pr" id="phaseReport" role="dialog" aria-modal="true" aria-label="Phase report" aria-hidden="true"><div class="pr-in" id="prIn"></div></div>
 
 <!-- Boot splash (branded, quick) -->
 <div id="bootSplash" aria-hidden="true">
@@ -1545,7 +1630,7 @@
     var img = new Image();
     img.onload = show;
     img.onerror = function(){};   // photo missing → keep the dark gradient fallback
-    img.src = './library.jpg?v=3';
+    img.src = './library.jpg?v=4';
     if (img.complete && img.naturalWidth) show();
   })();
 </script>
@@ -1695,10 +1780,14 @@
         </div>
       </div>
     </header>
-    <div class="oc-casc" id="ocCasc">
-      <div class="occ" id="occPers"><div class="occ-loading">Reading cascade&hellip;</div></div>
-      <div class="occ" id="occPhd"><div class="occ-loading">Reading cascade&hellip;</div></div>
+    <div class="oc-main" id="ocMain">
+      <aside class="ocd" id="ocDaily" aria-label="Office daily checklist"></aside>
+      <div class="oc-casc" id="ocCasc">
+        <div class="occ" id="occPers"><div class="occ-loading">Reading cascade&hellip;</div></div>
+        <div class="occ" id="occPhd"><div class="occ-loading">Reading cascade&hellip;</div></div>
+      </div>
     </div>
+    <div class="ocm" id="ocModal" role="dialog" aria-modal="true" aria-label="Select a schedule"><div class="ocm-box" id="ocModalBox"></div></div>
 
     <a href="https://jacksonjstewart.github.io/stewardapp/"
        target="_blank" rel="noopener"
@@ -1810,7 +1899,7 @@
           <div>
             <div class="nws-title">The Great Winter Lock-In of 2026</div>
           </div>
-          <div class="nws-chip" id="nwsChip">&mdash;</div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end"><div class="nws-chip" id="nwsChip">&mdash;</div><button type="button" class="nws-chip pr-archive-btn" id="nwsArchiveBtn" style="cursor:pointer;background:transparent">Archive</button></div>
         </div>
 
         <div class="nws-hero">
@@ -2374,7 +2463,9 @@
   // cascade (3-block heat map + weight graph).
   // ============================================================
   const NW_TASKS = ['wake-0430', 'hydration-supps', 'training-complete', 'cals-protein', 'push-pull-raise'];
-  const NW_PREFILLED = ['2026-10-13', '2026-10-14', '2026-10-15', '2026-10-16']; // completed before the tracker existed
+  const NW_PREFILLED_CYCLE = '2026-10-13';                                          // the cycle (by start date) these grandfathered days belong to
+  const NW_PREFILLED_DAYS  = ['2026-10-13', '2026-10-14', '2026-10-15', '2026-10-16']; // completed before the tracker existed
+  let NW_PREFILLED = NW_PREFILLED_DAYS.slice();                                      // re-evaluated whenever the program window changes
   // Program window. These are only defaults / last-known values — the sheet's "Start Date" and
   // "End Date" cells (THE GREAT WINTER tab) override them on every sync, and the result is cached
   // on this device so the page is right even before (or without) the network.
@@ -2385,18 +2476,49 @@
     if (!ok(start) || !ok(end) || start >= end) return false;
     const changed = start !== NW_START || end !== NW_END;
     NW_START = start; NW_END = end;
+    NW_PREFILLED = (start === NW_PREFILLED_CYCLE) ? NW_PREFILLED_DAYS.slice() : [];   // grandfathered days never leak into a new cycle
+    nwCycleGuard();
     try { localStorage.setItem('nw_prog', JSON.stringify({ s: start, e: end })); } catch (e) {}
     if (changed && !silent) { try { progRefresh(); } catch (e) {} }
     return changed;
   }
   (function () { try { const c = JSON.parse(localStorage.getItem('nw_prog') || 'null'); if (c) nwApplyProgram(c.s, c.e, true); } catch (e) {} })();
+  nwCycleGuard(); nwPruneStorage();
+  // Local history belongs to one cycle (identified by its start date). When the sheet's Start Date changes
+  // (a new phase), the old cycle's per-day progress is dropped from this device — it lives permanently in the
+  // archive, and the sheet is the source of truth for anything still relevant.
+  function nwCycleGuard() {
+    let prev = null; try { prev = localStorage.getItem('nw_cycle'); } catch (e) {}
+    if (prev === NW_START) return;
+    try {
+      const rm = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && (/^stewlab-nw-\d{4}-\d{2}-\d{2}$/.test(k) || k === 'stewlab-nw-log' || k === 'nw_splash_ack' || k === 'oc_cache' || k === 'nw_phase_ack')) rm.push(k);
+      }
+      if (prev !== null) rm.forEach(function (k) { localStorage.removeItem(k); });      // first-ever run: just stamp, don't wipe
+      localStorage.setItem('nw_cycle', NW_START);
+    } catch (e) {}
+  }
+  // Housekeeping: per-day keys older than the program start are useless after a cycle change; keep storage tiny.
+  function nwPruneStorage() {
+    try {
+      const rm = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const m = /^stewlab-nw-(\d{4}-\d{2}-\d{2})$/.exec(localStorage.key(i) || '');
+        if (m && (m[1] < NW_START || m[1] > NW_END)) rm.push(localStorage.key(i));
+      }
+      rm.forEach(function (k) { localStorage.removeItem(k); });
+    } catch (e) {}
+  }
   function nwProgTotal() { return nwIsoRange(NW_START, NW_END).length; }
   // Single source for "where are we in the program" (splash, header, stats all agree)
   function progInfo() {
     const all = nwIsoRange(NW_START, NW_END), total = all.length, today = todayISO(), idx = all.indexOf(today);
     const dayNum = today < NW_START ? 1 : (idx === -1 ? total : idx + 1);
     return { total: total, totalWeeks: Math.ceil(total / 7), dayNum: dayNum, weekNum: Math.ceil(dayNum / 7),
-             daysLeft: Math.max(0, total - dayNum + 1), started: today >= NW_START, ended: idx === -1 && today > NW_END };
+             daysLeft: today > NW_END ? 0 : Math.max(0, total - dayNum + 1), started: today >= NW_START, ended: today > NW_END,
+             lastDay: today === NW_END };
   }
   function progRefresh() {
     const pi = progInfo(), now = new Date();
@@ -2408,7 +2530,7 @@
     if (typeof initStatsNotif === 'function') { try { initStatsNotif(); } catch (e) {} }
   }
 
-  function nwKey() { return 'stewlab-nw-' + todayISO(); }
+  function nwKey() { const t = todayISO(); return 'stewlab-nw-' + (t > NW_END ? NW_END : t); }
   function nwLoadToday() {
     try { const a = JSON.parse(localStorage.getItem(nwKey()) || '[]'); return Array.isArray(a) ? a : []; }
     catch (_) { return []; }
@@ -2488,6 +2610,7 @@
         if (!w || w.ok !== true) { window._nwBackendStale = true; nwSyncDot(false, 'Update Backend'); return; }   // old script: returns calendar array
         window._nwBackendStale = false;
         nwSyncDot(true); window._nwWtAt = Date.now();
+        setTimeout(function () { try { prCheckPhaseEnd(); } catch (e) {} }, 600);
         if (w.start && w.end) nwApplyProgram(w.start, w.end);            // sheet is the source of truth for the program window
         const pdOld = window._physiqueData || {};
         const tgt = w.target || [];
@@ -2710,7 +2833,7 @@
 
     // ---- hero ----
     T('nwsDay', dayNum ? String(dayNum) : '\u2014'); T('nwsDayOf', 'of ' + total);
-    T('nwsChip', dayNum ? 'Week ' + weekNum + ' of ' + weekTot : 'Starts ' + nwFmt(NW_START));
+    T('nwsChip', progInfo().ended ? 'Phase complete' : (dayNum ? 'Week ' + weekNum + ' of ' + weekTot : 'Starts ' + nwFmt(NW_START)));
     const bar = document.getElementById('nwsDayBar'); if (bar) bar.style.width = (dayNum / total * 100).toFixed(1) + '%';
     const left = total - dayNum;
     T('nwsRemain', dayNum ? (Math.round(dayNum / total * 100) + '% complete \u00b7 ' + left + ' day' + (left === 1 ? '' : 's') + ' to go') : '');
@@ -2989,7 +3112,7 @@
   }
   function ocDays(a, b) { return Math.round((Date.parse(b + 'T12:00:00') - Date.parse(a + 'T12:00:00')) / 864e5); }
   function ocWeekly(log) {
-    const today = todayISO(), cur = Math.max(0, Math.floor(ocDays(NW_START, today) / 7));
+    const today = todayISO() > NW_END ? NW_END : todayISO(), cur = Math.max(0, Math.floor(ocDays(NW_START, today) / 7));
     const counts = []; for (let i = 0; i <= cur; i++) counts.push(0);
     (log || []).forEach(function (e) {
       if (e.date < NW_START || e.date > today) return;
@@ -3123,6 +3246,221 @@
     let _nwRz; window.addEventListener('resize', function () { clearTimeout(_nwRz); _nwRz = setTimeout(function () { try { nwRenderStatsPage(); } catch (e) {} }, 200); });
   }
 
+
+  // ============================================================
+  // PHASE REPORT — end-of-phase summary + permanent archive
+  // The server (Code.gs → archivePhase) builds the authoritative summary from the sheet and stores it forever
+  // (NW_Archive tab + a readable "ARCHIVE – <name>" snapshot). This block only renders what the server returns,
+  // so the same viewer shows the live phase at its end AND any past phase from the archive.
+  // ============================================================
+  let _prOpen = false, _prCache = null;
+  const PR_MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function prFmtDate(iso) { if (!iso) return ''; const d = new Date(iso + 'T12:00:00'); return PR_MON[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear(); }
+  function prFmtShort(iso) { const d = new Date(iso + 'T12:00:00'); return PR_MON[d.getMonth()] + ' ' + d.getDate(); }
+  function prClock(m) { if (m == null) return '\u2014'; const h = Math.floor(m / 60), mm = Math.round(m % 60); return ((h % 12) || 12) + ':' + String(mm).padStart(2, '0') + (h < 12 ? ' AM' : ' PM'); }
+  function prF(v, d) { return (v == null || isNaN(v)) ? '\u2014' : Number(v).toFixed(d == null ? 1 : d); }
+  function prEsc(t) { return String(t == null ? '' : t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  const PR_TILE_NAMES = { 'wake-0430': 'Wake Up at 04:30', 'hydration-supps': 'Hydration & Supplements', 'training-complete': 'Full Training Complete', 'cals-protein': 'Calories & Protein', 'push-pull-raise': '30 / 10 / 20' };
+
+  // Big weight graph: daily line, plan band + dashed target (placed at each week's check-in day), weekly markers, start/end labels.
+  function prGraph(S) {
+    const narrow = window.innerWidth < 720, W = narrow ? 340 : 1000, H = narrow ? 420 : 520, pL = narrow ? 40 : 56, pR = narrow ? 16 : 28, pT = 28, pB = 46, N = S.totalDays;
+    const pts = []; S.daily.forEach(function (d, i) { if (d.w != null) pts.push({ x: i + 1, w: d.w, d: d.d }); });
+    if (!pts.length) return '<div class="pr-empty">No weigh-ins recorded.</div>';
+    const wkX = function (k) { return Math.min(N, 7 * (k + 1) + 1); };
+    const vals = pts.map(function (q) { return q.w; });
+    (S.plan.min || []).concat(S.plan.max || [], S.plan.target || []).forEach(function (v) { if (v != null) vals.push(v); });
+    if (S.weight.goal != null) vals.push(S.weight.goal);
+    let hi = Math.max.apply(null, vals), lo = Math.min.apply(null, vals); const pad = Math.max(1, (hi - lo) * 0.07); hi += pad; lo -= pad;
+    const X = function (x) { return pL + (x - 1) / Math.max(1, N - 1) * (W - pL - pR); }, Y = function (v) { return pT + (hi - v) / (hi - lo) * (H - pT - pB); };
+    let g = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Body weight across the phase"><defs><linearGradient id="prFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6fe0a4" stop-opacity="0.30"/><stop offset="1" stop-color="#6fe0a4" stop-opacity="0"/></linearGradient></defs>';
+    const step = (hi - lo) > 30 ? 10 : (hi - lo) > 14 ? 5 : 2;
+    for (let v = Math.ceil(lo / step) * step; v <= hi; v += step) g += '<line x1="' + pL + '" x2="' + (W - pR) + '" y1="' + Y(v).toFixed(1) + '" y2="' + Y(v).toFixed(1) + '" stroke="rgba(255,255,255,0.12)" stroke-width="1"/><text x="' + (pL - 9) + '" y="' + (Y(v) + 4).toFixed(1) + '" text-anchor="end" font-family="DM Mono,monospace" font-size="12" fill="rgba(232,226,208,0.8)">' + v + '</text>';
+    // plan band + target
+    const mn = S.plan.min || [], mx = S.plan.max || [], tg = S.plan.target || [], bk = []; for (let k = 0; k < Math.max(mn.length, mx.length); k++) if (mn[k] != null && mx[k] != null) bk.push(k);
+    if (bk.length > 1) { let d = ''; bk.forEach(function (k) { d += (d ? ' L' : 'M') + X(wkX(k)).toFixed(1) + ' ' + Y(mn[k]).toFixed(1); }); for (let z = bk.length - 1; z >= 0; z--) d += ' L' + X(wkX(bk[z])).toFixed(1) + ' ' + Y(mx[bk[z]]).toFixed(1); g += '<path d="' + d + ' Z" fill="rgba(201,161,74,0.16)"/>'; }
+    const tk = []; for (let k = 0; k < tg.length; k++) if (tg[k] != null) tk.push(k);
+    if (tk.length > 1) { let d = 'M' + X(1).toFixed(1) + ' ' + Y(S.weight.start != null ? S.weight.start : tg[tk[0]]).toFixed(1); tk.forEach(function (k) { d += ' L' + X(wkX(k)).toFixed(1) + ' ' + Y(tg[k]).toFixed(1); }); g += '<path d="' + d + '" fill="none" stroke="#d9b25a" stroke-width="2" stroke-dasharray="6 6" opacity="0.9"/>'; }
+    if (S.weight.goal != null) g += '<line x1="' + pL + '" x2="' + (W - pR) + '" y1="' + Y(S.weight.goal).toFixed(1) + '" y2="' + Y(S.weight.goal).toFixed(1) + '" stroke="rgba(143,247,255,0.5)" stroke-width="1.2"/><text x="' + (W - pR) + '" y="' + (Y(S.weight.goal) - 6).toFixed(1) + '" text-anchor="end" font-family="DM Mono,monospace" font-size="12" fill="rgba(143,247,255,0.9)" letter-spacing="2">GOAL ' + prF(S.weight.goal, 0) + '</text>';
+    // week ticks
+    for (let w = 1; w <= S.totalWeeks; w += (S.totalWeeks > 20 ? 4 : (S.totalWeeks > 12 ? 2 : 1))) { const x = X(Math.min(N, 7 * (w - 1) + 1)); g += '<text x="' + x.toFixed(1) + '" y="' + (H - 16) + '" text-anchor="middle" font-family="DM Mono,monospace" font-size="12" fill="rgba(232,226,208,0.7)" letter-spacing="1.5">W' + w + '</text>'; }
+    // data
+    const line = pts.map(function (q, i) { return (i ? 'L' : 'M') + X(q.x).toFixed(1) + ' ' + Y(q.w).toFixed(1); }).join(' '), last = pts[pts.length - 1], first = pts[0];
+    g += '<path d="' + line + ' L' + X(last.x).toFixed(1) + ' ' + (H - pB) + ' L' + X(first.x).toFixed(1) + ' ' + (H - pB) + ' Z" fill="url(#prFill)"/>';
+    g += '<path d="' + line + '" fill="none" stroke="#6fe0a4" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round" style="filter:drop-shadow(0 0 6px rgba(111,224,164,0.55))"/>';
+    if (pts.length <= 60) pts.forEach(function (q) { g += '<circle cx="' + X(q.x).toFixed(1) + '" cy="' + Y(q.w).toFixed(1) + '" r="3" fill="#0a1512" stroke="#6fe0a4" stroke-width="1.8"><title>' + prFmtShort(q.d) + ': ' + q.w.toFixed(1) + ' lb</title></circle>'; });
+    g += '<circle cx="' + X(first.x).toFixed(1) + '" cy="' + Y(first.w).toFixed(1) + '" r="6" fill="#eafff3" stroke="#6fe0a4" stroke-width="3"/><text x="' + (X(first.x) + 10).toFixed(1) + '" y="' + (Y(first.w) - 12).toFixed(1) + '" font-family="DM Mono,monospace" font-size="15" fill="#a6ffd0">' + first.w.toFixed(1) + '</text>';
+    g += '<circle cx="' + X(last.x).toFixed(1) + '" cy="' + Y(last.w).toFixed(1) + '" r="7" fill="#eafff3" stroke="#6fe0a4" stroke-width="3.5" style="filter:drop-shadow(0 0 9px rgba(111,224,164,0.9))"/><text x="' + Math.min(X(last.x) + 12, W - 40).toFixed(1) + '" y="' + (Y(last.w) - 14).toFixed(1) + '" text-anchor="' + (X(last.x) > W - 90 ? 'end' : 'start') + '" font-family="DM Mono,monospace" font-size="17" fill="#a6ffd0">' + last.w.toFixed(1) + '</text>';
+    return g + '</svg>';
+  }
+
+  function prVerdict(S) {
+    const ch = S.weight.change, plan = S.weekly.filter(function (w) { return w.endW != null && w.plan.target != null; }), ahead = plan.filter(function (w) { return w.endW <= w.plan.target; }).length;
+    const adh = S.adherence.tilesPossible ? Math.round(S.adherence.tilesDone / S.adherence.tilesPossible * 100) : 0;
+    if (ch == null) return 'The phase is complete. The record is sealed.';
+    const lost = ch < 0 ? 'You moved body weight from ' + prF(S.weight.start) + ' to ' + prF(S.weight.end) + ' lb \u2014 ' + prF(Math.abs(ch)) + ' lb down' : 'Body weight finished at ' + prF(S.weight.end) + ' lb';
+    return lost + (plan.length ? ', on or ahead of plan in ' + ahead + ' of ' + plan.length + ' weekly check-ins' : '') + ', with ' + adh + '% of all daily tiles completed. Stay on course.';
+  }
+
+  function prRender(S, opts) {
+    opts = opts || {};
+    const adhPct = S.adherence.tilesPossible ? Math.round(S.adherence.tilesDone / S.adherence.tilesPossible * 100) : 0;
+    const ch = S.weight.change, chTxt = ch == null ? '\u2014' : (ch <= 0 ? '\u2212' : '+') + Math.abs(ch).toFixed(1);
+    const maxAbs = Math.max.apply(null, S.weekly.map(function (w) { return w.change == null ? 0 : Math.abs(w.change); }).concat([0.1]));
+    let h = '<div class="pr-top"><div class="pr-kick">' + (opts.archived ? 'Archived Phase' : 'Phase Complete') + '</div><button type="button" class="pr-close" id="prClose">' + (opts.back ? 'Back' : 'Close') + '</button></div>';
+    h += '<div class="pr-hero"><div class="pr-name">' + prEsc(S.name) + '</div><div class="pr-range">' + prFmtDate(S.start) + ' \u2192 ' + prFmtDate(S.end) + ' \u00b7 ' + S.totalDays + ' days \u00b7 ' + S.totalWeeks + ' weeks</div><div class="pr-verdict">' + prEsc(prVerdict(S)) + '</div></div>';
+    h += '<div class="pr-big"><div><b class="g">' + chTxt + '</b><span>Lb change</span></div><div><b>' + prF(S.weight.end) + '</b><span>Final weight</span></div><div><b class="y">' + adhPct + '%</b><span>Tile adherence</span></div><div><b>' + S.adherence.perfectDays + '</b><span>Perfect days</span></div></div>';
+    h += '<div class="pr-card"><div class="pr-h">Body weight, day by day<i>' + S.weight.weighIns + ' weigh-ins</i></div><div class="pr-graph">' + prGraph(S) + '</div><div class="pr-leg"><span><i></i>Actual</span><span><i class="t"></i>Plan target</span><span><i class="b"></i>Plan range</span></div></div>';
+    h += '<div class="pr-card"><div class="pr-h">Weekly change<i>lb per week</i></div><div class="pr-bars">' + S.weekly.map(function (w) {
+      const c = w.change, ht = c == null ? 3 : Math.max(3, Math.abs(c) / maxAbs * 100);
+      return '<div class="pr-bar" title="Week ' + w.week + ': ' + (c == null ? 'no data' : (c <= 0 ? '' : '+') + c.toFixed(1) + ' lb') + '"><u>' + (c == null ? '' : (c <= 0 ? '\u2212' : '+') + Math.abs(c).toFixed(1)) + '</u><i class="' + (c == null ? 'na' : (c > 0 ? 'up' : '')) + '" style="height:' + ht + '%"></i><em>W' + w.week + '</em></div>'; }).join('') + '</div></div>';
+    h += '<div class="pr-two"><div class="pr-card"><div class="pr-h">Adherence<i>' + S.adherence.tilesDone + ' of ' + S.adherence.tilesPossible + ' tiles</i></div>' + Object.keys(PR_TILE_NAMES).map(function (id) {
+      const n = (S.adherence.perTile && S.adherence.perTile[id]) || 0, pc = S.daysElapsed ? Math.round(n / S.daysElapsed * 100) : 0;
+      return '<div class="pr-tile"><span>' + PR_TILE_NAMES[id] + '</span><b>' + n + ' / ' + S.daysElapsed + '</b><div class="pr-meter"><i style="width:' + pc + '%"></i></div></div>'; }).join('')
+      + '</div><div class="pr-card"><div class="pr-h">The whole phase</div><div class="pr-kv">'
+      + '<span>Starting weight</span><b>' + prF(S.weight.start) + ' lb</b><span>Final weight</span><b>' + prF(S.weight.end) + ' lb</b><span>Goal</span><b>' + prF(S.weight.goal, 0) + ' lb</b>'
+      + '<span>Highest</span><b>' + (S.weight.high ? prF(S.weight.high.w) + ' lb \u00b7 day ' + S.weight.high.day : '\u2014') + '</b><span>Lowest</span><b>' + (S.weight.low ? prF(S.weight.low.w) + ' lb \u00b7 day ' + S.weight.low.day : '\u2014') + '</b>'
+      + '<span>Average wake time</span><b>' + prClock(S.averages.wakeMin) + '</b><span>Average HRV</span><b>' + prF(S.averages.hrv) + '</b><span>Average calories</span><b>' + prF(S.averages.cals, 0) + '</b><span>Average protein</span><b>' + prF(S.averages.protein, 0) + ' g</b>'
+      + '<span>Training days</span><b>' + S.adherence.trainDays + '</b><span>Steam days</span><b>' + S.adherence.steamDays + '</b><span>Supplement days</span><b>' + S.adherence.suppsDays + '</b><span>Cascade items finished</span><b>' + S.cascade.finished + '</b></div></div></div>';
+    h += '<div class="pr-card"><div class="pr-h">Week by week</div><div class="pr-wrap"><table class="pr-table"><thead><tr><th>Week</th><th>Dates</th><th>Start</th><th>End</th><th>Change</th><th>Plan</th><th>Wake</th><th>HRV</th><th>Tiles</th><th>Cascade</th></tr></thead><tbody>' + S.weekly.map(function (w) {
+      return '<tr><td>' + w.week + '</td><td>' + prFmtShort(w.from) + '\u2013' + prFmtShort(w.to) + '</td><td>' + prF(w.startW) + '</td><td>' + prF(w.endW) + '</td><td class="' + (w.change == null ? '' : (w.change > 0 ? 'up' : 'dn')) + '">' + (w.change == null ? '\u2014' : (w.change <= 0 ? '\u2212' : '+') + Math.abs(w.change).toFixed(1)) + '</td><td>' + prF(w.plan.target) + '</td><td>' + prClock(w.avgWake) + '</td><td>' + prF(w.avgHrv, 0) + '</td><td>' + w.tilesDone + '/' + w.tilesPossible + '</td><td>' + w.cascade + '</td></tr>'; }).join('') + '</tbody></table></div></div>';
+    h += '<div class="pr-foot">' + (opts.archived ? '' : '<button type="button" class="nwd-ack" id="prArchiveBtn">Open the archive</button>') + '<button type="button" class="nwd-ack" id="prDone">' + (opts.back ? 'Back to archive' : 'Acknowledged') + '</button></div>';
+    return h;
+  }
+
+  function prShow(html, onClose) {
+    const ov = document.getElementById('phaseReport'), inn = document.getElementById('prIn'); if (!ov) return;
+    inn.innerHTML = html; ov.scrollTop = 0; _prOpen = true; ov.setAttribute('aria-hidden', 'false');
+    ov.classList.remove('on'); void ov.offsetWidth; requestAnimationFrame(function () { ov.classList.add('on'); });
+    const close = function () { _prOpen = false; ov.classList.remove('on'); ov.setAttribute('aria-hidden', 'true'); if (onClose) onClose(); };
+    ['prClose', 'prDone'].forEach(function (id) { const b = document.getElementById(id); if (b) b.addEventListener('click', close); });
+    const ab = document.getElementById('prArchiveBtn'); if (ab) ab.addEventListener('click', function () { prOpenArchive(); });
+    return close;
+  }
+  function prOpenArchive() {
+    const ov = document.getElementById('phaseReport'); if (!ov) return;
+    const draw = function (phases) {
+      let h = '<div class="pr-top"><div class="pr-kick">The Archive</div><button type="button" class="pr-close" id="prClose">Close</button></div><div class="pr-hero"><div class="pr-name">Past Phases</div><div class="pr-range">A permanent record</div></div><div class="pr-list" style="margin-top:26px">';
+      if (!phases.length) h += '<div class="pr-empty">No phases archived yet. When a phase ends, it is sealed here permanently.</div>';
+      phases.forEach(function (p, i) { const S = p.summary; h += '<button type="button" class="pr-item" data-i="' + i + '"><strong>' + prEsc(p.name) + '</strong><b>' + (S.weight.change == null ? '' : (S.weight.change <= 0 ? '\u2212' : '+') + Math.abs(S.weight.change).toFixed(1) + ' lb') + '</b><small>' + prFmtDate(p.start) + ' \u2192 ' + prFmtDate(p.end) + '</small><small>' + (S.totalWeeks || '') + ' weeks</small></button>'; });
+      h += '</div>';
+      prShow(h);
+      document.querySelectorAll('.pr-item').forEach(function (b) { b.addEventListener('click', function () { const p = phases[+b.dataset.i]; prShow(prRender(p.summary, { archived: true, back: true }), function () { prOpenArchive(); }); }); });
+    };
+    if (_prCache) { draw(_prCache); return; }
+    prShow('<div class="pr-top"><div class="pr-kick">The Archive</div><button type="button" class="pr-close" id="prClose">Close</button></div><div class="pr-empty">Opening the archive\u2026</div>');
+    if (typeof APPS_SCRIPT_URL === 'undefined' || !APPS_SCRIPT_URL) return;
+    nwFetch(APPS_SCRIPT_URL + '?action=getArchive&_=' + Date.now(), { cache: 'no-store', redirect: 'follow' })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+      .then(function (res) { if (!res || res.ok !== true) throw 0; _prCache = res.phases || []; draw(_prCache); })
+      .catch(function () { prShow('<div class="pr-top"><div class="pr-kick">The Archive</div><button type="button" class="pr-close" id="prClose">Close</button></div><div class="pr-empty">The archive could not be reached. Update Code.gs or check your connection.</div>'); });
+  }
+
+  // Phase end: show the report once, and ask the server to seal it permanently (idempotent; safe if repeated).
+  function prCheckPhaseEnd() {
+    const pi = progInfo(); if (!pi.ended || _prOpen) return;
+    if (typeof APPS_SCRIPT_URL === 'undefined' || !APPS_SCRIPT_URL) return;
+    let ack = null; try { ack = localStorage.getItem('nw_phase_ack'); } catch (e) {}
+    if (ack === NW_START) return;                                             // already acknowledged on this device
+    nwFetch(APPS_SCRIPT_URL + '?action=archivePhase&_=' + Date.now(), { cache: 'no-store', redirect: 'follow' })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+      .then(function (res) {
+        if (!res || res.ok !== true || !res.phase) return;
+        _prCache = null;
+        prShow(prRender(res.phase.summary, {}), function () { try { localStorage.setItem('nw_phase_ack', NW_START); } catch (e) {} });
+      }).catch(function () {});
+  }
+
+
+  // ============================================================
+  // OFFICE DAILY CHECKLIST — visual only. Tiles vanish when clicked; everything regenerates tomorrow.
+  // State = today's schedule + which items are done. Kept on-device for instant paint and mirrored to one
+  // overwritten sheet row (NW_OfficeToday) so phone and desktop agree. No history is ever stored.
+  // ============================================================
+  const OCD_SCHED = {
+    idc:   { name: 'Infectious Diseases',        cls: 'oc-g' },
+    asp:   { name: 'Antimicrobial Stewardship',  cls: 'oc-r' },
+    pharm: { name: 'Pharm Supervisor',           cls: 'nw-training' },
+    off:   { name: 'Day Off',                    cls: '' }
+  };
+  const OCD_DAY = {
+    idc: [['review', 'Review All Patients'], ['meet', 'Attend All Meetings'], ['chat', 'Secure Group Chat']],
+    asp: [['lists', 'Setup All Lists'], ['review', 'Review All Patients'], ['meet', 'Attend All Meetings'], ['db', 'Database & Clear Lists']]
+  };
+  const OCD_EVERY = [['rev-sched', 'Review Schedule'], ['inbox', 'Inboxes Cleared'], ['phone', 'Phone Away at Home']];
+  let OCD = { d: '', s: '', done: [], t: 0 };
+
+  function ocdLoad() {
+    let o = null; try { o = JSON.parse(lsGet('oc_daily') || 'null'); } catch (e) {}
+    OCD = (o && o.d === todayISO()) ? { d: o.d, s: o.s || '', done: o.done || [], t: o.t || 0 } : { d: todayISO(), s: '', done: [], t: 0 };
+  }
+  function ocdSave(push) {
+    lsSet('oc_daily', JSON.stringify(OCD));
+    if (push) { OCD.t = Date.now(); lsSet('oc_daily', JSON.stringify(OCD)); ocdPush(); }
+  }
+  function ocdPush() {
+    if (typeof APPS_SCRIPT_URL === 'undefined' || !APPS_SCRIPT_URL) return;
+    nwFetch(APPS_SCRIPT_URL + '?action=setOfficeDay&date=' + encodeURIComponent(OCD.d) + '&s=' + encodeURIComponent(OCD.s) + '&done=' + encodeURIComponent(OCD.done.join(',')) + '&t=' + OCD.t + '&_=' + Date.now(), { cache: 'no-store', redirect: 'follow' }).catch(function () {});
+  }
+  function ocdPull() {
+    if (typeof APPS_SCRIPT_URL === 'undefined' || !APPS_SCRIPT_URL) return;
+    if (OCD.d !== todayISO()) { ocdLoad(); ocdRender(); }                      // page left open past midnight
+    nwFetch(APPS_SCRIPT_URL + '?action=getOfficeDay&_=' + Date.now(), { cache: 'no-store', redirect: 'follow' })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+      .then(function (j) {
+        if (!j || j.ok !== true || j.date !== OCD.d) return;                     // server holds another day → ignore (stale)
+        const before = JSON.stringify(OCD);
+        j.done.forEach(function (d) { if (OCD.done.indexOf(d) === -1) OCD.done.push(d); });
+        if (j.t > OCD.t) { OCD.s = j.schedule; OCD.t = j.t; }
+        if (JSON.stringify(OCD) !== before) { ocdSave(false); ocdRender(); }
+      }).catch(function () {});
+  }
+  function ocdItems() {
+    const day = OCD.s && OCD_DAY[OCD.s] ? OCD_DAY[OCD.s].map(function (x) { return { id: OCD.s + ':' + x[0], label: x[1], cls: OCD_SCHED[OCD.s].cls }; }) : [];
+    const head = OCD.s ? day : [{ id: '@select', label: 'Select a Schedule', cls: 'nw-training' }];
+    return head.concat(OCD_EVERY.map(function (x) { return { id: x[0], label: x[1], cls: '' }; }));
+  }
+  function ocdTile(it) {
+    return '<button type="button" class="nw-tile ' + it.cls + '" data-ocd="' + it.id + '"><span class="nw-box" aria-hidden="true"></span><span class="nw-label">' + it.label + '</span></button>';
+  }
+  function ocdRender() {
+    const el = document.getElementById('ocDaily'); if (!el) return;
+    const left = ocdItems().filter(function (it) { return it.id === '@select' || OCD.done.indexOf(it.id) === -1; });
+    let h = '<div class="ocd-top"><span class="ocd-k">' + (OCD.s ? OCD_SCHED[OCD.s].name : 'Office Hours') + '</span>' + (OCD.s ? '<button type="button" class="ocd-chg" id="ocdChg">Change</button>' : '') + '</div>';
+    h += left.length ? '<div class="ocd-list">' + left.map(ocdTile).join('') + '</div>' : '<div class="ocd-done">Office Hours Complete</div>';
+    el.innerHTML = h;
+  }
+  function ocdPick() {
+    const m = document.getElementById('ocModal'), b = document.getElementById('ocModalBox'); if (!m || !b) return;
+    b.innerHTML = '<div class="ocd-k">Select a Schedule</div>' + Object.keys(OCD_SCHED).map(function (k) {
+      return '<button type="button" class="nw-tile ' + OCD_SCHED[k].cls + '" data-ocd-pick="' + k + '"><span class="nw-label">' + OCD_SCHED[k].name + '</span></button>'; }).join('');
+    m.classList.add('on');
+  }
+  function ocdClosePick() { const m = document.getElementById('ocModal'); if (m) m.classList.remove('on'); }
+  function ocdInit() {
+    ocdLoad(); ocdRender();
+    const el = document.getElementById('ocDaily'), m = document.getElementById('ocModal'); if (!el || !m) return;
+    el.addEventListener('click', function (e) {
+      if (e.target.closest('#ocdChg')) { ocdPick(); return; }
+      const t = e.target.closest('[data-ocd]'); if (!t || t.classList.contains('nw-done')) return;
+      const id = t.dataset.ocd;
+      if (id === '@select') { ocdPick(); return; }
+      t.classList.add('nw-done');
+      OCD.done.push(id); ocdSave(true);
+      setTimeout(function () { t.classList.add('nw-collapsing'); }, 420);
+      setTimeout(ocdRender, 900);
+    });
+    m.addEventListener('click', function (e) {
+      const p = e.target.closest('[data-ocd-pick]');
+      if (p) { OCD.s = p.dataset.ocdPick; ocdSave(true); ocdClosePick(); ocdRender(); }
+      else if (e.target === m) ocdClosePick();
+    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') ocdClosePick(); });
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) ocdPull(); });
+    setInterval(ocdPull, 60000);
+    ocdPull();
+  }
+
   // ============================================================
   // BOOT
   // ============================================================
@@ -3138,6 +3476,8 @@
   progRefresh();
   loadStewardCount();
   initNightwingDailies();
+  ocdInit();
+  (function () { const b = document.getElementById('nwsArchiveBtn'); if (b) b.addEventListener('click', prOpenArchive); })();
   loadDomainsCSV();
   updateDesksNav();
   setInterval(loadDomainsCSV, 15 * 60 * 1000);
@@ -3263,13 +3603,38 @@
     setTimeout(showSplash, 120);
   })();
 
-  // ============================================================
-  // TENURE SYSTEM — streak-based point accumulation
-  // +1 TP every 5 consecutive fully-complete days
-  // No punishment on break — next 5-day streak awards next point
-  // ============================================================
 
-
+  // ============================================================
+  // DIAGNOSTICS — open the app with ?diag to see a plain health report (nothing else changes)
+  // ============================================================
+  (function () {
+    if (!/[?&]diag\b/.test(location.search)) return;
+    function show(rows) {
+      const d = document.createElement('div');
+      d.style.cssText = 'position:fixed;inset:auto 12px 12px 12px;max-height:70vh;overflow:auto;z-index:100001;background:rgba(6,14,38,0.96);border:1px solid rgba(201,161,74,0.4);color:#e8e2d0;font:12px/1.6 "DM Mono",monospace;padding:14px 16px;border-radius:4px;white-space:pre-wrap';
+      d.textContent = rows.join('\n'); document.body.appendChild(d);
+      d.addEventListener('click', function () { d.remove(); });
+    }
+    setTimeout(function () {
+      const pi = progInfo(), rows = ['PhD Pro \u2014 diagnostics (tap to dismiss)', '',
+        'Program: ' + NW_START + ' \u2192 ' + NW_END + '  (' + pi.total + ' days, ' + pi.totalWeeks + ' weeks)',
+        'Today: day ' + pi.dayNum + ', week ' + pi.weekNum + ', ' + pi.daysLeft + ' left' + (pi.ended ? '  [ENDED]' : ''),
+        'Cycle on device: ' + (lsGet('nw_cycle') || '\u2014'), 'Backend URL set: ' + (typeof APPS_SCRIPT_URL !== 'undefined' && !!APPS_SCRIPT_URL), ''];
+      if (typeof APPS_SCRIPT_URL === 'undefined' || !APPS_SCRIPT_URL) return show(rows);
+      const chk = function (label, q) {
+        return nwFetch(APPS_SCRIPT_URL + '?action=' + q + '&_=' + Date.now(), { cache: 'no-store', redirect: 'follow' })
+          .then(function (r) { return r.ok ? r.json() : Promise.reject('HTTP ' + r.status); })
+          .then(function (j) { rows.push((j && j.ok !== false ? 'OK    ' : 'FAIL  ') + label + (j && j.error ? ' \u2014 ' + j.error : '')); return j; })
+          .catch(function (e) { rows.push('FAIL  ' + label + ' \u2014 ' + e); });
+      };
+      chk('getWeights', 'getWeights').then(function (j) {
+        if (j && j.ok) rows.push('      sheet start/end: ' + j.start + ' \u2192 ' + j.end + ' | baseline ' + j.baseline + ' | weigh-ins ' + (j.daily || []).filter(function (v) { return v != null; }).length);
+        return chk('getCascade', 'getCascade');
+      }).then(function () { return chk('getNwHistory', 'getNwHistory'); })
+        .then(function () { return chk('getArchive', 'getArchive'); })
+        .then(function (j) { if (j && j.phases) rows.push('      archived phases: ' + j.phases.length); show(rows); });
+    }, 3500);
+  })();
 
 </script>
 </body>
