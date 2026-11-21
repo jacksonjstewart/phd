@@ -2469,8 +2469,8 @@
   // Program window. These are only defaults / last-known values — the sheet's "Start Date" and
   // "End Date" cells (THE GREAT WINTER tab) override them on every sync, and the result is cached
   // on this device so the page is right even before (or without) the network.
-  let NW_START = '2026-10-13';
-  let NW_END   = '2027-02-01';
+  let NW_START = '2026-11-11';
+  let NW_END   = '2027-03-01';   // placeholder until the sheet's End Date loads
   function nwApplyProgram(start, end, silent) {
     const ok = function (v) { return typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v); };
     if (!ok(start) || !ok(end) || start >= end) return false;
@@ -2612,6 +2612,8 @@
         nwSyncDot(true); window._nwWtAt = Date.now();
         setTimeout(function () { try { prCheckPhaseEnd(); } catch (e) {} }, 600);
         if (w.start && w.end) nwApplyProgram(w.start, w.end);            // sheet is the source of truth for the program window
+        window._nwMeta = { name: w.name || '', base: w.baseline, goal: (function (t) { for (let i = t.length - 1; i >= 0; i--) if (t[i] != null) return t[i]; return null; })(w.target || []) };
+        setTimeout(function () { try { prWelcomeCheck(); } catch (e) {} }, 900);
         const pdOld = window._physiqueData || {};
         const tgt = w.target || [];
         let goal = null; for (let i = tgt.length - 1; i >= 0; i--) { if (tgt[i] != null) { goal = tgt[i]; break; } }
@@ -3354,6 +3356,21 @@
       .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
       .then(function (res) { if (!res || res.ok !== true) throw 0; _prCache = res.phases || []; draw(_prCache); })
       .catch(function () { prShow('<div class="pr-top"><div class="pr-kick">The Archive</div><button type="button" class="pr-close" id="prClose">Close</button></div><div class="pr-empty">The archive could not be reached. Update Code.gs or check your connection.</div>'); });
+  }
+
+  // New phase: when the sheet's Start Date moves to a new cycle, greet it once. A device that is already
+  // well into the cycle (e.g. first load after this feature shipped) is marked as greeted without a splash.
+  function prWelcomeCheck() {
+    const pi = progInfo(); if (!pi.started || pi.ended || _prOpen) return;
+    if (lsGet('nw_welcome_ack') === NW_START) return;
+    if (pi.dayNum > 3) { lsSet('nw_welcome_ack', NW_START); return; }
+    const m = window._nwMeta || {}, total = pi.total;
+    const h = '<div class="pr-top"><div class="pr-kick">A New Phase Begins</div><button type="button" class="pr-close" id="prClose">Close</button></div>'
+      + '<div class="pr-hero" style="padding-top:6vh"><div class="pr-name">' + prEsc(m.name || 'New Phase') + '</div><div class="pr-range">' + prFmtDate(NW_START) + ' \u2192 ' + prFmtDate(NW_END) + '</div>'
+      + '<div class="pr-verdict">Day one. A clean slate \u2014 every number from here is earned.</div></div>'
+      + '<div class="pr-big"><div><b>' + pi.totalWeeks + '</b><span>Weeks</span></div><div><b>' + total + '</b><span>Days</span></div><div><b class="y">' + prF(m.base) + '</b><span>Starting weight</span></div><div><b class="g">' + prF(m.goal, 0) + '</b><span>Goal</span></div></div>'
+      + '<div class="pr-foot"><button type="button" class="nwd-ack" id="prDone">Begin</button></div>';
+    prShow(h, function () { lsSet('nw_welcome_ack', NW_START); });
   }
 
   // Phase end: show the report once, and ask the server to seal it permanently (idempotent; safe if repeated).
